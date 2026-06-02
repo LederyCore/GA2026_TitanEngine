@@ -33,6 +33,7 @@ namespace Platform
 		void Notify(UINT msg, WPARAM wParam, LPARAM lParam) override;
 
 	private :
+		int m_width, m_height;
 		HWND m_hWnd = nullptr;
 		std::unordered_map<UINT, std::vector<IWindowObserver*>> m_observerMap;
 

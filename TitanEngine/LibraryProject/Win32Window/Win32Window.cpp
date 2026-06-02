@@ -16,6 +16,9 @@ HWND Platform::Win32Window::Create(const std::wstring& windowName, int width, in
 	wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
 	wc.lpszClassName = className;
 
+	m_width = width;
+	m_height = height;
+
 	if (!RegisterClassEx(&wc))
 	{
 		if (GetLastError() != ERROR_CLASS_ALREADY_EXISTS)
