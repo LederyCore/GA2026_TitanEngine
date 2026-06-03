@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "Engine.h"
-#include "IWindow.h"
+#include "Win32Window/IWindow.h"
 
 using namespace Platform;
 

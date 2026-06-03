@@ -5,8 +5,6 @@ VisualStudioVersion = 17.14.37111.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TitanEngine", "TitanEngine\TitanEngine.vcxproj", "{A5BBA8C3-82B3-47D0-A4C3-B8AEBB54110D}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Win32Window", "LibraryProject\Win32Window\WindowFactory.vcxproj", "{6F1F8B7C-8967-4318-B4F2-8E6F90156018}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -23,14 +21,6 @@ Global
 		{A5BBA8C3-82B3-47D0-A4C3-B8AEBB54110D}.Release|x64.Build.0 = Release|x64
 		{A5BBA8C3-82B3-47D0-A4C3-B8AEBB54110D}.Release|x86.ActiveCfg = Release|Win32
 		{A5BBA8C3-82B3-47D0-A4C3-B8AEBB54110D}.Release|x86.Build.0 = Release|Win32
-		{6F1F8B7C-8967-4318-B4F2-8E6F90156018}.Debug|x64.ActiveCfg = Debug|x64
-		{6F1F8B7C-8967-4318-B4F2-8E6F90156018}.Debug|x64.Build.0 = Debug|x64
-		{6F1F8B7C-8967-4318-B4F2-8E6F90156018}.Debug|x86.ActiveCfg = Debug|Win32
-		{6F1F8B7C-8967-4318-B4F2-8E6F90156018}.Debug|x86.Build.0 = Debug|Win32
-		{6F1F8B7C-8967-4318-B4F2-8E6F90156018}.Release|x64.ActiveCfg = Release|x64
-		{6F1F8B7C-8967-4318-B4F2-8E6F90156018}.Release|x64.Build.0 = Release|x64
-		{6F1F8B7C-8967-4318-B4F2-8E6F90156018}.Release|x86.ActiveCfg = Release|Win32
-		{6F1F8B7C-8967-4318-B4F2-8E6F90156018}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

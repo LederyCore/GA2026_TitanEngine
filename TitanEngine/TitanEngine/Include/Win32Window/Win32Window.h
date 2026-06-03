@@ -25,6 +25,11 @@ namespace Platform
 		void AddObserver(UINT msg, IWindowObserver* obs) override;
 		void RemoveObserver(UINT msg, IWindowObserver* obs) override;
 		
+		// this를 GWLP_USERDATA에 등록하므로 복사/이동 금지
+		Win32Window(const Win32Window&) = delete;
+		Win32Window& operator=(const Win32Window&) = delete;
+		Win32Window(Win32Window&&) = delete;
+		Win32Window& operator=(Win32Window&&) = delete;
 
 	private :
 		static LRESULT CALLBACK StaticWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -34,6 +39,7 @@ namespace Platform
 
 	private :
 		HWND m_hWnd = nullptr;
+		int m_width = 0, m_height = 0;
 		std::unordered_map<UINT, std::vector<IWindowObserver*>> m_observerMap;
 
 	};

@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include <windowsx.h>
 #include "Win32Window.h"
 
@@ -62,32 +62,21 @@ LRESULT Platform::Win32Window::StaticWndProc(HWND hWnd, UINT msg, WPARAM wParam,
 {
 	Win32Window* pWindow = nullptr;
 
-	// ÃÖÃÊ »ı¼ºµÉ ¶§ ½ÇÇàµÊ
 	if (msg == WM_NCCREATE)
 	{
-		// CreateWindowExÀÇ ¸¶Áö¸· ÀÎÀÚ(this)¸¦ ÃßÃâ
 		CREATESTRUCT* pCreate = reinterpret_cast<CREATESTRUCT*>(lParam);
 		pWindow = reinterpret_cast<Win32Window*>(pCreate->lpCreateParams);
-
-		// HWND¿¡ C++ ÀÎ½ºÅÏ½º Æ÷ÀÎÅÍ¸¦ ¹­¾î¼­ ÀúÀå
 		SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pWindow));
-
-		// ¸â¹ö º¯¼ö¿¡ HWND º¸°ü
 		pWindow->m_hWnd = hWnd;
-	}
-	else
-	{
-		// ÀÌ¹Ì »ı¼ºµÈ À©µµ¿ì¶ó¸é ÀúÀåÇØµĞ Æ÷ÀÎÅÍ¸¦ ²¨³»¿È
-		pWindow = reinterpret_cast<Win32Window*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
+
+		DefWindowProc(hWnd, msg, wParam, lParam); // NC ì˜ì—­ ë‚´ë¶€ ì²˜ë¦¬
+		return TRUE;                              // ë°˜ë“œì‹œ TRUE ë°˜í™˜
 	}
 
-	// ´ë»ó ÀÎ½ºÅÏ½º¸¦ Ã£¾Ò´Ù¸é, ÇØ´ç ÀÎ½ºÅÏ½ºÀÇ °¡»ó ÇÔ¼ö(HandleMessage) È£Ãâ
+	pWindow = reinterpret_cast<Win32Window*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
 	if (pWindow)
-	{
 		return pWindow->HandleMessage(hWnd, msg, wParam, lParam);
-	}
 
-	// Æ÷ÀÎÅÍ°¡ ¼¼ÆÃµÇ±â ÀüÀÇ ÃÊ±â ¸Ş½ÃÁöµéÀº ±âº» Ã³¸®
 	return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
@@ -122,10 +111,10 @@ void Platform::Win32Window::RemoveObserver(UINT msg, IWindowObserver* obs)
 
 LRESULT Platform::Win32Window::HandleMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	// ÀÔ·Â°ü·Ã ÀÌº¥Æ® Àü´Ş
+	// ì…ë ¥ê´€ë ¨ ì´ë²¤íŠ¸ ì „ë‹¬
 	Notify(msg, wParam, lParam);
 
-	// À©µµ¿ì Ã¢ °ü·Ã ¸Ş½ÃÁö¸¸ ¿©±â¼­ Ã³¸®
+	// ìœˆë„ìš° ì°½ ê´€ë ¨ ë©”ì‹œì§€ë§Œ ì—¬ê¸°ì„œ ì²˜ë¦¬
 	switch (msg)
 	{
 	case WM_CLOSE:
@@ -141,32 +130,33 @@ LRESULT Platform::Win32Window::HandleMessage(HWND hWnd, UINT msg, WPARAM wParam,
 
 void Platform::Win32Window::Notify(UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	// A. ÀüÃ¼ ±¸µ¶ÀÚ(0¹ø)¿¡°Ô ¸ÕÀú ÅëÁö
+
+	// A. ì „ì²´ êµ¬ë…ì(0ë²ˆ)ì—ê²Œ ë¨¼ì € í†µì§€
 	if (m_observerMap.count(0)) 
 	{
 		for (auto* obs : m_observerMap[0]) 
 		{
-			// ÇÊ¿ä¿¡ µû¶ó ÀüÃ¼ ¾Ë¸²¿ë °¡»ó ÇÔ¼ö¸¦ ¿ÉÀú¹ö¿¡ Ãß°¡ÇÒ ¼ö ÀÖ½À´Ï´Ù.
+			// í•„ìš”ì— ë”°ë¼ ì „ì²´ ì•Œë¦¼ìš© ê°€ìƒ í•¨ìˆ˜ë¥¼ ì˜µì €ë²„ì— ì¶”ê°€í•  ìˆ˜ ìˆìŠµë‹ˆë‹¤.
 		}
 	}
 
-	// B. Æ¯Á¤ ¸Ş½ÃÁö ±¸µ¶ÀÚ¿¡°Ô ÅëÁö
+	// B. íŠ¹ì • ë©”ì‹œì§€ êµ¬ë…ìì—ê²Œ í†µì§€
 	auto it = m_observerMap.find(msg);
 	if (it != m_observerMap.end())
 	{
-		const auto& observers = it->second; // º¹»çº»
+		const auto& observers = it->second; // ë³µì‚¬ë³¸
 		for (const auto& obs : observers)
 		{
 			switch (msg)
 			{
-				// ¦¡¦¡ Å°º¸µå ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
+				// â”€â”€ í‚¤ë³´ë“œ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 			case WM_KEYDOWN:        obs->OnKeyDown(wParam); break;
 			case WM_KEYUP:          obs->OnKeyUp(wParam); break;
 			case WM_SYSKEYDOWN:     obs->OnSysKeyDown(wParam); break;
 			case WM_SYSKEYUP:       obs->OnSysKeyUp(wParam); break;
 			case WM_CHAR:           obs->OnChar(wParam); break;
 
-				// ¦¡¦¡ ¸¶¿ì½º ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
+				// â”€â”€ ë§ˆìš°ìŠ¤ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 			case WM_MOUSEMOVE:      obs->OnMouseMove(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)); break;
 			case WM_LBUTTONDOWN:    obs->OnMouseLButtonDown(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)); break;
 			case WM_LBUTTONUP:      obs->OnMouseLButtonUp(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)); break;
@@ -179,7 +169,7 @@ void Platform::Win32Window::Notify(UINT msg, WPARAM wParam, LPARAM lParam)
 			case WM_XBUTTONUP:      obs->OnMouseXButtonUp(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam), GET_XBUTTON_WPARAM(wParam)); break;
 			case WM_LBUTTONDBLCLK:  obs->OnMouseLButtonDblClk(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)); break;
 
-				// ¦¡¦¡ À©µµ¿ì »óÅÂ ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
+				// â”€â”€ ìœˆë„ìš° ìƒíƒœ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 			case WM_SIZE:           obs->OnResize(LOWORD(lParam), HIWORD(lParam)); break;
 			case WM_MOVE:           obs->OnMove(LOWORD(lParam), HIWORD(lParam)); break;
 			case WM_ACTIVATE:       obs->OnActivate(LOWORD(wParam) != WA_INACTIVE); break;
@@ -191,7 +181,7 @@ void Platform::Win32Window::Notify(UINT msg, WPARAM wParam, LPARAM lParam)
 			//case WM_CLOSE:          obs->OnClose(); break;
 			//case WM_DESTROY:        obs->OnDestroy(); break;
 
-				// ¦¡¦¡ ·»´õ¸µ ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
+				// â”€â”€ ë Œë”ë§ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 			case WM_PAINT:          obs->OnPaint(); break;
 			case WM_ERASEBKGND:     obs->OnEraseBackground(); break;
 			}
