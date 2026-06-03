@@ -20,7 +20,7 @@ namespace TitanEngine
 	private :
 		void Update();
 		void Render();
-
+		bool InitD2DRenderSystem();
 	private :
 		Platform::IWindow* m_window = nullptr;
 
