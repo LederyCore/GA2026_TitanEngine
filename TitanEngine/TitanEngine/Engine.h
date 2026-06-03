@@ -18,6 +18,10 @@ namespace TitanEngine
 		void Finalize();
 
 	private :
+		void Update();
+		void Render();
+
+	private :
 		Platform::IWindow* m_window = nullptr;
 
 	};

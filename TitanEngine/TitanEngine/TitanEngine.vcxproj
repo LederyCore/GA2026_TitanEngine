@@ -112,7 +112,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(ProjectDir)Lib\Debug</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Win32Window.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Win32Window.lib;InputSystem.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -132,7 +132,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(ProjectDir)Lib\Release</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Win32Window.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Win32Window.lib;InputSystem.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

@@ -11,3 +11,5 @@
 #endif
 
 #include <windows.h>
+
+#include <array>
