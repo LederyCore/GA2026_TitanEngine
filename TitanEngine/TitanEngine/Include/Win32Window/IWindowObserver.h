@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include <windows.h>
 #include "IObserver.h"
 namespace Platform
@@ -8,68 +8,25 @@ namespace Platform
     public:
         virtual ~IWindowObserver() = default;
 
-        // ¦¡¦¡ Å°º¸µå ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
-        // AddObserver(WM_KEYDOWN, this)
-        virtual void OnKeyDown(WPARAM key) {}
-        // AddObserver(WM_KEYUP, this)
-        virtual void OnKeyUp(WPARAM key) {}
-        // AddObserver(WM_SYSKEYDOWN, this)
-        virtual void OnSysKeyDown(WPARAM key) {}
-        // AddObserver(WM_SYSKEYUP, this)
-        virtual void OnSysKeyUp(WPARAM key) {}
-        // AddObserver(WM_CHAR, this)
-        virtual void OnChar(WPARAM key) {}
+        // ì „ì²´ êµ¬ë…ììš© â€” ëª¨ë“  ë©”ì‹œì§€ë¥¼ rawë¡œ ìˆ˜ì‹ 
+        virtual void OnMessage(UINT msg, WPARAM wParam, LPARAM lParam) {}
 
-        // ¦¡¦¡ ¸¶¿ì½º ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
-        // AddObserver(WM_MOUSEMOVE, this)
-        virtual void OnMouseMove(int x, int y) {}
-        // AddObserver(WM_LBUTTONDOWN, this)
-        virtual void OnMouseLButtonDown(int x, int y) {}
-        // AddObserver(WM_LBUTTONUP, this)
-        virtual void OnMouseLButtonUp(int x, int y) {}
-        // AddObserver(WM_RBUTTONDOWN, this)
-        virtual void OnMouseRButtonDown(int x, int y) {}
-        // AddObserver(WM_RBUTTONUP, this)
-        virtual void OnMouseRButtonUp(int x, int y) {}
-        // AddObserver(WM_MBUTTONDOWN, this)
-        virtual void OnMouseMButtonDown(int x, int y) {}
-        // AddObserver(WM_MBUTTONUP, this)
-        virtual void OnMouseMButtonUp(int x, int y) {}
-        // AddObserver(WM_MOUSEWHEEL, this)
-        virtual void OnMouseWheel(int delta) {}
-        // AddObserver(WM_XBUTTONDOWN, this)
-        virtual void OnMouseXButtonDown(int x, int y, WORD button) {}
-        // AddObserver(WM_XBUTTONUP, this)
-        virtual void OnMouseXButtonUp(int x, int y, WORD button) {}
-        // AddObserver(WM_LBUTTONDBLCLK, this)
-        virtual void OnMouseLButtonDblClk(int x, int y) {}
+        // â”€â”€ í…ìŠ¤íŠ¸ ì…ë ¥ (IME í¬í•¨) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // WM_KEYDOWN/UPê³¼ ë‹¬ë¦¬ ë¬¸ì ì¡°í•© ê²°ê³¼ì´ë¯€ë¡œ ì´ë²¤íŠ¸ê°€ ì í•©
+        virtual void OnChar(WPARAM ch) {}
 
-        // ¦¡¦¡ À©µµ¿ì »óÅÂ ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
-        // AddObserver(WM_SIZE, this)
+        // â”€â”€ ìœˆë„ìš° ìƒíƒœ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         virtual void OnResize(int width, int height) {}
-        // AddObserver(WM_MOVE, this)
         virtual void OnMove(int x, int y) {}
-        // AddObserver(WM_ACTIVATE, this)
         virtual void OnActivate(bool active) {}
-        // AddObserver(WM_SETFOCUS, this)
         virtual void OnFocusGained() {}
-        // AddObserver(WM_KILLFOCUS, this)
         virtual void OnFocusLost() {}
-        // AddObserver(WM_ENTERSIZEMOVE, this)
         virtual void OnEnterSizeMove() {}
-        // AddObserver(WM_EXITSIZEMOVE, this)
         virtual void OnExitSizeMove() {}
-        // AddObserver(WM_DISPLAYCHANGE, this)
         virtual void OnDisplayChange(int width, int height) {}
-        // AddObserver(WM_CLOSE, this)
-        //virtual void OnClose() {}
-        // AddObserver(WM_DESTROY, this)
-        //virtual void OnDestroy() {}
 
-        // ¦¡¦¡ ·»´õ¸µ ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡
-        // AddObserver(WM_PAINT, this)
+        // â”€â”€ ë Œë”ë§ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         virtual void OnPaint() {}
-        // AddObserver(WM_ERASEBKGND, this)
         virtual void OnEraseBackground() {}
     };
 }
