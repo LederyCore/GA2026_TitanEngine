@@ -10,6 +10,12 @@
 #define VC_EXTRALEAN
 #endif
 
+// 윈도우 관련
 #include <windows.h>
 
+
+// D2D 관련
+
+
+// 자료구조 알고리즘 관려
 #include <array>

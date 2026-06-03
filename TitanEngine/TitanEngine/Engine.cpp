@@ -2,6 +2,7 @@
 #include "Engine.h"
 #include "Win32Window/IWindow.h"
 #include "InputSystem/InputSystem.h"
+#include "DebugConsole/DebugConsole.h"
 
 using namespace Platform;
 
@@ -24,6 +25,7 @@ bool TitanEngine::Engine::Initialize(IWindow& window, const wchar_t* windowName,
         return false;
     }
 
+    LOG_DEBUG("엔진이 성공적으로 초기화 되었습니다.");
 	return true;
 }
 
@@ -58,6 +60,7 @@ void TitanEngine::Engine::Finalize()
 
 void TitanEngine::Engine::Update()
 {
+
 }
 
 void TitanEngine::Engine::Render()
