@@ -1,31 +1,53 @@
 #include "pch.h"
 #include "Engine.h"
+#include "SceneManager.h"
+#include "Scene.h"
 #include "Win32Window/IWindow.h"
 #include "InputSystem/InputSystem.h"
 #include "DebugConsole/DebugConsole.h"
+#include "GameTimer.h"
+
 using namespace Platform;
+using namespace TitanEngine::SceneManagement;
+using namespace TitanEngine::Time;
+
+#define FIXED_TIMESTEP 0.02f    // 캐주얼 게임 기준
+
+TitanEngine::Engine::Engine()
+{
+    m_timer = new GameTimer();
+}
 
 TitanEngine::Engine::~Engine()
 {
-
+    delete m_timer;
 }
 
 bool TitanEngine::Engine::Initialize(IWindow& window, const wchar_t* windowName, int width, int height)
 {
 	m_window = &window;
 	void* handle = m_window->Create(windowName, width, height);
+
     if (!handle)
     {
+        LOG_ERROR("윈도우 핸들이 할당되지 않았습니다.");
         return false;
     }
 
     if (false == InputSystem::Instance().Initialize(m_window->GetHWND()))
     {
+        LOG_ERROR("인풋 시스템이 초기화 되지 않았습니다.");
         return false;
     }
 
-    if (!InitD2DRenderSystem())
-		return false;
+
+    if (false == SceneManager::Instance().Initialize())
+    {
+        LOG_ERROR("씬매니저가 초기화 되지 않았습니다.");
+        return false;
+    }
+
+    m_timer->Reset();
 
     LOG_DEBUG("엔진이 성공적으로 초기화 되었습니다.");
 	return true;
@@ -38,7 +60,7 @@ void TitanEngine::Engine::Run()
     {
         if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
         {
-            if (!Platform::InputSystem::Instance().OnHandleMessage(msg))
+            if (!InputSystem::Instance().OnHandleMessage(msg))
             {
                 TranslateMessage(&msg);
                 DispatchMessage(&msg);
@@ -47,55 +69,53 @@ void TitanEngine::Engine::Run()
         else
         {
             // 프레임 시작
-            Platform::InputSystem::Instance().FlushFrame(); 
-            Update();
+            InputSystem::Instance().FlushFrame(); 
+            SceneManager::Instance().FlushFrame();
+
+            // 이 프레임에서 사용될 씬 그래프 가져오기
+            m_currentFrameActiveSceneGraph = SceneManager::Instance().GetActiveScene()->GetSceneGraph();
+            if (!m_currentFrameActiveSceneGraph) continue;
+
+            // 게임 타이머 시간 1틱 계산
+            m_timer->Tick();
+            m_fDeltaTime = m_timer->DeltaTime();   // 초 단위로 통일
+            m_fFrameCount += m_fDeltaTime;
+
+            // 누적 프레임이 물리 계산할 시간 기준점을 넘었으면 물리 연산 실행
+            while (m_fFrameCount >= FIXED_TIMESTEP)
+            {
+                FixedUpdate(FIXED_TIMESTEP);
+                m_fFrameCount = 0;
+            }
+
+            Update(m_fDeltaTime);
+            LateUpdate(m_fDeltaTime);
             Render();
         }
     }
-
 }
 
 void TitanEngine::Engine::Finalize()
 {
-
+    SceneManager::Instance().Shutdown();
 }
 
-void TitanEngine::Engine::Update()
+void TitanEngine::Engine::FixedUpdate(float fixedTime)
 {
+    m_currentFrameActiveSceneGraph->FixedUpdate(fixedTime);
+}
 
+void TitanEngine::Engine::Update(float deltaTime)
+{
+    m_currentFrameActiveSceneGraph->Update(deltaTime);
+}
+
+void TitanEngine::Engine::LateUpdate(float deltaTime)
+{
+    m_currentFrameActiveSceneGraph->LateUpdate(deltaTime);
 }
 
 void TitanEngine::Engine::Render()
 {
-
-}
-
-bool TitanEngine::Engine::InitD2DRenderSystem()
-{
-
-    // D3D11 디바이스 생성
-	ComPtr<ID3D11Device> device;
-    ComPtr<ID3D11DeviceContext> context;
-
-    D3D_FEATURE_LEVEL featureLevels[] = {D3D_FEATURE_LEVEL_11_0 };
-    D3D_FEATURE_LEVEL d3dFeatureLevel;
-
-    HRESULT hr = D3D11CreateDevice(
-        nullptr,
-        D3D_DRIVER_TYPE_HARDWARE,
-        nullptr,
-        D3D11_CREATE_DEVICE_BGRA_SUPPORT,
-        featureLevels,
-        ARRAYSIZE(featureLevels),
-        D3D11_SDK_VERSION,
-        &device,
-        &d3dFeatureLevel,
-        &context);
-
-    if (FAILED(hr)) 
-		return false;
-
-
-
-    return true;
+    // RenderSystem 연결 예정
 }
