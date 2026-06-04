@@ -2,7 +2,6 @@
 #include <iostream>
 #include "Win32Window/Win32Window.h"
 #include "Engine.h"
-
 #pragma warning(disable : 28251)
 
 using namespace Platform;

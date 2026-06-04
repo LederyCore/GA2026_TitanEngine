@@ -40,6 +40,7 @@ namespace Platform
 
         bool Initialize(HWND hWnd);
         bool OnHandleMessage(const MSG& msg);
+        void SetDebuging(bool value) { m_debugToggle = value; }
 
         // 매 프레임 Update() 직전에 호출
         void FlushFrame()
@@ -81,6 +82,7 @@ namespace Platform
         void HandleMouseInput(RAWINPUT& raw);
 
         MouseState               m_curMouse;
+        bool                     m_debugToggle = true;
         std::array<MouseEdge, 3> m_mouseEdge = {};
         std::array<bool, 256>    m_keyDown = {};
         std::array<KeyEdge, 256> m_keyEdge = {};

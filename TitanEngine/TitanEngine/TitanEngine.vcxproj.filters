@@ -11,6 +11,15 @@
     <Filter Include="TitanEngineCore">
       <UniqueIdentifier>{2175f85d-14ce-47d6-b8d4-e381a734d49e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="TitanEngineCore\Time">
+      <UniqueIdentifier>{71da633e-27e6-4aeb-9891-427a37e607d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TitanEngineCore\SceneManagement">
+      <UniqueIdentifier>{7632b069-2bd3-45b7-aa60-dd9ab5fc8ab7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TitanEngineCore\SceneManagement\Test">
+      <UniqueIdentifier>{303f58f6-ff14-4ed8-9d4b-bb4811f446d8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -22,6 +31,21 @@
     <ClCompile Include="Engine.cpp">
       <Filter>TitanEngineCore</Filter>
     </ClCompile>
+    <ClCompile Include="GameTimer.cpp">
+      <Filter>TitanEngineCore\Time</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneManager.cpp">
+      <Filter>TitanEngineCore\SceneManagement</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>TitanEngineCore\SceneManagement</Filter>
+    </ClCompile>
+    <ClCompile Include="TestSceneLES.cpp">
+      <Filter>TitanEngineCore\SceneManagement\Test</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneGraph.cpp">
+      <Filter>TitanEngineCore\SceneManagement</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -29,6 +53,21 @@
     </ClInclude>
     <ClInclude Include="Engine.h">
       <Filter>TitanEngineCore</Filter>
+    </ClInclude>
+    <ClInclude Include="GameTimer.h">
+      <Filter>TitanEngineCore\Time</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>TitanEngineCore\SceneManagement</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneGraph.h">
+      <Filter>TitanEngineCore\SceneManagement</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneManager.h">
+      <Filter>TitanEngineCore\SceneManagement</Filter>
+    </ClInclude>
+    <ClInclude Include="TestSceneLES.h">
+      <Filter>TitanEngineCore\SceneManagement\Test</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
