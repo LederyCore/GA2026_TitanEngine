@@ -3,6 +3,7 @@
 #include "SceneGraph.h"
 #include "DebugConsole/DebugConsole.h"
 
+
 TitanEngine::SceneManagement::Scene::Scene(std::string sceneName)
 {
 	m_sceneName = sceneName;

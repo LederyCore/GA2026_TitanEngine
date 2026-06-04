@@ -15,6 +15,20 @@ bool D2DRenderer::Initialize()
     return true;
 }
 
+void D2DRenderer::ShutDown()
+{
+    m_d2dContext->SetTarget(nullptr);  // ← 반드시 먼저 호출
+    m_targetBitmap.Reset();
+    m_brush.Reset();
+    m_d2dContext.Reset();
+    m_d2dDevice.Reset();
+    m_d2dFactory.Reset();
+    m_swapChain.Reset();
+    m_context.Reset();
+    m_device.Reset();
+}
+
+
 bool D2DRenderer::CreateDeviceAndSwapChain()
 {
     //1. D3D11 디바이스 생성
@@ -183,7 +197,7 @@ void D2DRenderer::Present()
 
     if (hr == DXGI_ERROR_DEVICE_REMOVED || hr == DXGI_ERROR_DEVICE_RESET)
     {
-        //Uninitialize();     // 디바이스가 제거되거나 리셋된 경우, 재초기화 필요
+        ShutDown();     // 디바이스가 제거되거나 리셋된 경우, 재초기화 필요
         Initialize();
     }
     else

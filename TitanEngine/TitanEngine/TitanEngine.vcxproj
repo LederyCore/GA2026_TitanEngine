@@ -137,6 +137,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="D2DRenderer.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="GameTimer.cpp" />
     <ClCompile Include="pch.cpp">
@@ -150,8 +151,10 @@
     <ClCompile Include="TestSceneLES.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="D2DRenderer.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="GameTimer.h" />
+    <ClInclude Include="IRenderer.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="SceneGraph.h" />

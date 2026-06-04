@@ -12,6 +12,7 @@ public:
 	}
 
 	bool Initialize() override;
+	void ShutDown() override;
 	void RenderBegin() override;
 	void RenderEnd() override;
 

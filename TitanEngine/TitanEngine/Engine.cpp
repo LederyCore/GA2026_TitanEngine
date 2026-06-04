@@ -6,6 +6,8 @@
 #include "InputSystem/InputSystem.h"
 #include "DebugConsole/DebugConsole.h"
 #include "GameTimer.h"
+#include "IRenderer.h"
+#include "D2DRenderer.h"
 
 using namespace Platform;
 using namespace TitanEngine::SceneManagement;
@@ -45,6 +47,10 @@ bool TitanEngine::Engine::Initialize(IWindow& window, const wchar_t* windowName,
         LOG_ERROR("씬매니저가 초기화 되지 않았습니다.");
         return false;
     }
+
+    m_renderer = new D2DRenderer(width, height, m_window->GetHWND());
+    if (!m_renderer->Initialize())
+        return false;
 
     m_timer->Reset();
 
@@ -97,6 +103,7 @@ void TitanEngine::Engine::Run()
 void TitanEngine::Engine::Finalize()
 {
     SceneManager::Instance().Shutdown();
+    m_renderer->ShutDown();
 }
 
 void TitanEngine::Engine::FixedUpdate(float fixedTime)
@@ -117,4 +124,10 @@ void TitanEngine::Engine::LateUpdate(float deltaTime)
 void TitanEngine::Engine::Render()
 {
     // RenderSystem 연결 예정
+    if (m_renderer == nullptr)
+        return;
+
+    m_renderer->RenderBegin();
+    m_renderer->DrawCircle(600, 600, 30, D2D1::ColorF::Tomato);
+    m_renderer->RenderEnd();
 }

@@ -4,6 +4,8 @@ class IRenderer
 {
 public :
 	virtual ~IRenderer() = default;
+
+	virtual void ShutDown() = 0;
 	virtual bool Initialize() = 0;
 	virtual void RenderBegin() = 0;
 	virtual void RenderEnd() = 0;
