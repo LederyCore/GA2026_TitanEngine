@@ -40,7 +40,6 @@ bool TitanEngine::Engine::Initialize(IWindow& window, const wchar_t* windowName,
         return false;
     }
 
-
     if (false == SceneManager::Instance().Initialize())
     {
         LOG_ERROR("씬매니저가 초기화 되지 않았습니다.");
