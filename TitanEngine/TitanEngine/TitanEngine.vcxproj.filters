@@ -22,6 +22,7 @@
     <ClCompile Include="Engine.cpp">
       <Filter>TitanEngineCore</Filter>
     </ClCompile>
+    <ClCompile Include="GameTimer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -30,5 +31,9 @@
     <ClInclude Include="Engine.h">
       <Filter>TitanEngineCore</Filter>
     </ClInclude>
+    <ClInclude Include="IScene.h">
+      <Filter>TitanEngineCore</Filter>
+    </ClInclude>
+    <ClInclude Include="GameTimer.h" />
   </ItemGroup>
 </Project>
