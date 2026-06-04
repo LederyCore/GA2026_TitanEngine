@@ -22,6 +22,7 @@
     <ClCompile Include="Engine.cpp">
       <Filter>TitanEngineCore</Filter>
     </ClCompile>
+    <ClCompile Include="D2DRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -30,5 +31,7 @@
     <ClInclude Include="Engine.h">
       <Filter>TitanEngineCore</Filter>
     </ClInclude>
+    <ClInclude Include="IRenderer.h" />
+    <ClInclude Include="D2DRenderer.h" />
   </ItemGroup>
 </Project>

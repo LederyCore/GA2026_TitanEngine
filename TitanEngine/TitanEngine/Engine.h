@@ -5,6 +5,8 @@ namespace Platform
 	class IWindow;
 }
 
+class IRenderer;
+
 namespace TitanEngine
 {
 	class Engine
@@ -20,9 +22,8 @@ namespace TitanEngine
 	private :
 		void Update();
 		void Render();
-		bool InitD2DRenderSystem();
 	private :
 		Platform::IWindow* m_window = nullptr;
-
+		IRenderer* m_renderer = nullptr;
 	};
 }
