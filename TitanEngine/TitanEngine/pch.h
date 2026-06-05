@@ -20,11 +20,6 @@
 #include <exception>
 #include <crtdbg.h>
 
-#include <array>
-#include <list>
-#include <vector>
-#include <string>
-
 
 #pragma region D2D 관련 =========================
 // COM 및 DirectX 인터페이스
@@ -51,5 +46,8 @@ using Microsoft::WRL::ComPtr;
 
 #pragma endregion D2D 관련 ==========================
 
-// 자료구조 알고리즘 관려
+// 자료구조 알고리즘 관련
 #include <array>
+#include <list>
+#include <vector>
+#include <string>

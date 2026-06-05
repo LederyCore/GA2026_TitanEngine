@@ -49,6 +49,8 @@
     <ClCompile Include="D2DRenderer.cpp" />
     <ClCompile Include="AnimationClip.cpp" />
     <ClCompile Include="AsepriteJsonLoader.cpp" />
+    <ClCompile Include="AsepriteParser.cpp" />
+    <ClCompile Include="AssetManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -76,5 +78,8 @@
     <ClInclude Include="IRenderer.h" />
     <ClInclude Include="AnimationClip.h" />
     <ClInclude Include="AsepriteJsonLoader.h" />
+    <ClInclude Include="AsepriteParser.h" />
+    <ClInclude Include="json.hpp" />
+    <ClInclude Include="AssetManager.h" />
   </ItemGroup>
 </Project>
