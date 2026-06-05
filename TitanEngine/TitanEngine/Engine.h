@@ -44,5 +44,11 @@ namespace TitanEngine
 
 		float m_fDeltaTime = 0;
 		float m_fFrameCount = 0;
+
+	public:
+		ComPtr<ID2D1Bitmap1> m_bitmapCat;
+
 	};
+
+
 }

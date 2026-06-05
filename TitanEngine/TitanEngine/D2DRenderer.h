@@ -16,6 +16,7 @@ public:
 	void RenderBegin() override;
 	void RenderEnd() override;
 
+	void DrawBitmap(ID2D1Bitmap1* bitmap, D2D1_RECT_F dest) override;
 	void DrawCircle(float x, float y, float radius, const D2D1::ColorF& color) override;
 
 	int m_screenWidth; // 렌더링할 최종 화면의 해상도
@@ -38,7 +39,7 @@ public:
 
 public:
 	void Present();
-	//void CreateBitmapFromFile(const wchar_t* path, ID2D1Bitmap1*& outBitmap);
+	void CreateBitmapFromFile(const wchar_t* path, ID2D1Bitmap1*& outBitmap) override;
 
 private:
 	bool CreateDeviceAndSwapChain();

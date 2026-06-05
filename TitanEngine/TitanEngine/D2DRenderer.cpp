@@ -11,6 +11,18 @@ bool D2DRenderer::Initialize()
     if (!CreateRenderTargets())
         return false;
  
+    ComPtr<IWICImagingFactory> wicFactory;
+
+    HRESULT hr = CoCreateInstance(CLSID_WICImagingFactory,
+        nullptr,
+        CLSCTX_INPROC_SERVER,
+        IID_PPV_ARGS(&wicFactory));
+
+    if (FAILED(hr))
+        return false;
+
+    m_wicFactory = wicFactory;
+
     return true;
 }
 
@@ -26,6 +38,7 @@ void D2DRenderer::ShutDown()
     m_swapChain.Reset();
     m_context.Reset();
     m_device.Reset();
+    m_wicFactory.Reset();
 }
 
 
@@ -197,6 +210,11 @@ void D2DRenderer::RenderEnd()
     Present();
 }
 
+void D2DRenderer::DrawBitmap(ID2D1Bitmap1* bitmap, D2D1_RECT_F dest)
+{
+    m_d2dContext->DrawBitmap(bitmap, dest);
+}
+
 void D2DRenderer::DrawCircle(float x, float y, float radius, const D2D1::ColorF& color)
 {
     if (!m_d2dContext || !m_brush || radius <= 0.0f)
@@ -229,47 +247,47 @@ void D2DRenderer::Present()
     }
 }
 
-//void D2DRenderer::CreateBitmapFromFile(const wchar_t* path, ID2D1Bitmap1*& outBitmap)
-//{
-//    ComPtr<IWICBitmapDecoder>     decoder;
-//    ComPtr<IWICBitmapFrameDecode> frame;
-//    ComPtr<IWICFormatConverter>   converter;
-//
-//
-//    HRESULT hr = m_wicFactory->CreateDecoderFromFilename(
-//        path, nullptr, GENERIC_READ, WICDecodeMetadataCacheOnLoad, &decoder);
-//
-//    if (FAILED(hr))
-//        return;
-//
-//
-//    hr = decoder->GetFrame(0, &frame);
-//
-//    if (FAILED(hr))
-//        return;
-//
-//    hr = m_wicFactory->CreateFormatConverter(&converter);
-//
-//    DX::ThrowIfFailed(hr);
-//
-//
-//    hr = converter->Initialize(
-//        frame.Get(),
-//        GUID_WICPixelFormat32bppPBGRA,
-//        WICBitmapDitherTypeNone,
-//        nullptr,
-//        0.0f,
-//        WICBitmapPaletteTypeCustom
-//    );
-//
-//    DX::ThrowIfFailed(hr);
-//
-//    // Direct2D 비트맵 속성 (premultiplied alpha, B8G8R8A8_UNORM)
-//    D2D1_BITMAP_PROPERTIES1 bmpProps = D2D1::BitmapProperties1(
-//        D2D1_BITMAP_OPTIONS_NONE,
-//        D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED)
-//    );
-//
-//    // ⑥ DeviceContext에서 WIC 비트맵으로부터 D2D1Bitmap1 생성
-//    hr = m_d2dContext->CreateBitmapFromWicBitmap(converter.Get(), &bmpProps, &outBitmap);
-//}
+void D2DRenderer::CreateBitmapFromFile(const wchar_t* path, ID2D1Bitmap1*& outBitmap)
+{
+    ComPtr<IWICBitmapDecoder>     decoder;
+    ComPtr<IWICBitmapFrameDecode> frame;
+    ComPtr<IWICFormatConverter>   converter;
+
+
+    HRESULT hr = m_wicFactory->CreateDecoderFromFilename(
+        path, nullptr, GENERIC_READ, WICDecodeMetadataCacheOnLoad, &decoder);
+
+    if (FAILED(hr))
+        return;
+
+
+    hr = decoder->GetFrame(0, &frame);
+
+    if (FAILED(hr))
+        return;
+
+    hr = m_wicFactory->CreateFormatConverter(&converter);
+
+    if (FAILED(hr))
+        return;
+
+    hr = converter->Initialize(
+        frame.Get(),
+        GUID_WICPixelFormat32bppPBGRA,
+        WICBitmapDitherTypeNone,
+        nullptr,
+        0.0f,
+        WICBitmapPaletteTypeCustom
+    );
+
+    if (FAILED(hr))
+        return;
+    // Direct2D 비트맵 속성 (premultiplied alpha, B8G8R8A8_UNORM)
+    D2D1_BITMAP_PROPERTIES1 bmpProps = D2D1::BitmapProperties1(
+        D2D1_BITMAP_OPTIONS_NONE,
+        D2D1::PixelFormat(DXGI_FORMAT_B8G8R8A8_UNORM, D2D1_ALPHA_MODE_PREMULTIPLIED)
+    );
+
+    // ⑥ DeviceContext에서 WIC 비트맵으로부터 D2D1Bitmap1 생성
+    hr = m_d2dContext->CreateBitmapFromWicBitmap(converter.Get(), &bmpProps, &outBitmap);
+}

@@ -13,6 +13,17 @@
 // 윈도우 관련
 #include <windows.h>
 #include <memory>
+#include <stdio.h>
+#include <iostream>
+
+#include <cassert>
+#include <exception>
+#include <crtdbg.h>
+
+#include <array>
+#include <list>
+#include <vector>
+#include <string>
 
 
 #pragma region D2D 관련 =========================

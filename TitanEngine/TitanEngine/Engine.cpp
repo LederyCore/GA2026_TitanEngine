@@ -52,6 +52,10 @@ bool TitanEngine::Engine::Initialize(IWindow& window, const wchar_t* windowName,
     if (!m_renderer->Initialize())
         return false;
 
+    m_renderer->CreateBitmapFromFile(L"./Resource/cat.png", *m_bitmapCat.GetAddressOf());
+
+
+
     m_timer->Reset();
 
     LOG_DEBUG("엔진이 성공적으로 초기화 되었습니다.");
@@ -129,5 +133,9 @@ void TitanEngine::Engine::Render()
 
     m_renderer->RenderBegin();
     m_renderer->DrawCircle(600, 600, 30, D2D1::ColorF::Tomato);
+
+    D2D1_RECT_F dest = D2D1::RectF(0, 0, 200, 200);
+    m_renderer->DrawBitmap(m_bitmapCat.Get(), dest);
+
     m_renderer->RenderEnd();
 }

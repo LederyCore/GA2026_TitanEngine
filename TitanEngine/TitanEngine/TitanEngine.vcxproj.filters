@@ -46,6 +46,9 @@
     <ClCompile Include="SceneGraph.cpp">
       <Filter>TitanEngineCore\SceneManagement</Filter>
     </ClCompile>
+    <ClCompile Include="D2DRenderer.cpp" />
+    <ClCompile Include="AnimationClip.cpp" />
+    <ClCompile Include="AsepriteJsonLoader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -69,5 +72,9 @@
     <ClInclude Include="TestSceneLES.h">
       <Filter>TitanEngineCore\SceneManagement\Test</Filter>
     </ClInclude>
+    <ClInclude Include="D2DRenderer.h" />
+    <ClInclude Include="IRenderer.h" />
+    <ClInclude Include="AnimationClip.h" />
+    <ClInclude Include="AsepriteJsonLoader.h" />
   </ItemGroup>
 </Project>
