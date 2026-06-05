@@ -34,9 +34,11 @@ public:
 	ComPtr<ID2D1SolidColorBrush> m_brush;
 	ComPtr<ID2D1Factory4> m_d2dFactory;
 
+	ComPtr<IWICImagingFactory> m_wicFactory;
+
 public:
 	void Present();
-
+	//void CreateBitmapFromFile(const wchar_t* path, ID2D1Bitmap1*& outBitmap);
 
 private:
 	bool CreateDeviceAndSwapChain();
