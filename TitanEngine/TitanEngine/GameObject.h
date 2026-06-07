@@ -62,9 +62,14 @@ namespace TitanEngine
                 if (rs) rs->Register(static_cast<IRenderable*>(ptr));
 
             m_components[id].push_back(std::move(comp));
+
             ptr->Awake();
+
+            // 오브젝트가 활성이고 컴포넌트가 enabled면 OnEnable 호출
+            if (m_isActive && ptr->IsEnabled())
+                ptr->OnEnable();
+
             if (us) us->RegisterStart(ptr);
-            return *ptr;
         }
 
         template<typename T>

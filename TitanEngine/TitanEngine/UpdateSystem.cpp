@@ -20,15 +20,20 @@ namespace TitanEngine
 
     void UpdateSystem::Update(float deltaTime)
     {
-        // Start 미실행 컴포넌트 처리
         if (!m_pendingStart.empty())
         {
+            std::vector<Component*> stillPending;
+
             for (auto* comp : m_pendingStart)
             {
-                if (!comp->IsActiveInHierarchy()) continue;
+                if (!comp->IsActiveInHierarchy())
+                {
+                    stillPending.push_back(comp); // 스킵된 건 다음 프레임으로 보존
+                    continue;
+                }
                 comp->Start();
             }
-            m_pendingStart.clear();
+            m_pendingStart = std::move(stillPending);
         }
 
         // 일반 Update
