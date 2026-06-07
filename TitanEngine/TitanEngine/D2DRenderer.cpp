@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "D2DRenderer.h"
-
 #include <iostream>
+
 bool D2DRenderer::Initialize()
 {
  
@@ -11,6 +11,9 @@ bool D2DRenderer::Initialize()
     if (!CreateRenderTargets())
         return false;
  
+    if (!CreateDWriteResources())
+        return false;
+
     return true;
 }
 
@@ -22,6 +25,8 @@ void D2DRenderer::ShutDown()
     m_brush.Reset();
     m_d2dContext.Reset();
     m_d2dDevice.Reset();
+    m_textFormat.Reset();
+    m_dwriteFactory.Reset();
     m_d2dFactory.Reset();
     m_swapChain.Reset();
     m_context.Reset();
@@ -146,6 +151,28 @@ bool D2DRenderer::CreateDeviceAndSwapChain()
     return true;
 }
 
+bool D2DRenderer::CreateDWriteResources()
+{
+    HRESULT hr = DWriteCreateFactory(
+        DWRITE_FACTORY_TYPE_SHARED,
+        __uuidof(IDWriteFactory),
+        reinterpret_cast<IUnknown**>(m_dwriteFactory.GetAddressOf())
+    );
+    if (FAILED(hr)) return false;
+
+    hr = m_dwriteFactory->CreateTextFormat(
+        L"굴림",
+        nullptr,
+        DWRITE_FONT_WEIGHT_NORMAL,
+        DWRITE_FONT_STYLE_NORMAL,
+        DWRITE_FONT_STRETCH_NORMAL,
+        20.0f,
+        L"ko-kr",
+        m_textFormat.GetAddressOf()
+    );
+    return SUCCEEDED(hr);
+}
+
 bool D2DRenderer::CreateRenderTargets()
 {
     // 6. SwapChain 백버퍼 -> D2D Bitmap1 을 생성하여 렌더 타겟으로 설정 ==============================================
@@ -174,6 +201,27 @@ bool D2DRenderer::CreateRenderTargets()
     // ============================================================================================
 
     return true;
+}
+
+void D2DRenderer::ShowFPS(float fps)
+{
+#ifdef _DEBUG
+    if (!m_d2dContext || !m_brush || !m_textFormat)
+        return;
+
+    wchar_t buffer[64];
+    swprintf_s(buffer, L"FPS : %.0f", fps);
+
+    m_brush->SetColor(D2D1::ColorF(D2D1::ColorF::LimeGreen));
+
+    m_d2dContext->DrawText(
+        buffer,
+        static_cast<UINT32>(wcslen(buffer)),
+        m_textFormat.Get(),
+        D2D1::RectF(5.0f, 5.0f, 300.0f, 40.0f),  // 출력 영역
+        m_brush.Get()
+    );
+#endif
 }
 
 void D2DRenderer::RenderBegin()

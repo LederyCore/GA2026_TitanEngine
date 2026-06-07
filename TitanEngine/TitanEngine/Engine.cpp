@@ -41,6 +41,7 @@ bool TitanEngine::Engine::Initialize(IWindow& window, const wchar_t* windowName,
         LOG_ERROR("인풋 시스템이 초기화 되지 않았습니다.");
         return false;
     }
+    InputSystem::Instance().SetDebuging(false);
 
     if (false == SceneManager::Instance().Initialize())
     {
@@ -128,6 +129,8 @@ void TitanEngine::Engine::Render()
         return;
 
     m_renderer->RenderBegin();
+    float fps = 1.0f / m_timer->DeltaTime();
+    m_renderer->ShowFPS(fps);
     m_renderer->DrawCircle(600, 600, 30, D2D1::ColorF::Tomato);
     m_renderer->RenderEnd();
 }

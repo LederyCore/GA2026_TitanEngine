@@ -20,6 +20,9 @@
     <Filter Include="TitanEngineCore\SceneManagement\Test">
       <UniqueIdentifier>{303f58f6-ff14-4ed8-9d4b-bb4811f446d8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="TitanEngineCore\Renderer">
+      <UniqueIdentifier>{95051d19-be7e-4a19-a4fd-76fbbc9f7a32}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -46,6 +49,9 @@
     <ClCompile Include="SceneGraph.cpp">
       <Filter>TitanEngineCore\SceneManagement</Filter>
     </ClCompile>
+    <ClCompile Include="D2DRenderer.cpp">
+      <Filter>TitanEngineCore\Renderer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -68,6 +74,12 @@
     </ClInclude>
     <ClInclude Include="TestSceneLES.h">
       <Filter>TitanEngineCore\SceneManagement\Test</Filter>
+    </ClInclude>
+    <ClInclude Include="D2DRenderer.h">
+      <Filter>TitanEngineCore\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="IRenderer.h">
+      <Filter>TitanEngineCore\Renderer</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
