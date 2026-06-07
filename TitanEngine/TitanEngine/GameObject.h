@@ -23,7 +23,7 @@ namespace TitanEngine
 
         const std::string& GetName()             const { return m_name; }
         bool               IsActive()            const { return m_isActive; }
-        void               SetActive(bool value) { m_isActive = value; }
+        void               SetActive(bool value);
 
         template<typename T>
         T& AddComponent()

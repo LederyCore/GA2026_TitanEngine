@@ -29,3 +29,21 @@ TitanEngine::GameObject::~GameObject()
     }
     // m_components → unique_ptr 자동 해제
 }
+
+void TitanEngine::GameObject::SetActive(bool value)
+{
+    if (m_isActive == value) return;
+    m_isActive = value;
+
+    // 모든 컴포넌트에 통보
+    for (auto& [id, comps] : m_components)
+    {
+        for (auto& comp : comps)
+        {
+            if (!comp->IsEnabled()) continue; // 비활성 컴포넌트는 스킵
+
+            if (m_isActive) comp->OnEnable();
+            else            comp->OnDisable();
+        }
+    }
+}

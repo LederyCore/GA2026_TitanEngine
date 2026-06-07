@@ -9,5 +9,6 @@ namespace TitanEngine
     public:
         virtual ~IRenderable() = default;
         virtual void FillRenderItem(RenderItem& outItem) const = 0;
+        virtual bool IsRenderActive() const = 0;
     };
 }

@@ -67,6 +67,15 @@
     <ClCompile Include="SpriteRenderer.cpp">
       <Filter>TitanEngineCore\TitanEngine</Filter>
     </ClCompile>
+    <ClCompile Include="Component.cpp">
+      <Filter>TitanEngineCore\TitanEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="UpdateSystem.cpp">
+      <Filter>TitanEngineCore\TitanEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderSystem.cpp">
+      <Filter>TitanEngineCore\TitanEngine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">

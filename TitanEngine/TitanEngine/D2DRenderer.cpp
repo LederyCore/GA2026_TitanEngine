@@ -22,15 +22,22 @@ namespace TitanEngine::Renderer
 
     void D2DRenderer::ShutDown()
     {
+        // 1. 타겟 해제 먼저
         if (m_d2dContext)
-            m_d2dContext->SetTarget(nullptr);  // ← 반드시 먼저 호출
-        m_targetBitmap.Reset();
+            m_d2dContext->SetTarget(nullptr);
+
+        // 2. D2D 리소스 해제 (생성 역순)
         m_brush.Reset();
-        m_d2dContext.Reset();
-        m_d2dDevice.Reset();
+        m_targetBitmap.Reset();
         m_textFormat.Reset();
         m_dwriteFactory.Reset();
+
+        // 3. D2D Context → Device → Factory 순
+        m_d2dContext.Reset();
+        m_d2dDevice.Reset();
         m_d2dFactory.Reset();
+
+        // 4. DXGI/D3D 리소스 마지막
         m_swapChain.Reset();
         m_context.Reset();
         m_device.Reset();
@@ -39,117 +46,98 @@ namespace TitanEngine::Renderer
 
     bool D2DRenderer::CreateDeviceAndSwapChain()
     {
-        //1. D3D11 디바이스 생성
-        ComPtr<ID3D11Device> device;
-        ComPtr<ID3D11DeviceContext> context;
+        // 1. D3D11 디바이스 생성
+        {
+            ComPtr<ID3D11Device>        device;
+            ComPtr<ID3D11DeviceContext> context;
 
-        D3D_FEATURE_LEVEL featureLevels[] = { D3D_FEATURE_LEVEL_11_0 };
-        D3D_FEATURE_LEVEL d3dFeatureLevel;
+            D3D_FEATURE_LEVEL featureLevels[] = { D3D_FEATURE_LEVEL_11_0 };
+            D3D_FEATURE_LEVEL d3dFeatureLevel;
 
-        HRESULT hr = D3D11CreateDevice(
-            nullptr,
-            D3D_DRIVER_TYPE_HARDWARE,
-            nullptr,
-            D3D11_CREATE_DEVICE_BGRA_SUPPORT,
-            featureLevels,
-            ARRAYSIZE(featureLevels),
-            D3D11_SDK_VERSION,
-            &device,
-            &d3dFeatureLevel,
-            &context);
+            HRESULT hr = D3D11CreateDevice(
+                nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr,
+                D3D11_CREATE_DEVICE_BGRA_SUPPORT,
+                featureLevels, ARRAYSIZE(featureLevels),
+                D3D11_SDK_VERSION,
+                &device, &d3dFeatureLevel, &context);
+            if (FAILED(hr)) return false;
 
-        if (FAILED(hr))
-            return false;
-
-        UINT numQualityLevels;
-        device->CheckMultisampleQualityLevels(DXGI_FORMAT_R8G8B8A8_UNORM, 4, &numQualityLevels);
-        if (numQualityLevels <= 0) {
-            std::cout << "MSAA not supported." << std::endl;
+            if (FAILED(device.As(&m_device)))   return false;
+            if (FAILED(context.As(&m_context))) return false;
         }
 
-        DXGI_SWAP_CHAIN_DESC sd;
-        ZeroMemory(&sd, sizeof(sd));
-        sd.BufferDesc.Width = m_screenWidth;               // set the back buffer width
-        sd.BufferDesc.Height = m_screenHeight;             // set the back buffer height
-        sd.BufferDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM; // use 32-bit color (D2D requires BGRA)
-        sd.BufferCount = 2;                                // Double-buffering
-        sd.BufferDesc.RefreshRate.Numerator = 60;
-        sd.BufferDesc.RefreshRate.Denominator = 1;
-        sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;  // how swap chain is to be used
-        sd.OutputWindow = m_mainWindow;                    // the window to be used
-        sd.Windowed = TRUE;                                // windowed/full-screen mode
-        sd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH; // allow full-screen switching
-        sd.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
-
-        if (numQualityLevels > 0) {
-            sd.SampleDesc.Count = 4; // how many multisamples
-            sd.SampleDesc.Quality = numQualityLevels - 1;
-        }
-        else {
-            sd.SampleDesc.Count = 1; // how many multisamples
-            sd.SampleDesc.Quality = 0;
-        }
-
-        if (FAILED(device.As(&m_device))) {
-            std::cout << "device.AS() failed." << std::endl;
-            return false;
-        }
-
-        if (FAILED(context.As(&m_context))) {
-            std::cout << "context.As() failed." << std::endl;
-            return false;
-        }
-
-        // IDXGIFactory를 이용한 CreateSwapChain()
         // 2. DXGI 스왑체인 생성
         ComPtr<IDXGIDevice> dxgiDevice;
         m_device.As(&dxgiDevice);
 
-        ComPtr<IDXGIAdapter> dxgiAdapter;
-        dxgiDevice->GetAdapter(&dxgiAdapter);
+        {
+            ComPtr<IDXGIAdapter> dxgiAdapter;
+            dxgiDevice->GetAdapter(&dxgiAdapter);
 
-        ComPtr<IDXGIFactory2> dxgiFactory;
-        dxgiAdapter->GetParent(IID_PPV_ARGS(&dxgiFactory));
+            ComPtr<IDXGIFactory2> dxgiFactory;
+            dxgiAdapter->GetParent(IID_PPV_ARGS(&dxgiFactory));
 
-        ComPtr<IDXGISwapChain> swapChain;
-        hr = dxgiFactory->CreateSwapChain(m_device.Get(), &sd, &swapChain);
-        if (FAILED(hr)) return false;
+            UINT numQualityLevels = 0;
+            m_device->CheckMultisampleQualityLevels(
+                DXGI_FORMAT_R8G8B8A8_UNORM, 4, &numQualityLevels);
 
-        swapChain.As(&m_swapChain);
+            DXGI_SWAP_CHAIN_DESC sd = {};
+            sd.BufferDesc.Width = m_screenWidth;
+            sd.BufferDesc.Height = m_screenHeight;
+            sd.BufferDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
+            sd.BufferDesc.RefreshRate.Numerator = 60;
+            sd.BufferDesc.RefreshRate.Denominator = 1;
+            sd.BufferCount = 2;
+            sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+            sd.OutputWindow = m_mainWindow;
+            sd.Windowed = TRUE;
+            sd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
+            sd.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 
-        // 3. ID2D1Factory8 생성 ============================================================================================
-        D2D1_FACTORY_OPTIONS opts = {};
-        ComPtr<ID2D1Factory8> d2dFactory;
+            if (numQualityLevels > 0) {
+                sd.SampleDesc.Count = 4;
+                sd.SampleDesc.Quality = numQualityLevels - 1;
+            }
+            else {
+                sd.SampleDesc.Count = 1;
+                sd.SampleDesc.Quality = 0;
+            }
 
+            ComPtr<IDXGISwapChain> swapChain;
+            HRESULT hr = dxgiFactory->CreateSwapChain(m_device.Get(), &sd, &swapChain);
+            if (FAILED(hr)) return false;
+            swapChain.As(&m_swapChain);
+        }
+
+        // 3. D2D Factory → Device → Context (스코프로 중간 참조 정리)
+        {
+            D2D1_FACTORY_OPTIONS opts = {};
 #if defined(_DEBUG)
-        opts.debugLevel = D2D1_DEBUG_LEVEL_INFORMATION;
+            opts.debugLevel = D2D1_DEBUG_LEVEL_INFORMATION;
 #endif
+            ComPtr<ID2D1Factory8> d2dFactory;
+            HRESULT hr = D2D1CreateFactory(
+                D2D1_FACTORY_TYPE_SINGLE_THREADED,
+                __uuidof(ID2D1Factory8), &opts,
+                reinterpret_cast<void**>(d2dFactory.GetAddressOf()));
+            if (FAILED(hr)) return false;
+            if (FAILED(d2dFactory.As(&m_d2dFactory))) return false;
+        }
 
-        hr = D2D1CreateFactory(
-            D2D1_FACTORY_TYPE_SINGLE_THREADED,
-            __uuidof(ID2D1Factory8),
-            &opts,
-            reinterpret_cast<void**>(d2dFactory.GetAddressOf()));
-        if (FAILED(hr)) return false;
+        {
+            ComPtr<ID2D1Device> baseDevice;
+            HRESULT hr = m_d2dFactory->CreateDevice(dxgiDevice.Get(), &baseDevice);
+            if (FAILED(hr)) return false;
+            if (FAILED(baseDevice.As(&m_d2dDevice))) return false;
+        }
 
-        // 4. ID2D1Device7 생성 ============================================================================================
-        ComPtr<ID2D1Device> baseDevice;
-        hr = d2dFactory->CreateDevice(dxgiDevice.Get(), &baseDevice);
-        if (FAILED(hr)) return false;
-        m_d2dFactory = d2dFactory;
-
-        ComPtr<ID2D1Device7> d2dDevice;
-        hr = baseDevice.As(&d2dDevice);
-        if (FAILED(hr)) return false;
-        m_d2dDevice = d2dDevice;
-        // ============================================================================================
-
-        // 5. ID2D1DeviceContext7 생성 ============================================================================================
-        ComPtr<ID2D1DeviceContext7> d2dContext;
-        hr = d2dDevice->CreateDeviceContext(D2D1_DEVICE_CONTEXT_OPTIONS_NONE, &d2dContext);
-        if (FAILED(hr)) return false;
-        m_d2dContext = d2dContext;
-        // ============================================================================================
+        {
+            ComPtr<ID2D1DeviceContext> baseContext;
+            HRESULT hr = m_d2dDevice->CreateDeviceContext(
+                D2D1_DEVICE_CONTEXT_OPTIONS_NONE, &baseContext);
+            if (FAILED(hr)) return false;
+            if (FAILED(baseContext.As(&m_d2dContext))) return false;
+        }
 
         return true;
     }

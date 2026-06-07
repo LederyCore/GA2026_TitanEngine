@@ -2,15 +2,22 @@
 #include "SpriteRenderer.h"
 #include "GameObject.h"
 
-void TitanEngine::SpriteRenderer::FillRenderItem(RenderItem& out) const
+namespace TitanEngine
 {
-    out.bitmap = sprite;
-    out.size = size;
-    out.opacity = opacity;
-    out.sortingLayer = sortingLayer;
-    out.orderInLayer = orderInLayer;
+    bool SpriteRenderer::IsRenderActive() const
+    {
+        return IsActiveInHierarchy();
+    }
 
-    // GameObjectÀÇ WorldMatrix »ç¿ë
-    if (m_owner)
-        out.worldTransform = m_owner->transform.worldMatrix;
+    void SpriteRenderer::FillRenderItem(RenderItem& out) const
+    {
+        out.bitmap = sprite;
+        out.size = size;
+        out.opacity = opacity;
+        out.sortingLayer = sortingLayer;
+        out.orderInLayer = orderInLayer;
+
+        if (m_owner)
+            out.worldTransform = m_owner->transform.worldMatrix;
+    }
 }

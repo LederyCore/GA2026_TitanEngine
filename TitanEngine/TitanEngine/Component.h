@@ -20,7 +20,6 @@ namespace TitanEngine
         Component() = default;
         virtual ~Component() = default;
 
-        // 각 컴포넌트가 자신의 TypeId 반환
         virtual TypeId GetTypeId() const = 0;
 
         virtual void Awake() {}
@@ -32,34 +31,33 @@ namespace TitanEngine
         virtual void OnDisable() {}
         virtual void OnDestroy() {}
 
-    public:
-        bool enabled = true;
+        bool IsEnabled() const { return m_enabled; }
+        void SetEnabled(bool value)
+        {
+            if (m_enabled == value) return;
+            m_enabled = value;
+            if (m_enabled) OnEnable();
+            else           OnDisable();
+        }
 
-    protected:
+        bool IsActiveInHierarchy() const;
+
         GameObject* GetGameObject() const { return m_owner; }
 
-    protected : 
+    protected:
         GameObject* m_owner = nullptr;
 
     private:
         friend class GameObject;
+        bool m_enabled = true;
     };
 
-    // 모든 커스텀 컴포넌트가 이걸 상속
+    // ComponentBase - IRenderable 상속 없음
     template<typename T>
     class ComponentBase : public Component
     {
     public:
-        // 자동으로 TypeId 구현
-        TypeId GetTypeId() const override
-        {
-            return TitanEngine::GetTypeId<T>();
-        }
-
-        // 정적으로도 접근 가능
-        static TypeId StaticTypeId()
-        {
-            return TitanEngine::GetTypeId<T>();
-        }
+        TypeId GetTypeId() const override { return TitanEngine::GetTypeId<T>(); }
+        static TypeId StaticTypeId() { return TitanEngine::GetTypeId<T>(); }
     };
 }
