@@ -5,6 +5,7 @@
 #include "SceneGraph.h"
 #include "UpdateSystem.h"
 #include "RenderSystem.h"
+#include "PhysicsSystem.h"
 #include "SystemLocator.h"
 
 namespace TitanEngine { class GameObject; }
@@ -24,15 +25,20 @@ namespace TitanEngine::SceneManagement
         SceneGraph* GetSceneGraph() { return m_sceneGraph; }
         UpdateSystem* GetUpdateSystem() { return m_updateSystem; }
         RenderSystem* GetRenderSystem() { return m_renderSystem; }
+        PhysicsSystem* GetPhysicsSystem() { return m_physicsSystem; }
 
         TitanEngine::GameObject* CreateGameObject(const std::string& name);
+        TitanEngine::GameObject* CreateGameObject(const std::string& name,
+            TitanEngine::Transform* parent);
         void                     DestroyGameObject(TitanEngine::GameObject* go);
+
 
     protected:
         std::string   m_sceneName;
         SceneGraph* m_sceneGraph = nullptr;
         UpdateSystem* m_updateSystem = nullptr;
         RenderSystem* m_renderSystem = nullptr;
+        PhysicsSystem* m_physicsSystem = nullptr;
 
         std::vector<std::unique_ptr<TitanEngine::GameObject>> m_gameObjects;
     };

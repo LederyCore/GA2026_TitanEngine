@@ -1,9 +1,11 @@
 #pragma once
+#include "SystemLocator.h"
 #include <cstdint>
 
 namespace TitanEngine
 {
     class GameObject;
+    class UpdateSystem;
 
     using TypeId = uintptr_t;
 
@@ -18,7 +20,9 @@ namespace TitanEngine
     {
     public:
         Component() = default;
-        virtual ~Component() = default;
+
+        // 소멸 시 UpdateSystem 자동 해제
+        virtual ~Component();
 
         virtual TypeId GetTypeId() const = 0;
 
@@ -52,7 +56,6 @@ namespace TitanEngine
         bool m_enabled = true;
     };
 
-    // ComponentBase - IRenderable 상속 없음
     template<typename T>
     class ComponentBase : public Component
     {

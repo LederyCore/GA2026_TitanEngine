@@ -1,9 +1,11 @@
 #pragma once
 #include "Transform.h"
 #include "SystemLocator.h"
-#include "UpdateSystem.h"   
-#include "RenderSystem.h"   
-#include "IRenderable.h"    
+#include "UpdateSystem.h"
+#include "RenderSystem.h"
+#include "PhysicsSystem.h"
+#include "IRenderable.h"
+#include "IPhysics.h"
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -19,7 +21,7 @@ namespace TitanEngine
     public:
         GameObject() = delete;
         explicit GameObject(const std::string& name);
-        ~GameObject();
+        ~GameObject() = default;
 
         const std::string& GetName()             const { return m_name; }
         bool               IsActive()            const { return m_isActive; }
@@ -36,9 +38,15 @@ namespace TitanEngine
             T* ptr = comp.get();
             ptr->m_owner = this;
 
+            auto* ps = SystemLocator::GetPhysicsSystem();
             auto* us = SystemLocator::GetUpdateSystem();
             auto* rs = SystemLocator::GetRenderSystem();
 
+            // 컴파일 타임 검사 PhysicsSystem
+            if constexpr (std::is_base_of_v<IPhysics, T>)
+                if (ps) ps->Register(static_cast<IPhysics*>(ptr));
+
+            // 컴파일 타임 검사 UpdateSystem
             if (us)
             {
                 if constexpr (&T::FixedUpdate != &Component::FixedUpdate)
@@ -49,14 +57,13 @@ namespace TitanEngine
                     us->RegisterLate(ptr);
             }
 
-            if (rs)
-            {
-                if (auto* r = dynamic_cast<IRenderable*>(ptr))
-                    rs->Register(r);
-            }
+            // 컴파일 타임 감지 RenderSystem
+            if constexpr (std::is_base_of_v<IRenderable, T>)
+                if (rs) rs->Register(static_cast<IRenderable*>(ptr));
 
             m_components[id].push_back(std::move(comp));
             ptr->Awake();
+            if (us) us->RegisterStart(ptr);
             return *ptr;
         }
 

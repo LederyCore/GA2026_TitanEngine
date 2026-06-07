@@ -13,23 +13,23 @@ TitanEngine::SceneManagement::Scene::Scene(const std::string& sceneName)
     m_sceneGraph = new SceneGraph();
     m_updateSystem = new UpdateSystem();
     m_renderSystem = new RenderSystem();
+    m_physicsSystem = new PhysicsSystem();
 
-    // 전역 접근점에 등록
-    SystemLocator::Set(m_updateSystem, m_renderSystem);
+    SystemLocator::Set(m_updateSystem, m_renderSystem, m_physicsSystem);
 }
 
 TitanEngine::SceneManagement::Scene::~Scene()
 {
-    // 전역 접근점 해제 먼저
     SystemLocator::Clear();
 
     delete m_sceneGraph;
     delete m_updateSystem;
     delete m_renderSystem;
+    delete m_physicsSystem;
     m_sceneGraph = nullptr;
     m_updateSystem = nullptr;
     m_renderSystem = nullptr;
-    // m_gameObjects → unique_ptr 자동 해제
+    m_physicsSystem = nullptr;
 }
 
 TitanEngine::GameObject* TitanEngine::SceneManagement::Scene::CreateGameObject(const std::string& name)
@@ -40,6 +40,20 @@ TitanEngine::GameObject* TitanEngine::SceneManagement::Scene::CreateGameObject(c
     m_sceneGraph->AddRoot(&ptr->transform);
     m_gameObjects.push_back(std::move(go));
 
+    return ptr;
+}
+
+TitanEngine::GameObject* TitanEngine::SceneManagement::Scene::CreateGameObject(const std::string& name, TitanEngine::Transform* parent)
+{
+    auto  go = std::make_unique<TitanEngine::GameObject>(name);
+    auto* ptr = go.get();
+
+    if (parent)
+        ptr->transform.SetParent(parent);
+    else
+        m_sceneGraph->AddRoot(&ptr->transform);
+
+    m_gameObjects.push_back(std::move(go));
     return ptr;
 }
 

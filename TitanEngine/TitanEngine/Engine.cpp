@@ -115,6 +115,10 @@ void TitanEngine::Engine::Finalize()
 
 void TitanEngine::Engine::FixedUpdate(float fixedTime)
 {
+    // IPhysics 구현한 것만 물리 연산 수행
+    m_currentFrameActiveScene->GetPhysicsSystem()->FixedUpdate(fixedTime);
+
+    // 컴포넌트의 FixedUpdate 오버라이드한 것만 물리 결과 기반 게임 로직
     m_currentFrameActiveScene->GetUpdateSystem()->FixedUpdate(fixedTime);
 }
 

@@ -7,6 +7,7 @@ namespace TitanEngine
     void RenderSystem::Register(IRenderable* renderable)
     {
         m_renderables.push_back(renderable);
+        m_sortDirty = true; // 새 오브젝트 추가 시 재정렬
     }
 
     void RenderSystem::Unregister(IRenderable* renderable)
@@ -14,13 +15,18 @@ namespace TitanEngine
         m_renderables.erase(
             std::remove(m_renderables.begin(), m_renderables.end(), renderable),
             m_renderables.end());
+        m_sortDirty = true; // 제거 시 재정렬
     }
 
     void RenderSystem::Render(ID2D1DeviceContext* ctx)
     {
         if (!ctx) return;
         Collect();
-        Sort();
+        if (m_sortDirty)
+        {
+            Sort();
+            m_sortDirty = false;
+        }
         Flush(ctx);
         m_renderItems.clear();
     }
@@ -65,15 +71,12 @@ namespace TitanEngine
                 item.worldTransform._21, item.worldTransform._22,
                 item.worldTransform._41, item.worldTransform._42
             );
-
             ctx->SetTransform(d2dMatrix);
             ctx->DrawBitmap(
                 item.bitmap,
                 D2D1::RectF(0.f, 0.f, item.size.x, item.size.y),
-                item.opacity
-            );
+                item.opacity);
         }
-
         ctx->SetTransform(D2D1::Matrix3x2F::Identity());
     }
 }

@@ -24,12 +24,12 @@ namespace TitanEngine::Renderer
 
 		// 테스트
 		void DrawCircle(float x, float y, float radius, const D2D1::ColorF& color) override;
-		//void CreateBitmapFromFile(const wchar_t* path, ID2D1Bitmap1*& outBitmap);
 
 	private:
 		bool CreateDeviceAndSwapChain();
 		bool CreateDWriteResources();
 		bool CreateRenderTargets();
+		bool CreateWICFactory();
 
 	public:
 		int m_screenWidth; // 렌더링할 최종 화면의 해상도

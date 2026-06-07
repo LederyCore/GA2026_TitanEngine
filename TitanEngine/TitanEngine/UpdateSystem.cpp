@@ -4,6 +4,10 @@
 
 namespace TitanEngine
 {
+    void UpdateSystem::RegisterStart(Component* comp)
+    {
+        m_pendingStart.push_back(comp);
+    }
     void UpdateSystem::FixedUpdate(float fixedTime)
     {
         for (auto* comp : m_fixedUpdatables)
@@ -16,6 +20,18 @@ namespace TitanEngine
 
     void UpdateSystem::Update(float deltaTime)
     {
+        // Start 미실행 컴포넌트 처리
+        if (!m_pendingStart.empty())
+        {
+            for (auto* comp : m_pendingStart)
+            {
+                if (!comp->IsActiveInHierarchy()) continue;
+                comp->Start();
+            }
+            m_pendingStart.clear();
+        }
+
+        // 일반 Update
         for (auto* comp : m_updatables)
         {
             if (!comp->IsEnabled())                 continue;

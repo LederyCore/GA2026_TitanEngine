@@ -4,28 +4,32 @@ namespace TitanEngine
 {
     class UpdateSystem;
     class RenderSystem;
+    class PhysicsSystem;
 
-    // 전역 접근점 - Scene이 시작/종료 시 등록/해제
     class SystemLocator final
     {
     public:
-        static void Set(UpdateSystem* us, RenderSystem* rs)
+        static void Set(UpdateSystem* us, RenderSystem* rs, PhysicsSystem* ps)
         {
             s_updateSystem = us;
             s_renderSystem = rs;
+            s_physicsSystem = ps;
         }
 
         static void Clear()
         {
             s_updateSystem = nullptr;
             s_renderSystem = nullptr;
+            s_physicsSystem = nullptr;
         }
 
         static UpdateSystem* GetUpdateSystem() { return s_updateSystem; }
         static RenderSystem* GetRenderSystem() { return s_renderSystem; }
+        static PhysicsSystem* GetPhysicsSystem() { return s_physicsSystem; }
 
     private:
         static UpdateSystem* s_updateSystem;
         static RenderSystem* s_renderSystem;
+        static PhysicsSystem* s_physicsSystem;
     };
 }

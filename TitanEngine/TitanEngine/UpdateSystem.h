@@ -11,8 +11,9 @@ namespace TitanEngine
         UpdateSystem() = default;
         ~UpdateSystem() = default;
 
-        void RegisterUpdate(Component* comp) { m_updatables.push_back(comp); }
         void RegisterFixed(Component* comp) { m_fixedUpdatables.push_back(comp); }
+        void RegisterStart(Component* comp);
+        void RegisterUpdate(Component* comp) { m_updatables.push_back(comp); }
         void RegisterLate(Component* comp) { m_lateUpdatables.push_back(comp); }
 
         void Unregister(Component* comp)
@@ -26,7 +27,6 @@ namespace TitanEngine
             remove(m_lateUpdatables);
         }
 
-        // 선언만 → .cpp에서 구현
         void FixedUpdate(float fixedTime);
         void Update(float deltaTime);
         void LateUpdate(float deltaTime);
@@ -39,8 +39,9 @@ namespace TitanEngine
         }
 
     private:
-        std::vector<Component*> m_updatables;
         std::vector<Component*> m_fixedUpdatables;
+        std::vector<Component*> m_pendingStart;
+        std::vector<Component*> m_updatables;
         std::vector<Component*> m_lateUpdatables;
     };
 }

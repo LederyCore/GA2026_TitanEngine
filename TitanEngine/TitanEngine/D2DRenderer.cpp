@@ -7,37 +7,33 @@ namespace TitanEngine::Renderer
 {
     bool D2DRenderer::Initialize()
     {
-
-        if (!CreateDeviceAndSwapChain())
-            return false;
-
-        if (!CreateRenderTargets())
-            return false;
-
-        if (!CreateDWriteResources())
-            return false;
-
+        if (!CreateDeviceAndSwapChain())  return false;
+        if (!CreateRenderTargets())       return false;
+        if (!CreateDWriteResources())     return false;
+        if (!CreateWICFactory())          return false;  // 추가
         return true;
     }
 
     void D2DRenderer::ShutDown()
     {
-        // 1. 타겟 해제 먼저
         if (m_d2dContext)
-            m_d2dContext->SetTarget(nullptr);
+        {
+            m_d2dContext->Flush();          // 1. 대기 중인 GPU 명령 비우기
+            m_d2dContext->SetTarget(nullptr); // 2. 렌더 타겟 해제
+        }
 
-        // 2. D2D 리소스 해제 (생성 역순)
+        // 3. D2D 리소스 해제 (생성 역순)
         m_brush.Reset();
         m_targetBitmap.Reset();
         m_textFormat.Reset();
         m_dwriteFactory.Reset();
 
-        // 3. D2D Context → Device → Factory 순
+        // 4. Context → Device → Factory 순
         m_d2dContext.Reset();
         m_d2dDevice.Reset();
         m_d2dFactory.Reset();
 
-        // 4. DXGI/D3D 리소스 마지막
+        // 5. DXGI/D3D 마지막
         m_swapChain.Reset();
         m_context.Reset();
         m_device.Reset();
@@ -194,6 +190,16 @@ namespace TitanEngine::Renderer
         return true;
     }
 
+    bool D2DRenderer::CreateWICFactory()
+    {
+        HRESULT hr = CoCreateInstance(
+            CLSID_WICImagingFactory,
+            nullptr,
+            CLSCTX_INPROC_SERVER,
+            IID_PPV_ARGS(&m_wicFactory));
+        return SUCCEEDED(hr);
+    }
+
     void D2DRenderer::ShowFPS(float fps)
     {
 #ifdef _DEBUG
@@ -215,11 +221,6 @@ namespace TitanEngine::Renderer
 #endif
     }
 
-    void D2DRenderer::RenderScene(TitanEngine::RenderSystem* rs)
-    {
-        if (!rs || !m_d2dContext) return;
-        rs->Render(m_d2dContext.Get());
-    }
 
     void D2DRenderer::RenderBegin()
     {
@@ -228,6 +229,12 @@ namespace TitanEngine::Renderer
 
         m_d2dContext->BeginDraw();
         m_d2dContext->Clear(D2D1::ColorF(D2D1::ColorF::White)); // 배경을 흰색으로 초기화
+    }
+
+    void D2DRenderer::RenderScene(TitanEngine::RenderSystem* rs)
+    {
+        if (!rs || !m_d2dContext) return;
+        rs->Render(m_d2dContext.Get());
     }
 
     void D2DRenderer::RenderEnd()
