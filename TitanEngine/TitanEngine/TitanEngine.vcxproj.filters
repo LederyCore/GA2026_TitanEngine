@@ -64,9 +64,6 @@
     <ClCompile Include="SystemLocator.cpp">
       <Filter>TitanEngineCore\TitanEngine</Filter>
     </ClCompile>
-    <ClCompile Include="SpriteRenderer.cpp">
-      <Filter>TitanEngineCore\TitanEngine</Filter>
-    </ClCompile>
     <ClCompile Include="Component.cpp">
       <Filter>TitanEngineCore\TitanEngine</Filter>
     </ClCompile>
@@ -136,9 +133,6 @@
       <Filter>TitanEngineCore\TitanEngine</Filter>
     </ClInclude>
     <ClInclude Include="RenderItem.h">
-      <Filter>TitanEngineCore\TitanEngine</Filter>
-    </ClInclude>
-    <ClInclude Include="SpriteRenderer.h">
       <Filter>TitanEngineCore\TitanEngine</Filter>
     </ClInclude>
     <ClInclude Include="IPhysics.h">

@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "TestSceneLES.h"
 #include "GameObject.h"
-#include "SpriteRenderer.h"
 #include "DebugConsole/DebugConsole.h"
 #include "InputSystem/InputSystem.h"
 
@@ -119,11 +118,6 @@ void TestSceneLES::OnLoad()
 
     m_weapon = CreateGameObject("Weapon", &m_player->transform);
     m_weapon->transform.localPosition = { 50.f, 0.f };
-
-    auto& sr = m_weapon->AddComponent<SpriteRenderer>();
-    sr.size = { 64.f, 64.f };
-    sr.sortingLayer = 0;
-    sr.orderInLayer = 1;
 
     m_camera = CreateGameObject("Camera");
     auto& cam = m_camera->AddComponent<CameraFollow>();
