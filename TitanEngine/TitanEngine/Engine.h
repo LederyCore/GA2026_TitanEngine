@@ -5,8 +5,6 @@ namespace Platform
 	class IWindow;
 }
 
-class IRenderer;
-
 namespace TitanEngine
 {
 	namespace Time
@@ -17,6 +15,11 @@ namespace TitanEngine
 	namespace SceneManagement
 	{
 		class SceneGraph;
+	}
+
+	namespace Renderer
+	{
+		class IRenderer;
 	}
 
 	class Engine
@@ -38,7 +41,7 @@ namespace TitanEngine
 	private:
 		Time::GameTimer* m_timer = nullptr;
 		Platform::IWindow* m_window = nullptr;
-		IRenderer* m_renderer = nullptr;
+		Renderer::IRenderer* m_renderer = nullptr;
 
 		SceneManagement::SceneGraph* m_currentFrameActiveSceneGraph = nullptr;
 

@@ -23,6 +23,9 @@
     <Filter Include="TitanEngineCore\Renderer">
       <UniqueIdentifier>{95051d19-be7e-4a19-a4fd-76fbbc9f7a32}</UniqueIdentifier>
     </Filter>
+    <Filter Include="TitanEngineCore\Components">
+      <UniqueIdentifier>{ea030b67-add6-498e-b718-0ec3c9e648ac}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -51,6 +54,9 @@
     </ClCompile>
     <ClCompile Include="D2DRenderer.cpp">
       <Filter>TitanEngineCore\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="Component.h">
+      <Filter>TitanEngineCore\Components</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

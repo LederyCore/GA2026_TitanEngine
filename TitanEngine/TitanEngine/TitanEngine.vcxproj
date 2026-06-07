@@ -139,6 +139,7 @@
   <ItemGroup>
     <ClCompile Include="D2DRenderer.cpp" />
     <ClCompile Include="Engine.cpp" />
+    <ClCompile Include="Component.h" />
     <ClCompile Include="GameTimer.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
