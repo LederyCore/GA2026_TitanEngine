@@ -1,21 +1,29 @@
 #pragma once
 #include "Transform.h"
 #include <vector>
+#include <directxtk/SimpleMath.h>
 
 namespace TitanEngine::SceneManagement
 {
-	// 씬 자체의 계층구조를 담당하는 클래스
-	class SceneGraph final
-	{
-	public :
-		SceneGraph() = default;
-		~SceneGraph() = default;
+    // WorldMatrix 전파 전용
+    // 게임 로직 루프는 UpdateSystem이 담당함..
+    class SceneGraph final
+    {
+    public:
+        SceneGraph() = default;
+        ~SceneGraph() = default;
 
-		void FixedUpdate(float fixedTime);
-		void Update		(float deltaTime);
-		void LateUpdate (float deltaTime);
+        void AddRoot(Transform* root);
+        void RemoveRoot(Transform* root);
+        void Clear();
 
-	private :
-		std::vector<Transform*> m_roots;
-	};
+        // WorldMatrix 전파만 수행 (매 프레임 1회)
+        void PropagateWorldMatrix();
+
+    private:
+        std::vector<Transform*> m_roots;
+
+        void PropagateRecursive(Transform& node,
+            const DirectX::SimpleMath::Matrix& parentWorld);
+    };
 }

@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "D2DRenderer.h"
+#include "RenderSystem.h"
 #include <iostream>
 
 namespace TitanEngine::Renderer
@@ -224,6 +225,12 @@ namespace TitanEngine::Renderer
             m_brush.Get()
         );
 #endif
+    }
+
+    void D2DRenderer::RenderScene(TitanEngine::RenderSystem* rs)
+    {
+        if (!rs || !m_d2dContext) return;
+        rs->Render(m_d2dContext.Get());
     }
 
     void D2DRenderer::RenderBegin()

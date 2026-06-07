@@ -88,14 +88,16 @@ void TitanEngine::Engine::Run()
             SceneManager::Instance().FlushFrame();
 
             // 이 프레임에서 사용될 씬 그래프 가져오기
-            m_currentFrameActiveSceneGraph = SceneManager::Instance().GetActiveScene()->GetSceneGraph();
-            if (!m_currentFrameActiveSceneGraph) continue;
+            m_currentFrameActiveScene = SceneManager::Instance().GetActiveScene();
+            if (!m_currentFrameActiveScene) continue;
+            // SceneGraph가 유효한지 체크
+            if (!m_currentFrameActiveScene->GetSceneGraph()) continue;
 
             // 누적 프레임이 물리 계산할 시간 기준점을 넘었으면 물리 연산 실행
             while (m_fFrameCount >= FIXED_TIMESTEP)
             {
                 FixedUpdate(FIXED_TIMESTEP);
-                m_fFrameCount = 0;
+                m_fFrameCount -= FIXED_TIMESTEP;
             }
 
             Update(m_fDeltaTime);
@@ -113,17 +115,19 @@ void TitanEngine::Engine::Finalize()
 
 void TitanEngine::Engine::FixedUpdate(float fixedTime)
 {
-    m_currentFrameActiveSceneGraph->FixedUpdate(fixedTime);
+    m_currentFrameActiveScene->GetUpdateSystem()->FixedUpdate(fixedTime);
 }
 
 void TitanEngine::Engine::Update(float deltaTime)
 {
-    m_currentFrameActiveSceneGraph->Update(deltaTime);
+    m_currentFrameActiveScene->GetSceneGraph()->PropagateWorldMatrix();
+
+    m_currentFrameActiveScene->GetUpdateSystem()->Update(deltaTime);
 }
 
 void TitanEngine::Engine::LateUpdate(float deltaTime)
 {
-    m_currentFrameActiveSceneGraph->LateUpdate(deltaTime);
+    m_currentFrameActiveScene->GetUpdateSystem()->LateUpdate(deltaTime);
 }
 
 void TitanEngine::Engine::Render()
@@ -138,5 +142,7 @@ void TitanEngine::Engine::Render()
         // TEST
         m_renderer->DrawCircle(600, 600, 30, D2D1::ColorF::Tomato);
 
+        // RenderSystem에 DeviceContext 넘겨서 일괄 드로우
+        m_renderer->RenderScene(m_currentFrameActiveScene->GetRenderSystem());
     m_renderer->RenderEnd();
 }

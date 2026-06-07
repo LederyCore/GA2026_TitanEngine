@@ -1,5 +1,9 @@
 #pragma once
 #include "Transform.h"
+#include "SystemLocator.h"
+#include "UpdateSystem.h"   
+#include "RenderSystem.h"   
+#include "IRenderable.h"    
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -10,50 +14,83 @@ namespace TitanEngine
     class GameObject final
     {
     public:
-        Transform transform; // 반드시 첫 번째 멤버
+        Transform transform;
 
     public:
         GameObject() = delete;
         explicit GameObject(const std::string& name);
-        ~GameObject() = default;
+        ~GameObject();
+
+        const std::string& GetName()             const { return m_name; }
+        bool               IsActive()            const { return m_isActive; }
+        void               SetActive(bool value) { m_isActive = value; }
 
         template<typename T>
         T& AddComponent()
         {
-            TypeId id = TitanEngine::GetTypeId<T>();
+            static_assert(std::is_base_of<Component, T>::value,
+                "T must derive from Component");
 
-            auto  comp = std::make_unique<T>();
+            TypeId id = TitanEngine::GetTypeId<T>();
+            auto   comp = std::make_unique<T>();
             T* ptr = comp.get();
             ptr->m_owner = this;
 
-            m_components[id].push_back(std::move(comp));
+            auto* us = SystemLocator::GetUpdateSystem();
+            auto* rs = SystemLocator::GetRenderSystem();
 
+            if (us)
+            {
+                if constexpr (&T::FixedUpdate != &Component::FixedUpdate)
+                    us->RegisterFixed(ptr);
+                if constexpr (&T::Update != &Component::Update)
+                    us->RegisterUpdate(ptr);
+                if constexpr (&T::LateUpdate != &Component::LateUpdate)
+                    us->RegisterLate(ptr);
+            }
+
+            if (rs)
+            {
+                if (auto* r = dynamic_cast<IRenderable*>(ptr))
+                    rs->Register(r);
+            }
+
+            m_components[id].push_back(std::move(comp));
             ptr->Awake();
             return *ptr;
         }
 
-        // 단일 반환
         template<typename T>
         T* GetComponent() const
         {
-            TypeId id = TitanEngine::GetTypeId<T>();
+            static_assert(std::is_base_of<Component, T>::value,
+                "T must derive from Component");
 
-            auto it = m_components.find(id);
+            TypeId id = TitanEngine::GetTypeId<T>();
+            auto   it = m_components.find(id);
+
             if (it == m_components.end() || it->second.empty())
                 return nullptr;
 
-            // TypeId로 이미 타입이 존재함을 보장
             return static_cast<T*>(it->second[0].get());
         }
 
-        // 동일 타입 전체 반환
+        template<>
+        inline Transform* GetComponent<Transform>() const
+        {
+            return const_cast<Transform*>(&transform);
+        }
+
         template<typename T>
         std::vector<T*> GetComponents() const
         {
-            TypeId id = TitanEngine::GetTypeId<T>();
+            static_assert(std::is_base_of<Component, T>::value,
+                "T must derive from Component");
 
+            TypeId          id = TitanEngine::GetTypeId<T>();
             std::vector<T*> result;
-            auto it = m_components.find(id);
+            auto            it = m_components.find(id);
+
             if (it == m_components.end()) return result;
 
             for (auto& comp : it->second)
@@ -63,10 +100,11 @@ namespace TitanEngine
         }
 
     private:
+        friend class Component;
+
         std::string m_name;
         bool        m_isActive = true;
 
-        // TypeId 키의 컴포넌트 배열 (같은 타입 여러 개 허용)
         std::unordered_map<TypeId,
             std::vector<std::unique_ptr<Component>>> m_components;
     };

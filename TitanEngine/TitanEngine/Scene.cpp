@@ -1,17 +1,57 @@
 #include "pch.h"
 #include "Scene.h"
 #include "SceneGraph.h"
-#include "DebugConsole/DebugConsole.h"
+#include "UpdateSystem.h"
+#include "RenderSystem.h"
+#include "SystemLocator.h"
+#include "GameObject.h"
+#include <algorithm>
 
-
-TitanEngine::SceneManagement::Scene::Scene(std::string sceneName)
+TitanEngine::SceneManagement::Scene::Scene(const std::string& sceneName)
 {
-	m_sceneName = sceneName;
-	m_sceneGraph = new SceneGraph();
+    m_sceneName = sceneName;
+    m_sceneGraph = new SceneGraph();
+    m_updateSystem = new UpdateSystem();
+    m_renderSystem = new RenderSystem();
+
+    // 전역 접근점에 등록
+    SystemLocator::Set(m_updateSystem, m_renderSystem);
 }
 
 TitanEngine::SceneManagement::Scene::~Scene()
 {
-	delete m_sceneGraph;
-	m_sceneGraph = nullptr;
+    // 전역 접근점 해제 먼저
+    SystemLocator::Clear();
+
+    delete m_sceneGraph;
+    delete m_updateSystem;
+    delete m_renderSystem;
+    m_sceneGraph = nullptr;
+    m_updateSystem = nullptr;
+    m_renderSystem = nullptr;
+    // m_gameObjects → unique_ptr 자동 해제
+}
+
+TitanEngine::GameObject* TitanEngine::SceneManagement::Scene::CreateGameObject(const std::string& name)
+{
+    auto  go = std::make_unique<TitanEngine::GameObject>(name);
+    auto* ptr = go.get();
+
+    m_sceneGraph->AddRoot(&ptr->transform);
+    m_gameObjects.push_back(std::move(go));
+
+    return ptr;
+}
+
+void TitanEngine::SceneManagement::Scene::DestroyGameObject(TitanEngine::GameObject* go)
+{
+    m_sceneGraph->RemoveRoot(&go->transform);
+
+    m_gameObjects.erase(
+        std::remove_if(m_gameObjects.begin(), m_gameObjects.end(),
+            [go](const std::unique_ptr<TitanEngine::GameObject>& p)
+            {
+                return p.get() == go;
+            }),
+        m_gameObjects.end());
 }

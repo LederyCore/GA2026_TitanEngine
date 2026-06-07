@@ -38,9 +38,11 @@ namespace TitanEngine
     protected:
         GameObject* GetGameObject() const { return m_owner; }
 
+    protected : 
+        GameObject* m_owner = nullptr;
+
     private:
         friend class GameObject;
-        GameObject* m_owner = nullptr;
     };
 
     // 모든 커스텀 컴포넌트가 이걸 상속

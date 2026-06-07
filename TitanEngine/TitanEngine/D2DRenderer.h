@@ -20,6 +20,8 @@ namespace TitanEngine::Renderer
 		void RenderEnd() override;
 		void ShowFPS(float fps) override;
 
+		void RenderScene(TitanEngine::RenderSystem* rs) override;
+
 		// Å×½ºÆ®
 		void DrawCircle(float x, float y, float radius, const D2D1::ColorF& color) override;
 		//void CreateBitmapFromFile(const wchar_t* path, ID2D1Bitmap1*& outBitmap);

@@ -1,13 +1,15 @@
 #pragma once
 #include "Scene.h"
 
-using namespace TitanEngine::SceneManagement;
+namespace TitanEngine { class GameObject; }
 
-class TestSceneLES : public Scene
+class TestSceneLES : public TitanEngine::SceneManagement::Scene
 {
-public :
-	using Scene::Scene;
-	// Scene을(를) 통해 상속됨
-	void OnLoad() override;
-	void OnUnLoad() override;
+public:
+    TestSceneLES(const std::string& name = "TestSceneLES") : Scene(name) {}
+    void OnLoad()   override;
+    void OnUnLoad() override;
+
+private:
+    TitanEngine::GameObject* m_player = nullptr;
 };

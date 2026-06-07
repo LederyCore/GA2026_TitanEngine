@@ -15,6 +15,7 @@ namespace TitanEngine
 	namespace SceneManagement
 	{
 		class SceneGraph;
+		class Scene;
 	}
 
 	namespace Renderer
@@ -43,7 +44,7 @@ namespace TitanEngine
 		Platform::IWindow* m_window = nullptr;
 		Renderer::IRenderer* m_renderer = nullptr;
 
-		SceneManagement::SceneGraph* m_currentFrameActiveSceneGraph = nullptr;
+		SceneManagement::Scene* m_currentFrameActiveScene = nullptr;
 
 		float m_fDeltaTime = 0;
 		float m_fFrameCount = 0;
