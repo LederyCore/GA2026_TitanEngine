@@ -78,6 +78,11 @@ void TitanEngine::Engine::Run()
         }
         else
         {
+            // 게임 타이머 시간 1틱 계산
+            m_timer->Tick();
+            m_fDeltaTime = m_timer->DeltaTime();   // 초 단위로 통일
+            m_fFrameCount += m_fDeltaTime;
+
             // 프레임 시작
             InputSystem::Instance().FlushFrame(); 
             SceneManager::Instance().FlushFrame();
@@ -85,11 +90,6 @@ void TitanEngine::Engine::Run()
             // 이 프레임에서 사용될 씬 그래프 가져오기
             m_currentFrameActiveSceneGraph = SceneManager::Instance().GetActiveScene()->GetSceneGraph();
             if (!m_currentFrameActiveSceneGraph) continue;
-
-            // 게임 타이머 시간 1틱 계산
-            m_timer->Tick();
-            m_fDeltaTime = m_timer->DeltaTime();   // 초 단위로 통일
-            m_fFrameCount += m_fDeltaTime;
 
             // 누적 프레임이 물리 계산할 시간 기준점을 넘었으면 물리 연산 실행
             while (m_fFrameCount >= FIXED_TIMESTEP)

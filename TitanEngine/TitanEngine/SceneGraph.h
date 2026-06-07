@@ -1,9 +1,10 @@
 #pragma once
-
-// 씬 자체의 계층구조를 담당하는 클래스
+#include "Transform.h"
+#include <vector>
 
 namespace TitanEngine::SceneManagement
 {
+	// 씬 자체의 계층구조를 담당하는 클래스
 	class SceneGraph final
 	{
 	public :
@@ -11,10 +12,10 @@ namespace TitanEngine::SceneManagement
 		~SceneGraph() = default;
 
 		void FixedUpdate(float fixedTime);
-		void Update(float deltaTime);
-		void LateUpdate(float deltaTime);
+		void Update		(float deltaTime);
+		void LateUpdate (float deltaTime);
 
 	private :
-
+		std::vector<Transform*> m_roots;
 	};
 }

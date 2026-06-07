@@ -4,6 +4,7 @@
 
 void TestSceneLES::OnLoad()
 {
+
 }
 
 void TestSceneLES::OnUnLoad()
