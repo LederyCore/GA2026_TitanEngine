@@ -21,7 +21,7 @@ namespace TitanEngine::SceneManagement
         SceneManager& operator=(const SceneManager&) = delete;
 
         bool         Initialize();
-        void         Shutdown();
+        void         UnInitialize();
 
         void         LoadScene(const std::string& sceneName);
         void         UnLoadScene(const std::string& sceneName);

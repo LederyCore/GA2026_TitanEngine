@@ -1,11 +1,5 @@
 #pragma once
 #include "Transform.h"
-#include "SystemLocator.h"
-#include "UpdateSystem.h"
-#include "RenderSystem.h"
-#include "PhysicsSystem.h"
-#include "IRenderable.h"
-#include "IPhysics.h"
 #include <string>
 #include <unordered_map>
 #include <vector>

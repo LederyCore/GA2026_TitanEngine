@@ -52,11 +52,6 @@
     <ClCompile Include="SceneGraph.cpp">
       <Filter>TitanEngineCore\SceneManagement</Filter>
     </ClCompile>
-    <ClCompile Include="D2DRenderer.cpp" />
-    <ClCompile Include="AnimationClip.cpp" />
-    <ClCompile Include="AsepriteJsonLoader.cpp" />
-    <ClCompile Include="AsepriteParser.cpp" />
-    <ClCompile Include="AssetManager.cpp" />
     <ClCompile Include="D2DRenderer.cpp">
       <Filter>TitanEngineCore\Renderer</Filter>
     </ClCompile>
@@ -66,26 +61,11 @@
     <ClCompile Include="Transform.cpp">
       <Filter>TitanEngineCore\TitanEngine</Filter>
     </ClCompile>
-    <ClCompile Include="SystemLocator.cpp">
-      <Filter>TitanEngineCore\TitanEngine</Filter>
-    </ClCompile>
     <ClCompile Include="Component.cpp">
       <Filter>TitanEngineCore\TitanEngine</Filter>
     </ClCompile>
-    <ClCompile Include="UpdateSystem.cpp">
-      <Filter>TitanEngineCore\TitanEngine</Filter>
-    </ClCompile>
-    <ClCompile Include="RenderSystem.cpp">
-      <Filter>TitanEngineCore\TitanEngine</Filter>
-    </ClCompile>
-    <ClCompile Include="PhysicsSystem.cpp">
-      <Filter>TitanEngineCore\TitanEngine</Filter>
-    </ClCompile>
-    <ClCompile Include="IPhysics.cpp">
-      <Filter>TitanEngineCore\TitanEngine</Filter>
-    </ClCompile>
-    <ClCompile Include="IRenderable.cpp">
-      <Filter>TitanEngineCore\TitanEngine</Filter>
+    <ClCompile Include="D2DRenderer.cpp">
+      <Filter>TitanEngineCore\Renderer</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -110,13 +90,6 @@
     <ClInclude Include="TestSceneLES.h">
       <Filter>TitanEngineCore\SceneManagement\Test</Filter>
     </ClInclude>
-    <ClInclude Include="D2DRenderer.h" />
-    <ClInclude Include="IRenderer.h" />
-    <ClInclude Include="AnimationClip.h" />
-    <ClInclude Include="AsepriteJsonLoader.h" />
-    <ClInclude Include="AsepriteParser.h" />
-    <ClInclude Include="json.hpp" />
-    <ClInclude Include="AssetManager.h" />
     <ClInclude Include="D2DRenderer.h">
       <Filter>TitanEngineCore\Renderer</Filter>
     </ClInclude>
@@ -132,26 +105,8 @@
     <ClInclude Include="GameObject.h">
       <Filter>TitanEngineCore\TitanEngine</Filter>
     </ClInclude>
-    <ClInclude Include="SystemLocator.h">
-      <Filter>TitanEngineCore\TitanEngine</Filter>
-    </ClInclude>
-    <ClInclude Include="UpdateSystem.h">
-      <Filter>TitanEngineCore\TitanEngine</Filter>
-    </ClInclude>
-    <ClInclude Include="RenderSystem.h">
-      <Filter>TitanEngineCore\TitanEngine</Filter>
-    </ClInclude>
-    <ClInclude Include="IRenderable.h">
-      <Filter>TitanEngineCore\TitanEngine</Filter>
-    </ClInclude>
-    <ClInclude Include="RenderItem.h">
-      <Filter>TitanEngineCore\TitanEngine</Filter>
-    </ClInclude>
-    <ClInclude Include="IPhysics.h">
-      <Filter>TitanEngineCore\TitanEngine</Filter>
-    </ClInclude>
-    <ClInclude Include="PhysicsSystem.h">
-      <Filter>TitanEngineCore\TitanEngine</Filter>
+    <ClInclude Include="D2DRenderer.h">
+      <Filter>TitanEngineCore\Renderer</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -18,7 +18,7 @@ namespace TitanEngine::SceneManagement
         return true;
     }
 
-    void SceneManager::Shutdown()
+    void SceneManager::UnInitialize()
     {
         // 현재 씬 정리
         if (m_currentScene)

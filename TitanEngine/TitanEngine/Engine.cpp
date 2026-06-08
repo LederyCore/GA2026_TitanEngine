@@ -18,6 +18,7 @@ using namespace TitanEngine::Time;
 TitanEngine::Engine::Engine()
 {
     m_timer = new GameTimer();
+    m_renderer = new D2DRenderer();
 }
 
 TitanEngine::Engine::~Engine()
@@ -49,16 +50,11 @@ bool TitanEngine::Engine::Initialize(IWindow& window, const wchar_t* windowName,
         return false;
     }
 
-    m_renderer = new D2DRenderer(width, height, m_window->GetHWND());
-    if (!m_renderer->Initialize())
+    if (false == m_renderer->Initialize(m_window->GetHWND()))
     {
         LOG_ERROR("D2D 렌더 시스템이 초기화 되지 않았습니다.");
         return false;
     }
-
-    m_renderer->CreateBitmapFromFile(L"./Resource/cat.png", *m_bitmapCat.GetAddressOf());
-
-
 
     m_timer->Reset();
 
@@ -112,8 +108,8 @@ void TitanEngine::Engine::Run()
 
 void TitanEngine::Engine::Finalize()
 {
-    SceneManager::Instance().Shutdown();
-    m_renderer->ShutDown();
+    SceneManager::Instance().UnInitialize();
+    m_renderer->UnInitialize();
 }
 
 void TitanEngine::Engine::FixedUpdate(float fixedTime)
@@ -140,19 +136,12 @@ void TitanEngine::Engine::LateUpdate(float deltaTime)
 void TitanEngine::Engine::Render()
 {
     m_renderer->RenderBegin();
+    //#ifdef _DEBUG
+    //    float fps = 1.0f / m_fDeltaTime;
+    //    m_renderer->ShowFPS(fps);
+    //#endif // _DEBUG
 
-    #ifdef _DEBUG
-        float fps = 1.0f / m_fDeltaTime;
-        m_renderer->ShowFPS(fps);
-    #endif // _DEBUG
-    
-        // TEST
-        m_renderer->DrawCircle(600, 600, 30, D2D1::ColorF::Tomato);
-
-        D2D1_RECT_F dest = D2D1::RectF(0, 0, 200, 200);
-        m_renderer->DrawBitmap(m_bitmapCat.Get(), dest);
-
-        // RenderSystem에 DeviceContext 넘겨서 일괄 드로우
-        m_renderer->RenderScene(m_currentFrameActiveScene->GetRenderSystem());
+    // RenderSystem에 DeviceContext 넘겨서 일괄 드로우
+    m_currentFrameActiveScene->GetRenderSystem()->Draw(m_renderer->GetContext());
     m_renderer->RenderEnd();
 }

@@ -4,9 +4,10 @@
 
 namespace TitanEngine
 {
-    class Transform : public ComponentBase<Transform>
+    class Transform : public Component
     {
-        using Vector2 = DirectX::SimpleMath::Vector2;
+        using Vector3 = DirectX::SimpleMath::Vector3;
+        using Quaternion = DirectX::SimpleMath::Quaternion;
         using Matrix = DirectX::SimpleMath::Matrix;
 
     public :
@@ -25,9 +26,9 @@ namespace TitanEngine
         Transform* nextSibling = nullptr;
 
         // Local space
-        Vector2 localPosition = {};
-        float   localRotation = 0.f;
-        Vector2 localScale = { 1.f, 1.f };
+        Vector3      localPosition = {};
+        Quaternion   localRotation = {};
+        Vector3      localScale = { 1.f, 1.f, 1.f };
 
         //Cached world matrix
         Matrix worldMatrix = {};
