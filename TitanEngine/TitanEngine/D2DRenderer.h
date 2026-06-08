@@ -44,7 +44,6 @@ namespace TitanEngine::Renderer
 		ComPtr<IDXGISwapChain> m_swapChain;
 
 	public:
-		void Present();
 		void CreateBitmapFromFile(const wchar_t* path, ID2D1Bitmap1*& outBitmap) override;
 		//D2D member
 		ComPtr<ID2D1Device7> m_d2dDevice;
