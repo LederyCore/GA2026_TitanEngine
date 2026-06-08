@@ -70,6 +70,8 @@ namespace TitanEngine
                 ptr->OnEnable();
 
             if (us) us->RegisterStart(ptr);
+
+            return *ptr;
         }
 
         template<typename T>
