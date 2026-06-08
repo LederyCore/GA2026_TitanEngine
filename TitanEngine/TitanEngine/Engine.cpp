@@ -153,6 +153,6 @@ void TitanEngine::Engine::Render()
         m_renderer->DrawBitmap(m_bitmapCat.Get(), dest);
 
         // RenderSystem에 DeviceContext 넘겨서 일괄 드로우
-        m_renderer->RenderScene(m_currentFrameActiveScene->GetRenderSystem());
+		m_renderer->RenderScene(m_currentFrameActiveScene->GetRenderSystem());
     m_renderer->RenderEnd();
 }
