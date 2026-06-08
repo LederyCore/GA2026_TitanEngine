@@ -10,7 +10,7 @@ namespace TitanEngine::SceneManagement
 
     class SceneManager
     {
-    public:
+    public :
         static SceneManager& Instance()
         {
             static SceneManager instance;
@@ -33,14 +33,15 @@ namespace TitanEngine::SceneManagement
         bool         RegisterScene(const std::string& sceneName, std::shared_ptr<Scene> scene);
         bool         UnRegisterScene(const std::string& sceneName);
 
-    private:
+    private :
         SceneManager() = default;
         ~SceneManager() = default;
 
-    private:
+    private :
         std::unordered_map<std::string, std::shared_ptr<Scene>> m_scenes;
         std::shared_ptr<Scene>  m_currentScene = nullptr;
         std::string             m_nextSceneName;
         std::queue<std::string> m_removeQueue;
+
     };
 }

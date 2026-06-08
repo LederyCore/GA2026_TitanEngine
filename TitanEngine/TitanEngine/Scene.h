@@ -1,24 +1,45 @@
 #pragma once
-#include <unordered_set>
 #include <string>
+#include <vector>
+#include <memory>
 #include "SceneGraph.h"
+#include "UpdateSystem.h"
+#include "RenderSystem.h"
+#include "PhysicsSystem.h"
+#include "SystemLocator.h"
+
+namespace TitanEngine { class GameObject; }
 
 namespace TitanEngine::SceneManagement
 {
-	class Scene abstract
-	{
-	public :
-		Scene(std::string sceneName);
-		virtual ~Scene();
+    class Scene abstract
+    {
+    public:
+        Scene(const std::string& sceneName);
+        virtual ~Scene();
 
-		virtual void OnLoad() = 0;
-		virtual void OnUnLoad() = 0;
+        virtual void OnLoad() = 0;
+        virtual void OnUnLoad() = 0;
 
-		const std::string GetSceneName() { return m_sceneName; }
-		SceneGraph* GetSceneGraph() { return m_sceneGraph; }
+        const std::string& GetSceneName()  const { return m_sceneName; }
+        SceneGraph* GetSceneGraph() { return m_sceneGraph; }
+        UpdateSystem* GetUpdateSystem() { return m_updateSystem; }
+        RenderSystem* GetRenderSystem() { return m_renderSystem; }
+        PhysicsSystem* GetPhysicsSystem() { return m_physicsSystem; }
 
-	protected :
-		std::string m_sceneName;
-		SceneGraph* m_sceneGraph = nullptr;
-	};
+        TitanEngine::GameObject* CreateGameObject(const std::string& name);
+        TitanEngine::GameObject* CreateGameObject(const std::string& name,
+            TitanEngine::Transform* parent);
+        void                     DestroyGameObject(TitanEngine::GameObject* go);
+
+
+    protected:
+        std::string   m_sceneName;
+        SceneGraph* m_sceneGraph = nullptr;
+        UpdateSystem* m_updateSystem = nullptr;
+        RenderSystem* m_renderSystem = nullptr;
+        PhysicsSystem* m_physicsSystem = nullptr;
+
+        std::vector<std::unique_ptr<TitanEngine::GameObject>> m_gameObjects;
+    };
 }
