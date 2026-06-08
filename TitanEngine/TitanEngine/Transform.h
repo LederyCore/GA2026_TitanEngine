@@ -10,8 +10,8 @@ namespace TitanEngine
         using Quaternion = DirectX::SimpleMath::Quaternion;
         using Matrix = DirectX::SimpleMath::Matrix;
 
-    public :
-        // Hierarchy 조작
+    public:
+        // 계층 조작
         void SetParent(Transform* newParent);
         void DetachFromParent();
         void AddChild(Transform* child);
@@ -20,17 +20,18 @@ namespace TitanEngine
         void UpdateWorldMatrix(const Matrix& parentWorld);
 
     public:
-        // 침투형 링크드 리스트 계층구조
+        // 침투형 링크드 리스트
         Transform* parent = nullptr;
         Transform* firstChild = nullptr;
         Transform* nextSibling = nullptr;
+        Transform* prevSibling = nullptr;   // ← 추가
 
-        // Local space
-        Vector3      localPosition = {};
-        Quaternion   localRotation = {};
-        Vector3      localScale = { 1.f, 1.f, 1.f };
+        // 로컬
+        Vector3    localPosition = {};
+        Quaternion localRotation = {};
+        Vector3    localScale = { 1.f, 1.f, 1.f };
 
-        //Cached world matrix
+        // 캐시된 월드 행렬
         Matrix worldMatrix = {};
 
     private:

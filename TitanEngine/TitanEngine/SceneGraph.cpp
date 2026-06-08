@@ -1,42 +1,43 @@
+// SceneGraph.cpp
 #include "pch.h"
 #include "SceneGraph.h"
-#include <algorithm>
+#include "GameObject.h"
+#include "Scene.h"
 
 namespace TitanEngine::SceneManagement
 {
-    void SceneGraph::AddRoot(Transform* root)
+    void SceneGraph::AddToRoot(GameObject* go, Scene* scene)
     {
-        m_roots.push_back(root);
-    }
+        if (!go) return;
 
-    void SceneGraph::RemoveRoot(Transform* root)
-    {
-        m_roots.erase(std::remove(m_roots.begin(), m_roots.end(), root),
-            m_roots.end());
-    }
+        // 루트 자식 리스트 앞에 삽입
+        go->transform.nextSibling = m_rootFirstChild;
+        go->transform.prevSibling = nullptr;
+        go->transform.parent = nullptr;
 
-    void SceneGraph::Clear()
-    {
-        m_roots.clear();
+        if (m_rootFirstChild)
+            m_rootFirstChild->prevSibling = &go->transform;
+
+        m_rootFirstChild = &go->transform;
+
+        // 시스템 등록
+        go->OnEnterScene(scene);
     }
 
     void SceneGraph::PropagateWorldMatrix()
     {
-        for (Transform* root : m_roots)
-            PropagateRecursive(*root, DirectX::SimpleMath::Matrix{});
+        const auto identity = DirectX::SimpleMath::Matrix{};
+
+        for (auto* tr = m_rootFirstChild; tr; tr = tr->nextSibling)
+            Propagate(tr, identity);
     }
 
-    void SceneGraph::PropagateRecursive(Transform& node,
+    void SceneGraph::Propagate(Transform* tr,
         const DirectX::SimpleMath::Matrix& parentWorld)
     {
-        // 부모 → 자식 순서 보장 (DFS)
-        node.UpdateWorldMatrix(parentWorld);
+        tr->UpdateWorldMatrix(parentWorld);
 
-        Transform* child = node.firstChild;
-        while (child)
-        {
-            PropagateRecursive(*child, node.worldMatrix);
-            child = child->nextSibling;
-        }
+        for (auto* child = tr->firstChild; child; child = child->nextSibling)
+            Propagate(child, tr->worldMatrix);
     }
 }

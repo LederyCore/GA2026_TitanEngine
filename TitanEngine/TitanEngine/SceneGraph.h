@@ -1,29 +1,30 @@
+// SceneGraph.h
 #pragma once
 #include "Transform.h"
-#include <vector>
 #include <directxtk/SimpleMath.h>
+
+namespace TitanEngine { class GameObject; }
+namespace TitanEngine::SceneManagement { class Scene; }
 
 namespace TitanEngine::SceneManagement
 {
-    // WorldMatrix 전파 전용
-    // 게임 로직 루프는 UpdateSystem이 담당함..
-    class SceneGraph final
+    class SceneGraph
     {
     public:
         SceneGraph() = default;
         ~SceneGraph() = default;
 
-        void AddRoot(Transform* root);
-        void RemoveRoot(Transform* root);
-        void Clear();
+        // 루트에 오브젝트 추가
+        void AddToRoot(GameObject* go, Scene* scene);
 
-        // WorldMatrix 전파만 수행 (매 프레임 1회)
+        // 매 프레임 Engine에서 호출
         void PropagateWorldMatrix();
 
     private:
-        std::vector<Transform*> m_roots;
-
-        void PropagateRecursive(Transform& node,
+        void Propagate(Transform* tr,
             const DirectX::SimpleMath::Matrix& parentWorld);
+
+        // 루트 자식들 (더미 루트 대신 첫 번째 루트 자식 포인터)
+        Transform* m_rootFirstChild = nullptr;
     };
 }

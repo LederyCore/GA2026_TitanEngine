@@ -3,6 +3,7 @@
 #include "SceneManager.h"
 #include "Scene.h"
 #include "Win32Window/IWindow.h"
+#include "Win32Window/Win32Window.h"
 #include "InputSystem/InputSystem.h"
 #include "DebugConsole/DebugConsole.h"
 #include "GameTimer.h"
@@ -30,6 +31,7 @@ bool TitanEngine::Engine::Initialize(IWindow& window, const wchar_t* windowName,
 {
 	m_window = &window;
 	void* handle = m_window->Create(windowName, width, height);
+    auto* wnd = static_cast<Win32Window*>(m_window);
 
     if (!handle)
     {
@@ -56,6 +58,7 @@ bool TitanEngine::Engine::Initialize(IWindow& window, const wchar_t* windowName,
         return false;
     }
 
+    wnd->AddObserver(WM_SIZE, m_renderer);
     m_timer->Reset();
 
     LOG_DEBUG("엔진이 성공적으로 초기화 되었습니다.");
@@ -115,9 +118,9 @@ void TitanEngine::Engine::Finalize()
 void TitanEngine::Engine::FixedUpdate(float fixedTime)
 {
     // IPhysics 구현한 것만 물리 연산 수행
-    m_currentFrameActiveScene->GetPhysicsSystem()->FixedUpdate(fixedTime);
+    //m_currentFrameActiveScene->GetPhysicsSystem()->FixedUpdate(fixedTime);
 
-    // 컴포넌트의 FixedUpdate 오버라이드한 것만 물리 결과 기반 게임 로직
+    //// 컴포넌트의 FixedUpdate 오버라이드한 것만 물리 결과 기반 게임 로직
     m_currentFrameActiveScene->GetUpdateSystem()->FixedUpdate(fixedTime);
 }
 

@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "D2DRenderer.h"
+#include "Win32Window/IWindowObserver.h"
 
 TitanEngine::Renderer::D2DRenderer::~D2DRenderer()
 {
@@ -21,6 +22,8 @@ bool TitanEngine::Renderer::D2DRenderer::Initialize(HWND hwnd)
 		IID_PPV_ARGS(&wicFactory));
 
 	DX::ThrowIfFailed(hr);
+
+	return true;
 }
 
 void TitanEngine::Renderer::D2DRenderer::UnInitialize()
@@ -42,6 +45,11 @@ void TitanEngine::Renderer::D2DRenderer::Resize(UINT width, UINT height)
 	DX::ThrowIfFailed(m_swapChain->ResizeBuffers(0, width, height, DXGI_FORMAT_UNKNOWN, 0));
 
 	CreateRenderTargets();
+}
+
+void TitanEngine::Renderer::D2DRenderer::OnResize(int width, int height)
+{
+	Resize(width, height);
 }
 
 void TitanEngine::Renderer::D2DRenderer::RenderBegin()

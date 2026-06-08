@@ -1,11 +1,12 @@
 #pragma once
 #include <wrl/client.h>
 #include <d2d1helper.h>
+#include "Win32Window/IWindowObserver.h"
 using namespace Microsoft::WRL;
 
 namespace TitanEngine::Renderer
 {
-    class D2DRenderer final
+    class D2DRenderer final : public Platform::IWindowObserver
     {
     public:
         D2DRenderer() = default;
@@ -14,6 +15,7 @@ namespace TitanEngine::Renderer
         bool Initialize(HWND hwnd);
         void UnInitialize();
         void Resize(UINT width, UINT height);
+        void OnResize(int width, int height) override;
 
         void RenderBegin();
         void RenderEnd();

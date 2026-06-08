@@ -46,9 +46,6 @@
     <ClCompile Include="Scene.cpp">
       <Filter>TitanEngineCore\SceneManagement</Filter>
     </ClCompile>
-    <ClCompile Include="TestSceneLES.cpp">
-      <Filter>TitanEngineCore\SceneManagement\Test</Filter>
-    </ClCompile>
     <ClCompile Include="SceneGraph.cpp">
       <Filter>TitanEngineCore\SceneManagement</Filter>
     </ClCompile>
@@ -67,6 +64,8 @@
     <ClCompile Include="D2DRenderer.cpp">
       <Filter>TitanEngineCore\Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="UpdateSystem.cpp" />
+    <ClCompile Include="RenderSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -87,13 +86,7 @@
     <ClInclude Include="SceneManager.h">
       <Filter>TitanEngineCore\SceneManagement</Filter>
     </ClInclude>
-    <ClInclude Include="TestSceneLES.h">
-      <Filter>TitanEngineCore\SceneManagement\Test</Filter>
-    </ClInclude>
     <ClInclude Include="D2DRenderer.h">
-      <Filter>TitanEngineCore\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="IRenderer.h">
       <Filter>TitanEngineCore\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="Transform.h">
@@ -108,5 +101,7 @@
     <ClInclude Include="D2DRenderer.h">
       <Filter>TitanEngineCore\Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="UpdateSystem.h" />
+    <ClInclude Include="RenderSystem.h" />
   </ItemGroup>
 </Project>

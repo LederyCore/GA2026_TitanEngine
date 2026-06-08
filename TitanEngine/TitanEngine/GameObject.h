@@ -1,9 +1,12 @@
 #pragma once
 #include "Transform.h"
+#include "Component.h"
+#include "Scene.h"
 #include <string>
-#include <unordered_map>
 #include <vector>
 #include <memory>
+
+namespace TitanEngine::SceneManagement { class Scene; }
 
 namespace TitanEngine
 {
@@ -15,72 +18,70 @@ namespace TitanEngine
     public:
         GameObject() = delete;
         explicit GameObject(const std::string& name);
-        ~GameObject() = default;
+        ~GameObject();
 
-        const std::string& GetName()             const { return m_name; }
-        bool               IsActive()            const { return m_isActive; }
+        const std::string& GetName()  const { return m_name; }
+        bool               IsActive() const { return m_isActive; }
         void               SetActive(bool value);
 
+        // ── 컴포넌트 ─────────────────────────────────────────
         template<typename T>
         T& AddComponent()
         {
-            static_assert(std::is_base_of<Component, T>::value,
+            static_assert(std::is_base_of_v<Component, T>,
                 "T must derive from Component");
 
-            TypeId id = TitanEngine::GetTypeId<T>();
-            auto   comp = std::make_unique<T>();
+            auto comp = std::make_unique<T>();
             T* ptr = comp.get();
             ptr->m_owner = this;
 
-            auto* ps = SystemLocator::GetPhysicsSystem();
-            auto* us = SystemLocator::GetUpdateSystem();
-            auto* rs = SystemLocator::GetRenderSystem();
+            m_components.push_back(std::move(comp));
 
-            // 컴파일 타임 검사 PhysicsSystem
-            if constexpr (std::is_base_of_v<IPhysics, T>)
-                if (ps) ps->Register(static_cast<IPhysics*>(ptr));
-
-            // 컴파일 타임 검사 UpdateSystem
-            if (us)
+            // Scene 접근은 cpp 함수로 위임
+            if (m_scene)
             {
-                if constexpr (&T::FixedUpdate != &Component::FixedUpdate)
-                    us->RegisterFixed(ptr);
-                if constexpr (&T::Update != &Component::Update)
-                    us->RegisterUpdate(ptr);
-                if constexpr (&T::LateUpdate != &Component::LateUpdate)
-                    us->RegisterLate(ptr);
+                RegisterToSystems(ptr);
+                NotifyStart(ptr);       // ← Scene 접근 cpp로 분리
             }
 
-            // 컴파일 타임 감지 RenderSystem
-            if constexpr (std::is_base_of_v<IRenderable, T>)
-                if (rs) rs->Register(static_cast<IRenderable*>(ptr));
-
-            m_components[id].push_back(std::move(comp));
-
             ptr->Awake();
-
-            // 오브젝트가 활성이고 컴포넌트가 enabled면 OnEnable 호출
-            if (m_isActive && ptr->IsEnabled())
-                ptr->OnEnable();
-
-            if (us) us->RegisterStart(ptr);
+            if (m_isActive && ptr->IsEnabled()) ptr->OnEnable();
 
             return *ptr;
         }
 
         template<typename T>
-        T* GetComponent() const
+        void RemoveComponent()
         {
-            static_assert(std::is_base_of<Component, T>::value,
+            static_assert(std::is_base_of_v<Component, T>,
                 "T must derive from Component");
 
-            TypeId id = TitanEngine::GetTypeId<T>();
-            auto   it = m_components.find(id);
+            auto it = std::find_if(m_components.begin(), m_components.end(),
+                [](const std::unique_ptr<Component>& c) {
+                    return dynamic_cast<T*>(c.get()) != nullptr;
+                });
 
-            if (it == m_components.end() || it->second.empty())
-                return nullptr;
+            if (it == m_components.end()) return;
 
-            return static_cast<T*>(it->second[0].get());
+            Component* ptr = it->get();
+            if (m_scene) UnregisterFromSystems(ptr);
+            ptr->OnDisable();
+            ptr->OnDestroy();
+
+            m_components.erase(it);
+        }
+
+        template<typename T>
+        T* GetComponent() const
+        {
+            static_assert(std::is_base_of_v<Component, T>,
+                "T must derive from Component");
+
+            for (auto& comp : m_components)
+                if (T* ptr = dynamic_cast<T*>(comp.get()))
+                    return ptr;
+
+            return nullptr;
         }
 
         template<>
@@ -92,20 +93,54 @@ namespace TitanEngine
         template<typename T>
         std::vector<T*> GetComponents() const
         {
-            static_assert(std::is_base_of<Component, T>::value,
+            static_assert(std::is_base_of_v<Component, T>,
                 "T must derive from Component");
 
-            TypeId          id = TitanEngine::GetTypeId<T>();
             std::vector<T*> result;
-            auto            it = m_components.find(id);
-
-            if (it == m_components.end()) return result;
-
-            for (auto& comp : it->second)
-                result.push_back(static_cast<T*>(comp.get()));
+            for (auto& comp : m_components)
+                if (T* ptr = dynamic_cast<T*>(comp.get()))
+                    result.push_back(ptr);
 
             return result;
         }
+
+        // ── 씬그래프 API ─────────────────────────────────────
+        void AddChild(GameObject* child);
+        void RemoveFromParent();
+
+        GameObject* GetParent() const
+        {
+            return transform.parent
+                ? transform.parent->gameObject()
+                : nullptr;
+        }
+
+        GameObject* GetFirstChild() const
+        {
+            return transform.firstChild
+                ? transform.firstChild->gameObject()
+                : nullptr;
+        }
+
+        GameObject* GetNextSibling() const
+        {
+            return transform.nextSibling
+                ? transform.nextSibling->gameObject()
+                : nullptr;
+        }
+
+        // ── 씬 편입/이탈 ─────────────────────────────────────
+        void OnEnterScene(SceneManagement::Scene* scene);
+        void OnExitScene();
+
+        SceneManagement::Scene* GetScene() const { return m_scene; }
+
+    private:
+        void NotifyStart(Component* comp);  // ← 추가
+        void RegisterToSystems(Component* comp);
+        void UnregisterFromSystems(Component* comp);
+        void OnEnableAllComponents();
+        void OnDisableAllComponents();
 
     private:
         friend class Component;
@@ -113,7 +148,8 @@ namespace TitanEngine
         std::string m_name;
         bool        m_isActive = true;
 
-        std::unordered_map<TypeId,
-            std::vector<std::unique_ptr<Component>>> m_components;
+        std::vector<std::unique_ptr<Component>> m_components;
+
+        SceneManagement::Scene* m_scene = nullptr;
     };
 }

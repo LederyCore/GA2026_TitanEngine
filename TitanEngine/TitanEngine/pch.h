@@ -36,6 +36,10 @@
 #include <d2d1_3helper.h>            // D2D1::Helper 클래스들
 #include <dwrite_3.h>                // DirectWrite (최신 텍스트 엔진)
 #include <wincodec.h>                // WIC (이미지 로딩)
+#pragma comment(lib, "d3d11.lib")
+#pragma comment(lib, "d2d1.lib")
+#pragma comment(lib, "dxgi.lib")
+#pragma comment(lib, "dwrite.lib")
 #pragma endregion D2D 관련 ==========================
 
 #define _USE_MATH_DEFINES

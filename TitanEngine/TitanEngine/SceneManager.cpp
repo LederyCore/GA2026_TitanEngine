@@ -2,18 +2,14 @@
 #include "SceneManager.h"
 #include "Scene.h"
 #include "DebugConsole/DebugConsole.h"
-#include "TestSceneLES.h"
 
 namespace TitanEngine::SceneManagement
 {
     bool SceneManager::Initialize()
     {
         // 에디터 없으므로 사용할 씬 수동 등록 (의도된 하드코딩)
-        if (!RegisterScene("TitleScene", std::make_shared<TestSceneLES>("TitleScene")))
-            return false;
 
         // 첫 씬 예약
-        LoadScene("TitleScene");
 
         return true;
     }
