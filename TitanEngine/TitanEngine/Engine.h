@@ -5,6 +5,7 @@ namespace Platform
 	class IWindow;
 }
 
+
 namespace TitanEngine
 {
 	namespace Time
@@ -22,7 +23,6 @@ namespace TitanEngine
 	{
 		class IRenderer;
 	}
-
 	class Engine
 	{
 	public:

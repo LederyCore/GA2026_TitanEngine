@@ -6,7 +6,6 @@
 #include "InputSystem/InputSystem.h"
 #include "DebugConsole/DebugConsole.h"
 #include "GameTimer.h"
-#include "IRenderer.h"
 #include "D2DRenderer.h"
 
 using namespace Platform;
