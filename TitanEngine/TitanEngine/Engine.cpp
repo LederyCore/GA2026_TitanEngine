@@ -24,6 +24,7 @@ TitanEngine::Engine::Engine()
 
 TitanEngine::Engine::~Engine()
 {
+    delete m_renderer;
     delete m_timer;
 }
 
@@ -92,8 +93,6 @@ void TitanEngine::Engine::Run()
             // 이 프레임에서 사용될 씬 그래프 가져오기
             m_currentFrameActiveScene = SceneManager::Instance().GetActiveScene();
             if (!m_currentFrameActiveScene) continue;
-            // SceneGraph가 유효한지 체크
-            if (!m_currentFrameActiveScene->GetSceneGraph()) continue;
 
             // 누적 프레임이 물리 계산할 시간 기준점을 넘었으면 물리 연산 실행
             while (m_fFrameCount >= FIXED_TIMESTEP)
@@ -117,23 +116,18 @@ void TitanEngine::Engine::Finalize()
 
 void TitanEngine::Engine::FixedUpdate(float fixedTime)
 {
-    // IPhysics 구현한 것만 물리 연산 수행
-    //m_currentFrameActiveScene->GetPhysicsSystem()->FixedUpdate(fixedTime);
-
-    //// 컴포넌트의 FixedUpdate 오버라이드한 것만 물리 결과 기반 게임 로직
-    m_currentFrameActiveScene->GetUpdateSystem()->FixedUpdate(fixedTime);
+    m_currentFrameActiveScene->FixedUpdate(fixedTime);
 }
 
 void TitanEngine::Engine::Update(float deltaTime)
 {
-    m_currentFrameActiveScene->GetSceneGraph()->PropagateWorldMatrix();
-
-    m_currentFrameActiveScene->GetUpdateSystem()->Update(deltaTime);
+    m_currentFrameActiveScene->PropagateWorldMatrix();
+    m_currentFrameActiveScene->Update(deltaTime);
 }
 
 void TitanEngine::Engine::LateUpdate(float deltaTime)
 {
-    m_currentFrameActiveScene->GetUpdateSystem()->LateUpdate(deltaTime);
+    m_currentFrameActiveScene->LateUpdate(deltaTime);
 }
 
 void TitanEngine::Engine::Render()
@@ -145,6 +139,6 @@ void TitanEngine::Engine::Render()
     //#endif // _DEBUG
 
     // RenderSystem에 DeviceContext 넘겨서 일괄 드로우
-    m_currentFrameActiveScene->GetRenderSystem()->Draw(m_renderer->GetContext());
+    m_currentFrameActiveScene->Render(m_renderer->GetContext());
     m_renderer->RenderEnd();
 }

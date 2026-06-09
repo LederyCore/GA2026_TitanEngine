@@ -2,63 +2,126 @@
 #include "Scene.h"
 #include "GameObject.h"
 
-// 네임스페이스 안에서 TitanEngine 타입을 편하게 쓰기 위해
-using TitanEngine::GameObject;
-using TitanEngine::Transform;
-
 namespace TitanEngine::SceneManagement
 {
-    Scene::Scene(const std::string& sceneName)
-        : m_sceneName(sceneName)
+    void Scene::AddObject(Object* obj)
     {
-        m_sceneGraph = std::make_unique<SceneGraph>();
-        m_updateSystem = std::make_unique<UpdateSystem>();
-        m_renderSystem = std::make_unique<RenderSystem>();
+        GameObject* go = dynamic_cast<GameObject*>(obj);
+        if (go == nullptr) return;
+
+        m_root.push_back(std::unique_ptr<GameObject>(go));
     }
 
-    // ── GameObject 생성 ───────────────────────────────────────
-    GameObject* Scene::CreateGameObject(const std::string& name)
+    void Scene::RemoveObject(Object* obj)
     {
-        auto  go = std::make_unique<GameObject>(name);
-        auto* ptr = go.get();
-        m_gameObjects.push_back(std::move(go));
-        m_sceneGraph->AddToRoot(ptr, this);
-        return ptr;
+        // 대기열에 쌓고 Update 끝나고 일괄 삭제
+        m_pendingDestroyList.push_back(obj);
     }
 
-    GameObject* Scene::CreateGameObject(const std::string& name,
-        Transform* parent)
+    void Scene::Update(float deltaTime)
     {
-        auto  go = std::make_unique<GameObject>(name);
-        auto* ptr = go.get();
-        m_gameObjects.push_back(std::move(go));
+        // 1. 일반 업데이트
+        for (auto& go : m_updateableList)
+            go->Update(deltaTime);
 
-        if (parent && parent->gameObject())
+        // 2. 지연 삭제 타이머 처리
+        for (auto& go : m_root)
         {
-            parent->AddChild(&ptr->transform);
-            ptr->OnEnterScene(this);
+            if (go->m_pendingDestroy)
+            {
+                go->m_destroyDelay -= deltaTime;
+                if (go->m_destroyDelay <= 0.0f)
+                    RemoveObject(go.get());
+            }
         }
-        else
+
+        // 3. 대기열 일괄 삭제
+        for (Object* obj : m_pendingDestroyList)
         {
-            m_sceneGraph->AddToRoot(ptr, this);
+            // 컴포넌트이면 OnDestory 호출
+            Component* comp = dynamic_cast<Component*>(obj);
+            if (comp != nullptr)
+            {
+                comp->OnDestory();
+            }
+
+            // GameObject이면 모든 컴포넌트에 OnDestory 호출
+            GameObject* go = dynamic_cast<GameObject*>(obj);
+            if (go != nullptr)
+            {
+                for (Component* c : go->m_components)
+                {
+                    c->OnDestory();
+                }
+            }
+
+            // 업데이트 리스트에서 제거
+            m_fixedUpdateList.erase(
+                std::remove_if(m_fixedUpdateList.begin(), m_fixedUpdateList.end(),
+                    [obj](IFixedUpdateable* c) {
+                        return c == dynamic_cast<IFixedUpdateable*>(obj);
+                    }),
+                m_fixedUpdateList.end()
+            );
+            m_updateableList.erase(
+                std::remove_if(m_updateableList.begin(), m_updateableList.end(),
+                    [obj](IUpdateable* c) {
+                        return c == dynamic_cast<IUpdateable*>(obj);
+                    }),
+                m_updateableList.end()
+            );
+            m_lateUpdateList.erase(
+                std::remove_if(m_lateUpdateList.begin(), m_lateUpdateList.end(),
+                    [obj](ILateUpdateable* c) {
+                        return c == dynamic_cast<ILateUpdateable*>(obj);
+                    }),
+                m_lateUpdateList.end()
+            );
+            m_renderList.erase(
+                std::remove_if(m_renderList.begin(), m_renderList.end(),
+                    [obj](IRenderable* c) {
+                        return c == dynamic_cast<IRenderable*>(obj);
+                    }),
+                m_renderList.end()
+            );
+
+            // 루트에서 제거
+            m_root.erase(
+                std::remove_if(m_root.begin(), m_root.end(),
+                    [obj](const std::unique_ptr<GameObject>& go) {
+                        return go.get() == dynamic_cast<GameObject*>(obj);
+                    }),
+                m_root.end()
+            );
         }
-        return ptr;
+        m_pendingDestroyList.clear();
     }
 
-    // ── GameObject 소멸 ───────────────────────────────────────
-    void Scene::DestroyGameObject(GameObject* go)
+    void Scene::FixedUpdate(float fixedTime)
     {
-        if (!go) return;
-
-        go->transform.DetachFromParent();
-        go->OnExitScene();
-
-        auto it = std::find_if(m_gameObjects.begin(), m_gameObjects.end(),
-            [go](const std::unique_ptr<GameObject>& owned) {
-                return owned.get() == go;
-            });
-
-        if (it != m_gameObjects.end())
-            m_gameObjects.erase(it);
+        for (auto& go : m_fixedUpdateList)
+            go->FixedUpdate(fixedTime);
     }
+
+    void Scene::PropagateWorldMatrix()
+    {
+
+    }
+
+    void Scene::LateUpdate(float deltaTime)
+    {
+        for (auto& go : m_lateUpdateList)
+            go->LateUpdate(deltaTime);
+    }
+
+    void Scene::Render(ID2D1DeviceContext7* ctx)
+    {
+        for (auto& go : m_renderList)
+            go->Render(ctx);
+    }
+
+    void Scene::AddToFixedUpdateList(IFixedUpdateable* c) { m_fixedUpdateList.push_back(c); }
+    void Scene::AddToUpdateList(IUpdateable* c)           { m_updateableList.push_back(c); }
+    void Scene::AddToLateUpdateList(ILateUpdateable* c)   { m_lateUpdateList.push_back(c); }
+    void Scene::AddToRenderList(IRenderable* c)           { m_renderList.push_back(c); }
 }

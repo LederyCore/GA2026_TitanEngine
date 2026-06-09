@@ -1,41 +1,45 @@
-// Scene.h
 #pragma once
+#include "GameObject.h" 
 #include <string>
 #include <vector>
 #include <memory>
-#include "SceneGraph.h"
-#include "UpdateSystem.h"
-#include "RenderSystem.h"
-#include "GameObject.h"   // ← 전방선언 대신 완전 포함으로 변경
-
+namespace TitanEngine
+{
+    class IFixedUpdateable;
+    class IUpdateable;
+    class ILateUpdateable;
+    class IRenderable;
+    class Object;
+}
 namespace TitanEngine::SceneManagement
 {
-    class Scene abstract
+    class Scene
     {
     public:
-        explicit Scene(const std::string& sceneName);
-        virtual ~Scene() = default;              // ← 선언만, cpp에서 정의
+        Scene(const std::string& name) : m_sceneName(name) {}
+        virtual ~Scene() = default;
         virtual void OnLoad() = 0;
         virtual void OnUnLoad() = 0;
+        void FixedUpdate(float fixedTime);
+        void PropagateWorldMatrix();
+        void Update(float deltaTime);
+        void LateUpdate(float deltaTime);
+        void Render(ID2D1DeviceContext7* ctx);
+        void AddObject(Object* obj);
+        void RemoveObject(Object* obj);
+        void AddToFixedUpdateList(IFixedUpdateable* c);
+        void AddToUpdateList(IUpdateable* c);
+        void AddToLateUpdateList(ILateUpdateable* c);
+        void AddToRenderList(IRenderable* c);
+        const std::string GetSceneName() { return m_sceneName; }
 
-        const std::string& GetSceneName() const { return m_sceneName; }
-
-        SceneGraph* GetSceneGraph() { return m_sceneGraph.get(); }
-        UpdateSystem* GetUpdateSystem() { return m_updateSystem.get(); }
-        RenderSystem* GetRenderSystem() { return m_renderSystem.get(); }
-
-        ::TitanEngine::GameObject* CreateGameObject(const std::string& name);
-        ::TitanEngine::GameObject* CreateGameObject(const std::string& name,
-            ::TitanEngine::Transform* parent);
-        void DestroyGameObject(::TitanEngine::GameObject* go);
-
-    protected:
+    private:
         std::string m_sceneName;
-
-        std::unique_ptr<SceneGraph>   m_sceneGraph;
-        std::unique_ptr<UpdateSystem> m_updateSystem;
-        std::unique_ptr<RenderSystem> m_renderSystem;
-
-        std::vector<std::unique_ptr<::TitanEngine::GameObject>> m_gameObjects;
+        std::vector<std::unique_ptr<GameObject>> m_root;
+        std::vector<IFixedUpdateable*> m_fixedUpdateList;
+        std::vector<IUpdateable*>      m_updateableList;
+        std::vector<ILateUpdateable*>  m_lateUpdateList;
+        std::vector<IRenderable*>      m_renderList;
+        std::vector<Object*>           m_pendingDestroyList;
     };
 }
