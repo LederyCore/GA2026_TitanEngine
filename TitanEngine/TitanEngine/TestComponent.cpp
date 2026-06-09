@@ -37,10 +37,11 @@ void TitanEngine::TestComponent::Update(float deltaTime)
 	float dy = 0.0f;
 
 	auto& input = Platform::InputSystem::Instance();
-	if (input.GetKeyDown(VK_LEFT))  dx -= m_speed * deltaTime;
-	if (input.GetKeyDown(VK_RIGHT)) dx += m_speed * deltaTime;
-	if (input.GetKeyDown(VK_UP))    dy -= m_speed * deltaTime;
-	if (input.GetKeyDown(VK_DOWN))  dy += m_speed * deltaTime;
+
+	if (input.GetKeyDown(VK_LEFT) || input.GetKeyPressed(VK_LEFT))  dx -= m_speed * deltaTime;
+	if (input.GetKeyDown(VK_RIGHT) || input.GetKeyPressed(VK_RIGHT)) dx += m_speed * deltaTime;
+	if (input.GetKeyDown(VK_UP) || input.GetKeyPressed(VK_UP))    dy -= m_speed * deltaTime;
+	if (input.GetKeyDown(VK_DOWN) || input.GetKeyPressed(VK_DOWN))  dy += m_speed * deltaTime;
 
 	if (dx != 0.0f || dy != 0.0f)
 		t->SetLocalPosition(pos.x + dx, pos.y + dy);

@@ -114,7 +114,7 @@ void TitanEngine::Renderer::D2DRenderer::RenderEnd()
 {
 	m_d2dContext->EndDraw();
 
-	HRESULT hr = m_swapChain->Present(1, 0);
+	HRESULT hr = m_swapChain->Present(0, DXGI_PRESENT_ALLOW_TEARING);
 
 	if (hr == DXGI_ERROR_DEVICE_REMOVED || hr == DXGI_ERROR_DEVICE_RESET)
 	{
@@ -170,6 +170,7 @@ void TitanEngine::Renderer::D2DRenderer::CreateDeviceAndSwapChain(HWND hwnd)
 	scDesc.BufferCount = 2;
 	scDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
 	scDesc.Scaling = DXGI_SCALING_STRETCH;
+	scDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING;
 
 	ComPtr<IDXGISwapChain1> swapChain;
 	hr = dxgiFactory->CreateSwapChainForHwnd(
