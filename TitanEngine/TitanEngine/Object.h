@@ -5,6 +5,7 @@ namespace TitanEngine
     class Transform;
     class Object
     {
+
     public:
         Object();
         virtual ~Object() = default;
@@ -13,6 +14,8 @@ namespace TitanEngine
         // Destroy
         static void Destroy(Object* obj);
         static void Destroy(Object* obj, float delay);  // 지연 삭제
+
+        SceneManagement::Scene* GetScene() const { return m_currentScene; }
 
         template<typename T>
         static T* Instantiate(T* original)

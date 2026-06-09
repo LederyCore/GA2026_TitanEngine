@@ -2,6 +2,7 @@
 #include "Object.h"
 #include "SceneManager.h"
 #include "Scene.h"
+#include "GameObject.h"
 
 namespace TitanEngine
 {
@@ -13,8 +14,6 @@ namespace TitanEngine
     void Object::Destroy(Object* obj)
     {
         if (obj == nullptr) return;
-
-        // 씬에서 제거 요청
         if (obj->m_currentScene != nullptr)
             obj->m_currentScene->RemoveObject(obj);
     }
@@ -22,8 +21,6 @@ namespace TitanEngine
     void Object::Destroy(Object* obj, float delay)
     {
         if (obj == nullptr) return;
-
-        // 지연 삭제 예약 (씬이 매 프레임 체크)
         obj->m_pendingDestroy = true;
         obj->m_destroyDelay = delay;
     }
@@ -42,18 +39,49 @@ namespace TitanEngine
     {
         if (original == nullptr) return nullptr;
 
-        // 1. 복제 (파생 클래스의 Clone 호출)
+        // 1. 복제
         Object* clone = original->Clone();
 
-        // 2. 씬 등록
+        // 2. 씬 획득
         SceneManagement::Scene* activeScene =
             SceneManagement::SceneManager::Instance().GetActiveScene();
-        clone->m_currentScene = activeScene;
-        activeScene->AddObject(clone);
+        if (!activeScene) return clone;
 
-        // 3. Transform 부모 설정
-        // (Transform 연결은 GameObject 레벨 문제라 여기선 parent만 보관)
-        // instantiateInWorldSpace는 향후 Transform::SetParent()에서 처리
+        clone->m_currentScene = activeScene;
+
+        // 3. GameObject면 씬에 등록
+        GameObject* go = dynamic_cast<GameObject*>(clone);
+        if (go)
+        {
+            activeScene->RegisterObject(go);
+
+            // 4. 부모 설정
+            if (parent != nullptr)
+            {
+                if (instantiateInWorldSpace)
+                {
+                    // 월드 위치 유지 → 부모 설정 후 월드 위치 보정
+                    D2D1_POINT_2F worldPos = go->GetTransform()->GetWorldPosition();
+                    float worldRot = go->GetTransform()->GetWorldRotation();
+                    D2D1_POINT_2F worldScl = go->GetTransform()->GetWorldScale();
+
+                    go->GetTransform()->SetParent(parent);
+
+                    D2D1_POINT_2F localPos = parent->GetInverseWorldMatrix().TransformPoint(worldPos);
+                    go->GetTransform()->SetLocalPosition(localPos.x, localPos.y);
+                    go->GetTransform()->SetLocalRotation(worldRot - parent->GetWorldRotation());
+                    go->GetTransform()->SetLocalScale(
+                        worldScl.x / parent->GetWorldScale().x,
+                        worldScl.y / parent->GetWorldScale().y
+                    );
+                }
+                else
+                {
+                    // 로컬 위치 유지 → 그냥 부모만 설정
+                    go->GetTransform()->SetParent(parent);
+                }
+            }
+        }
 
         return clone;
     }

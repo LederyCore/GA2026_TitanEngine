@@ -16,6 +16,7 @@ namespace TitanEngine::Renderer
         void UnInitialize();
         void Resize(UINT width, UINT height);
         void OnResize(int width, int height) override;
+        void ShowFPS(float fps);
 
         void RenderBegin();
         void RenderEnd();
@@ -44,5 +45,8 @@ namespace TitanEngine::Renderer
 
         // 공용 리소스
         ComPtr<ID2D1SolidColorBrush> m_brush;
+
+        ComPtr<IDWriteFactory>       m_dwriteFactory;   
+        ComPtr<IDWriteTextFormat>    m_fpsTextFormat;   
     };
 }

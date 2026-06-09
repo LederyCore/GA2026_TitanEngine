@@ -1,36 +1,67 @@
 #include "pch.h"
 #include "GameObject.h"
-#include "SceneManager.h"
+#include "Scene.h"
 
 namespace TitanEngine
 {
-	Object* GameObject::Clone()
-	{
-        // 1. 얕은 복사로 시작
-        GameObject* clone = new GameObject(*this);
+    GameObject::~GameObject()
+    {
+        for (Component* comp : m_components)
+        {
+            // 컴포넌트의 다형성이 유지되는 delete 전에 명시적으로 호출합니다.
+            if (comp->GetActive())
+            {
+                comp->OnDisable();
+            }
+            comp->OnDestory();
 
-        // 2. 계층 초기화 (원본 참조 끊기)
-        clone->m_parent = nullptr;
-        clone->m_children.clear();
-        clone->m_components.clear();
-        clone->m_currentScene = SceneManagement::SceneManager::Instance().GetActiveScene();
+            delete comp;
+        }
+        m_components.clear();
+    }
 
-        // 3. 컴포넌트 깊은 복사
+    Object* GameObject::Clone()
+    {
+        GameObject* clone = new GameObject(m_name);
+
+        clone->m_isActive = m_isActive;
+
         for (Component* comp : m_components)
         {
             Component* compClone = static_cast<Component*>(comp->Clone());
-            compClone->m_owner = clone;  // 소유자 재연결
+            compClone->m_owner = clone;
             clone->m_components.push_back(compClone);
         }
 
-        // 4. 자식 GameObject 재귀 복사
-        for (GameObject* child : m_children)
+        if (m_transform)
         {
-            GameObject* childClone = static_cast<GameObject*>(child->Clone());
-            childClone->m_parent = clone;
-            clone->m_children.push_back(childClone);
+            for (int i = 0; i < m_transform->GetChildCount(); i++)
+            {
+                Transform* childTransform = m_transform->GetChild(i);
+                GameObject* childClone = static_cast<GameObject*>(
+                    childTransform->GetOwner()->Clone()
+                    );
+                if (childClone->m_transform)
+                    childClone->m_transform->SetParent(clone->m_transform);
+            }
         }
 
         return clone;
-	}
+    }
+    void GameObject::RegisterComponent(Component* comp)
+    {
+        if (!m_currentScene) return;
+        m_currentScene->RegisterComponent(comp);  // Scene에 위임
+
+        comp->OnAwake();          // 즉시 호출
+
+        if (comp->GetActive())
+        {
+            comp->OnEnable();     // 즉시 호출
+
+            // OnStart는 다음 프레임 시작 시 호출되도록 예약
+            if (m_currentScene)
+                m_currentScene->AddToPendingStartList(comp);
+        }
+    }
 }

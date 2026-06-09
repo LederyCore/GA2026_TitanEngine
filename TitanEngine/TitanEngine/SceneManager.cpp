@@ -20,6 +20,7 @@ namespace TitanEngine::SceneManagement
         if (m_currentScene)
         {
             m_currentScene->OnUnLoad();
+            m_currentScene->Clear();
             m_currentScene = nullptr;
         }
 
@@ -125,6 +126,7 @@ namespace TitanEngine::SceneManagement
         if (m_currentScene)
         {
             m_currentScene->OnUnLoad();
+            m_currentScene->Clear();
             m_currentScene = nullptr;
         }
 

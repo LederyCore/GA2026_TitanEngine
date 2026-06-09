@@ -35,10 +35,12 @@ namespace TitanEngine
     class Component : protected Object
     {
         friend class GameObject;
+        friend class SceneManagement::Scene;
+        GameObject* m_owner = nullptr;
 
     public :
         virtual ~Component() = default;
-        Object* Clone() override = 0; // 여기서 파생 컴포넌트들도 재구현을 강제하려면
+        Object* Clone() override = 0;
 
         virtual void OnAwake() {}
         virtual void OnEnable() {}
@@ -47,7 +49,7 @@ namespace TitanEngine
         virtual void OnDestory() {}
 
         const bool GetActive() { return m_isActive; }
-        void SetActive(bool value) { m_isActive = value; }
+        void SetActive(bool value);
      
         const GameObject* GetGameGameObject() { return m_owner; }
 
@@ -56,6 +58,6 @@ namespace TitanEngine
 
     private :
         bool m_isActive = true;
-        GameObject* m_owner = nullptr;
+
     };
 }

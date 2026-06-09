@@ -1,31 +1,46 @@
 #include "pch.h"
 #include "Scene.h"
-#include "GameObject.h"
+#include "DebugConsole/DebugConsole.h"
+#include <algorithm>
+#include <functional>
 
 namespace TitanEngine::SceneManagement
 {
-    void Scene::AddObject(Object* obj)
+    void Scene::Clear()
     {
-        GameObject* go = dynamic_cast<GameObject*>(obj);
-        if (go == nullptr) return;
+        m_pendingStartList.clear();
+        m_fixedUpdateList.clear();
+        m_updateableList.clear();
+        m_lateUpdateList.clear();
+        m_renderList.clear();
+        m_pendingDestroyList.clear();
 
-        m_root.push_back(std::unique_ptr<GameObject>(go));
+        m_allGameObjects.clear();  // unique_ptr 소멸 → ~GameObject() → ~Component() 자동
+        m_transforms.clear();
     }
 
-    void Scene::RemoveObject(Object* obj)
+    void Scene::FixedUpdate(float fixedTime)
     {
-        // 대기열에 쌓고 Update 끝나고 일괄 삭제
-        m_pendingDestroyList.push_back(obj);
+        for (auto* c : m_fixedUpdateList)
+            c->FixedUpdate(fixedTime);
     }
 
     void Scene::Update(float deltaTime)
     {
-        // 1. 일반 업데이트
-        for (auto& go : m_updateableList)
-            go->Update(deltaTime);
+        // 1. Start 처리
+        for (Component* comp : m_pendingStartList)
+        {
+            if (comp->GetActive())
+                comp->OnStart();
+        }
+        m_pendingStartList.clear();
 
-        // 2. 지연 삭제 타이머 처리
-        for (auto& go : m_root)
+        // 2. 일반 업데이트
+        for (auto* c : m_updateableList)
+            c->Update(deltaTime);
+
+        // 3. 지연 삭제 타이머
+        for (auto& go : m_allGameObjects)
         {
             if (go->m_pendingDestroy)
             {
@@ -35,93 +50,255 @@ namespace TitanEngine::SceneManagement
             }
         }
 
-        // 3. 대기열 일괄 삭제
-        for (Object* obj : m_pendingDestroyList)
-        {
-            // 컴포넌트이면 OnDestory 호출
-            Component* comp = dynamic_cast<Component*>(obj);
-            if (comp != nullptr)
-            {
-                comp->OnDestory();
-            }
-
-            // GameObject이면 모든 컴포넌트에 OnDestory 호출
-            GameObject* go = dynamic_cast<GameObject*>(obj);
-            if (go != nullptr)
-            {
-                for (Component* c : go->m_components)
-                {
-                    c->OnDestory();
-                }
-            }
-
-            // 업데이트 리스트에서 제거
-            m_fixedUpdateList.erase(
-                std::remove_if(m_fixedUpdateList.begin(), m_fixedUpdateList.end(),
-                    [obj](IFixedUpdateable* c) {
-                        return c == dynamic_cast<IFixedUpdateable*>(obj);
-                    }),
-                m_fixedUpdateList.end()
-            );
-            m_updateableList.erase(
-                std::remove_if(m_updateableList.begin(), m_updateableList.end(),
-                    [obj](IUpdateable* c) {
-                        return c == dynamic_cast<IUpdateable*>(obj);
-                    }),
-                m_updateableList.end()
-            );
-            m_lateUpdateList.erase(
-                std::remove_if(m_lateUpdateList.begin(), m_lateUpdateList.end(),
-                    [obj](ILateUpdateable* c) {
-                        return c == dynamic_cast<ILateUpdateable*>(obj);
-                    }),
-                m_lateUpdateList.end()
-            );
-            m_renderList.erase(
-                std::remove_if(m_renderList.begin(), m_renderList.end(),
-                    [obj](IRenderable* c) {
-                        return c == dynamic_cast<IRenderable*>(obj);
-                    }),
-                m_renderList.end()
-            );
-
-            // 루트에서 제거
-            m_root.erase(
-                std::remove_if(m_root.begin(), m_root.end(),
-                    [obj](const std::unique_ptr<GameObject>& go) {
-                        return go.get() == dynamic_cast<GameObject*>(obj);
-                    }),
-                m_root.end()
-            );
-        }
-        m_pendingDestroyList.clear();
-    }
-
-    void Scene::FixedUpdate(float fixedTime)
-    {
-        for (auto& go : m_fixedUpdateList)
-            go->FixedUpdate(fixedTime);
-    }
-
-    void Scene::PropagateWorldMatrix()
-    {
-
+        FlushDestroyQueue();
     }
 
     void Scene::LateUpdate(float deltaTime)
     {
-        for (auto& go : m_lateUpdateList)
-            go->LateUpdate(deltaTime);
+        for (auto* c : m_lateUpdateList)
+            c->LateUpdate(deltaTime);
     }
 
     void Scene::Render(ID2D1DeviceContext7* ctx)
     {
-        for (auto& go : m_renderList)
-            go->Render(ctx);
+        for (auto* c : m_renderList)
+            c->Render(ctx);
     }
 
+    void Scene::RegisterComponent(Component* comp)
+    {
+        if (comp == nullptr) return;
+
+        if (auto* c = dynamic_cast<IFixedUpdateable*>(comp))
+            if (std::find(m_fixedUpdateList.begin(), m_fixedUpdateList.end(), c) == m_fixedUpdateList.end())
+                m_fixedUpdateList.push_back(c);
+
+        if (auto* c = dynamic_cast<IUpdateable*>(comp))
+            if (std::find(m_updateableList.begin(), m_updateableList.end(), c) == m_updateableList.end())
+                m_updateableList.push_back(c);
+
+        if (auto* c = dynamic_cast<ILateUpdateable*>(comp))
+            if (std::find(m_lateUpdateList.begin(), m_lateUpdateList.end(), c) == m_lateUpdateList.end())
+                m_lateUpdateList.push_back(c);
+
+        if (auto* c = dynamic_cast<IRenderable*>(comp))
+            if (std::find(m_renderList.begin(), m_renderList.end(), c) == m_renderList.end())
+                m_renderList.push_back(c);
+    }
+
+    void Scene::UnRegisterComponent(Component* comp)
+    {
+        if (comp == nullptr) return;
+
+        if (auto* c = dynamic_cast<IFixedUpdateable*>(comp))
+            m_fixedUpdateList.erase(
+                std::remove(m_fixedUpdateList.begin(), m_fixedUpdateList.end(), c),
+                m_fixedUpdateList.end());
+
+        if (auto* c = dynamic_cast<IUpdateable*>(comp))
+            m_updateableList.erase(
+                std::remove(m_updateableList.begin(), m_updateableList.end(), c),
+                m_updateableList.end());
+
+        if (auto* c = dynamic_cast<ILateUpdateable*>(comp))
+            m_lateUpdateList.erase(
+                std::remove(m_lateUpdateList.begin(), m_lateUpdateList.end(), c),
+                m_lateUpdateList.end());
+
+        if (auto* c = dynamic_cast<IRenderable*>(comp))
+            m_renderList.erase(
+                std::remove(m_renderList.begin(), m_renderList.end(), c),
+                m_renderList.end());
+    }
+    GameObject* Scene::AddObject(const std::string& name)
+    {
+        if ((int)m_transforms.size() >= MAX_GAMEOBJECTS)
+        {
+            LOG_ERROR("MAX_GAMEOBJECTS(%d) 초과", MAX_GAMEOBJECTS);
+            return nullptr;
+        }
+
+        int index = (int)m_transforms.size();
+
+        // Transform 먼저 배열에 추가
+        m_transforms.emplace_back();
+        Transform* t = &m_transforms.back();
+        t->m_selfIndex = index;
+
+        // GameObject 생성
+        auto go = std::make_unique<GameObject>(name);
+        go->m_transform = t;
+        t->m_owner = go.get();
+
+        GameObject* goPtr = go.get();
+        m_allGameObjects.push_back(std::move(go));
+
+        return goPtr;
+    }
+
+    void Scene::SwapTransforms(int a, int b)
+    {
+        std::swap(m_transforms[a], m_transforms[b]);
+
+        // selfIndex 갱신
+        m_transforms[a].m_selfIndex = a;
+        m_transforms[b].m_selfIndex = b;
+
+        // m_owner->m_transform 포인터 갱신
+        if (m_transforms[a].m_owner)
+            m_transforms[a].m_owner->m_transform = &m_transforms[a];
+        if (m_transforms[b].m_owner)
+            m_transforms[b].m_owner->m_transform = &m_transforms[b];
+
+        // 전체 배열의 parentIndex, childrenIndices 중 a↔b 교체
+        for (Transform& t : m_transforms)
+        {
+            if (t.m_parentIndex == a)       t.m_parentIndex = b;
+            else if (t.m_parentIndex == b)  t.m_parentIndex = a;
+
+            for (int& ci : t.m_childrenIndices)
+            {
+                if (ci == a)      ci = b;
+                else if (ci == b) ci = a;
+            }
+        }
+    }
+
+    void Scene::PropagateWorldMatrix()
+    {
+        // 인덱스 순서 = 부모가 항상 앞 → 단순 선형 순회로 OK
+        for (int i = 0; i < (int)m_transforms.size(); i++)
+        {
+            Transform& t = m_transforms[i];
+
+            D2D1::Matrix3x2F local =
+                D2D1::Matrix3x2F::Scale(t.GetLocalScale().x, t.GetLocalScale().y)
+                * D2D1::Matrix3x2F::Rotation(t.GetLocalRotation())
+                * D2D1::Matrix3x2F::Translation(t.GetLocalPosition().x, t.GetLocalPosition().y);
+
+            if (t.m_parentIndex == -1)
+                t.SetWorldMatrix(local);
+            else
+                t.SetWorldMatrix(local * m_transforms[t.m_parentIndex].GetWorldMatrix());
+            //                           ↑ 부모가 항상 앞 → 이미 계산된 상태
+        }
+    }
+
+    void Scene::RegisterObject(GameObject* go)
+    {
+        if (go == nullptr) return;
+        if ((int)m_transforms.size() >= MAX_GAMEOBJECTS)
+        {
+            LOG_ERROR("MAX_GAMEOBJECTS(%d) 초과", MAX_GAMEOBJECTS);
+            return;
+        }
+
+        int index = (int)m_transforms.size();
+
+        m_transforms.emplace_back();
+        Transform* t = &m_transforms.back();
+        t->m_selfIndex = index;
+
+        // 기존 Transform 값 복사
+        *t = *go->m_transform;
+        t->m_selfIndex = index;  // 복사 후 인덱스 재설정
+        go->m_transform = t;
+        t->m_owner = go;
+
+        m_allGameObjects.push_back(std::unique_ptr<GameObject>(go));
+    }
+
+    void Scene::FlushDestroyQueue()
+    {
+        // 재귀적으로 자식 포함 파괴 대상 수집
+        std::vector<int> toRemoveIndices;
+
+        std::function<void(int)> collectWithChildren = [&](int idx)
+            {
+                // 이미 수집된 인덱스면 스킵
+                if (std::find(toRemoveIndices.begin(), toRemoveIndices.end(), idx) != toRemoveIndices.end())
+                    return;
+
+                toRemoveIndices.push_back(idx);
+
+                // 자식들도 재귀 수집
+                for (int childIdx : m_transforms[idx].m_childrenIndices)
+                    collectWithChildren(childIdx);
+            };
+
+        for (Object* obj : m_pendingDestroyList)
+        {
+            GameObject* go = dynamic_cast<GameObject*>(obj);
+            if (go && go->m_transform)
+                collectWithChildren(go->m_transform->m_selfIndex);
+        }
+
+        // 인덱스 내림차순 정렬 (뒤에서부터 제거해야 인덱스 밀림 없음)
+        std::sort(toRemoveIndices.rbegin(), toRemoveIndices.rend());
+
+        for (int idx : toRemoveIndices)
+        {
+            GameObject* go = m_transforms[idx].m_owner;
+
+            // 업데이트 리스트에서 제거
+            if (go)
+            {
+                m_fixedUpdateList.erase(
+                    std::remove_if(m_fixedUpdateList.begin(), m_fixedUpdateList.end(),
+                        [go](IFixedUpdateable* c) { return c == dynamic_cast<IFixedUpdateable*>(go); }),
+                    m_fixedUpdateList.end());
+                m_updateableList.erase(
+                    std::remove_if(m_updateableList.begin(), m_updateableList.end(),
+                        [go](IUpdateable* c) { return c == dynamic_cast<IUpdateable*>(go); }),
+                    m_updateableList.end());
+                m_lateUpdateList.erase(
+                    std::remove_if(m_lateUpdateList.begin(), m_lateUpdateList.end(),
+                        [go](ILateUpdateable* c) { return c == dynamic_cast<ILateUpdateable*>(go); }),
+                    m_lateUpdateList.end());
+                m_renderList.erase(
+                    std::remove_if(m_renderList.begin(), m_renderList.end(),
+                        [go](IRenderable* c) { return c == dynamic_cast<IRenderable*>(go); }),
+                    m_renderList.end());
+            }
+
+            // Transform 제거
+            m_transforms.erase(m_transforms.begin() + idx);
+
+            // 제거 후 인덱스 갱신
+            for (int i = idx; i < (int)m_transforms.size(); i++)
+            {
+                m_transforms[i].m_selfIndex = i;
+                if (m_transforms[i].m_owner)
+                    m_transforms[i].m_owner->m_transform = &m_transforms[i];
+            }
+            for (Transform& t : m_transforms)
+            {
+                if (t.m_parentIndex > idx)       t.m_parentIndex--;
+                else if (t.m_parentIndex == idx) t.m_parentIndex = -1;
+
+                for (int& ci : t.m_childrenIndices)
+                    if (ci > idx) ci--;
+
+                t.m_childrenIndices.erase(
+                    std::remove(t.m_childrenIndices.begin(), t.m_childrenIndices.end(), idx),
+                    t.m_childrenIndices.end());
+            }
+
+            // GameObject 제거
+            m_allGameObjects.erase(
+                std::remove_if(m_allGameObjects.begin(), m_allGameObjects.end(),
+                    [go](const std::unique_ptr<GameObject>& g) { return g.get() == go; }),
+                m_allGameObjects.end());
+        }
+
+        m_pendingDestroyList.clear();
+    }
+
+    // 나머지 동일
+    void Scene::RemoveObject(Object* obj) { m_pendingDestroyList.push_back(obj); }
+    void Scene::AddToPendingStartList(Component* c) { m_pendingStartList.push_back(c); }
     void Scene::AddToFixedUpdateList(IFixedUpdateable* c) { m_fixedUpdateList.push_back(c); }
-    void Scene::AddToUpdateList(IUpdateable* c)           { m_updateableList.push_back(c); }
-    void Scene::AddToLateUpdateList(ILateUpdateable* c)   { m_lateUpdateList.push_back(c); }
-    void Scene::AddToRenderList(IRenderable* c)           { m_renderList.push_back(c); }
+    void Scene::AddToUpdateList(IUpdateable* c) { m_updateableList.push_back(c); }
+    void Scene::AddToLateUpdateList(ILateUpdateable* c) { m_lateUpdateList.push_back(c); }
+    void Scene::AddToRenderList(IRenderable* c) { m_renderList.push_back(c); }
 }

@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "D2DRenderer.h"
+#include "DebugConsole/DebugConsole.h"
 #include "Win32Window/IWindowObserver.h"
 
 TitanEngine::Renderer::D2DRenderer::~D2DRenderer()
@@ -23,6 +24,25 @@ bool TitanEngine::Renderer::D2DRenderer::Initialize(HWND hwnd)
 
 	DX::ThrowIfFailed(hr);
 
+	// DirectWrite 팩토리 생성
+	DWriteCreateFactory(
+		DWRITE_FACTORY_TYPE_SHARED,
+		__uuidof(IDWriteFactory),
+		reinterpret_cast<IUnknown**>(m_dwriteFactory.GetAddressOf())
+	);
+
+	// FPS 텍스트 포맷 생성
+	m_dwriteFactory->CreateTextFormat(
+		L"Consolas",               // 폰트
+		nullptr,
+		DWRITE_FONT_WEIGHT_NORMAL,
+		DWRITE_FONT_STYLE_NORMAL,
+		DWRITE_FONT_STRETCH_NORMAL,
+		20.0f,                     // 폰트 크기
+		L"ko-KR",
+		m_fpsTextFormat.GetAddressOf()
+	);
+
 	return true;
 }
 
@@ -40,6 +60,8 @@ void TitanEngine::Renderer::D2DRenderer::UnInitialize()
 
 void TitanEngine::Renderer::D2DRenderer::Resize(UINT width, UINT height)
 {
+	LOG_DEBUG("Resize: %d x %d", width, height);  // 한글 제거
+
 	ReleaseRenderTargets();
 
 	DX::ThrowIfFailed(m_swapChain->ResizeBuffers(0, width, height, DXGI_FORMAT_UNKNOWN, 0));
@@ -50,6 +72,29 @@ void TitanEngine::Renderer::D2DRenderer::Resize(UINT width, UINT height)
 void TitanEngine::Renderer::D2DRenderer::OnResize(int width, int height)
 {
 	Resize(width, height);
+}
+
+void TitanEngine::Renderer::D2DRenderer::ShowFPS(float fps)
+{
+	if (!m_d2dContext || !m_fpsTextFormat || !m_brush) return;
+
+	// float → wstring 변환
+	wchar_t buffer[64];
+	swprintf_s(buffer, L"FPS: %.1f", fps);
+
+	// 렌더링 위치 (좌측 상단)
+	D2D1_RECT_F rect = D2D1::RectF(10.0f, 10.0f, 300.0f, 40.0f);
+
+	// 브러시 색상 초록으로 임시 변경
+	m_brush->SetColor(D2D1::ColorF(D2D1::ColorF::LimeGreen));
+
+	m_d2dContext->DrawText(
+		buffer,
+		static_cast<UINT32>(wcslen(buffer)),
+		m_fpsTextFormat.Get(),
+		rect,
+		m_brush.Get()
+	);
 }
 
 void TitanEngine::Renderer::D2DRenderer::RenderBegin()

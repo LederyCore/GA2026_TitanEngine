@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Engine.h"
 #include "SceneManager.h"
-#include "Scene.h"
+#include "TestScene.h"
 #include "Win32Window/IWindow.h"
 #include "Win32Window/Win32Window.h"
 #include "InputSystem/InputSystem.h"
@@ -58,6 +58,11 @@ bool TitanEngine::Engine::Initialize(IWindow& window, const wchar_t* windowName,
         LOG_ERROR("D2D 렌더 시스템이 초기화 되지 않았습니다.");
         return false;
     }
+
+    // 씬 등록 + 전환 예약  ← 추가
+    auto testScene = std::make_shared<TestScene>("TestScene");
+    SceneManager::Instance().RegisterScene("TestScene", testScene);
+    SceneManager::Instance().LoadScene("TestScene");
 
     wnd->AddObserver(WM_SIZE, m_renderer);
     m_timer->Reset();
@@ -133,12 +138,10 @@ void TitanEngine::Engine::LateUpdate(float deltaTime)
 void TitanEngine::Engine::Render()
 {
     m_renderer->RenderBegin();
-    //#ifdef _DEBUG
-    //    float fps = 1.0f / m_fDeltaTime;
-    //    m_renderer->ShowFPS(fps);
-    //#endif // _DEBUG
-
-    // RenderSystem에 DeviceContext 넘겨서 일괄 드로우
     m_currentFrameActiveScene->Render(m_renderer->GetContext());
+#ifdef _DEBUG
+    float fps = 1.0f / m_fDeltaTime;
+    m_renderer->ShowFPS(fps);
+#endif // _DEBUG
     m_renderer->RenderEnd();
 }
