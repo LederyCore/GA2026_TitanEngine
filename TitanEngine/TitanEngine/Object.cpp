@@ -60,15 +60,17 @@ namespace TitanEngine
             {
                 if (instantiateInWorldSpace)
                 {
-                    // 월드 위치 유지 → 부모 설정 후 월드 위치 보정
-                    D2D1_POINT_2F worldPos = go->GetTransform()->GetWorldPosition();
-                    float worldRot = go->GetTransform()->GetWorldRotation();
-                    D2D1_POINT_2F worldScl = go->GetTransform()->GetWorldScale();
+                    Vector2 worldPos = go->GetTransform()->GetWorldPosition();
+                    float   worldRot = go->GetTransform()->GetWorldRotation();
+                    Vector2 worldScl = go->GetTransform()->GetWorldScale();
 
                     go->GetTransform()->SetParent(parent);
 
-                    D2D1_POINT_2F localPos = parent->GetInverseWorldMatrix().TransformPoint(worldPos);
-                    go->GetTransform()->SetLocalPosition(localPos.x, localPos.y);
+                    Matrix inv = parent->GetInverseWorldMatrix();
+                    Vector3 localPos3 = Vector3::Transform(
+                        Vector3(worldPos.x, worldPos.y, 0.0f), inv);
+
+                    go->GetTransform()->SetLocalPosition(localPos3.x, localPos3.y);
                     go->GetTransform()->SetLocalRotation(worldRot - parent->GetWorldRotation());
                     go->GetTransform()->SetLocalScale(
                         worldScl.x / parent->GetWorldScale().x,

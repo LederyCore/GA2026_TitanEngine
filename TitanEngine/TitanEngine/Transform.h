@@ -1,10 +1,13 @@
+// Transform.h
 #pragma once
 #include "Component.h"
 #include <vector>
-#include <d2d1helper.h>
+#include <DirectXTK/SimpleMath.h>
 
 namespace TitanEngine
 {
+    using namespace DirectX::SimpleMath;
+
     class Transform : public Component
     {
         friend class SceneManagement::Scene;
@@ -15,24 +18,25 @@ namespace TitanEngine
 
         // 로컬 설정
         void SetLocalPosition(float x, float y) { m_localPosition = { x, y }; }
+        void SetLocalPosition(Vector2 pos) { m_localPosition = pos; }
         void SetLocalRotation(float angle) { m_localRotation = angle; }
         void SetLocalScale(float x, float y) { m_localScale = { x, y }; }
+        void SetLocalScale(Vector2 scale) { m_localScale = scale; }
 
         // 로컬 읽기
-        D2D1_POINT_2F GetLocalPosition() const { return m_localPosition; }
-        float         GetLocalRotation() const { return m_localRotation; }
-        D2D1_POINT_2F GetLocalScale()    const { return m_localScale; }
+        Vector2 GetLocalPosition() const { return m_localPosition; }
+        float   GetLocalRotation() const { return m_localRotation; }
+        Vector2 GetLocalScale()    const { return m_localScale; }
 
         // 월드 읽기
-        D2D1_POINT_2F           GetWorldPosition() const { return m_worldPosition; }
-        float                   GetWorldRotation() const { return m_worldRotation; }
-        D2D1_POINT_2F           GetWorldScale()    const { return m_worldScale; }
-        const D2D1::Matrix3x2F& GetWorldMatrix()   const { return m_worldMatrix; }
-        D2D1::Matrix3x2F GetInverseWorldMatrix() const
+        Vector2        GetWorldPosition() const { return m_worldPosition; }
+        float          GetWorldRotation() const { return m_worldRotation; }
+        Vector2        GetWorldScale()    const { return m_worldScale; }
+        const Matrix& GetWorldMatrix()   const { return m_worldMatrix; }
+
+        Matrix GetInverseWorldMatrix() const
         {
-            D2D1::Matrix3x2F inv = m_worldMatrix;
-            inv.Invert();
-            return inv;
+            return m_worldMatrix.Invert();  // SimpleMath Matrix는 Invert()가 새 행렬 반환
         }
 
         // 계층구조
@@ -47,10 +51,10 @@ namespace TitanEngine
         GameObject* GetOwner() const { return m_owner; }
 
     private:
-        void SetWorldMatrix(const D2D1::Matrix3x2F& worldMatrix)
+        void SetWorldMatrix(const Matrix& worldMatrix)
         {
             m_worldMatrix = worldMatrix;
-            m_worldPosition = { worldMatrix._31, worldMatrix._32 };
+            m_worldPosition = { worldMatrix._41, worldMatrix._42 };
             m_worldRotation = atan2f(worldMatrix._12, worldMatrix._11) * (180.0f / 3.14159f);
             m_worldScale = {
                 sqrtf(worldMatrix._11 * worldMatrix._11 + worldMatrix._12 * worldMatrix._12),
@@ -60,15 +64,15 @@ namespace TitanEngine
 
     private:
         // 로컬
-        D2D1_POINT_2F    m_localPosition = { 0.0f, 0.0f };
-        float            m_localRotation = 0.0f;
-        D2D1_POINT_2F    m_localScale = { 1.0f, 1.0f };
+        Vector2 m_localPosition = { 0.0f, 0.0f };
+        float   m_localRotation = 0.0f;
+        Vector2 m_localScale = { 1.0f, 1.0f };
 
         // 월드
-        D2D1_POINT_2F    m_worldPosition = { 0.0f, 0.0f };
-        float            m_worldRotation = 0.0f;
-        D2D1_POINT_2F    m_worldScale = { 1.0f, 1.0f };
-        D2D1::Matrix3x2F m_worldMatrix = D2D1::Matrix3x2F::Identity();
+        Vector2 m_worldPosition = { 0.0f, 0.0f };
+        float   m_worldRotation = 0.0f;
+        Vector2 m_worldScale = { 1.0f, 1.0f };
+        Matrix  m_worldMatrix = Matrix{};
 
         // 인덱스 기반 계층구조
         int              m_selfIndex = -1;

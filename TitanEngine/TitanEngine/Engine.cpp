@@ -138,10 +138,14 @@ void TitanEngine::Engine::LateUpdate(float deltaTime)
 void TitanEngine::Engine::Render()
 {
     m_renderer->RenderBegin();
-    m_currentFrameActiveScene->Render(m_renderer->GetContext());
+    m_currentFrameActiveScene->Render(
+        m_renderer->GetContext(),
+        (float)m_renderer->GetWidth(),
+        (float)m_renderer->GetHeight()
+    );
 #ifdef _DEBUG
-    float fps = 1.0f / m_fDeltaTime;
+    float fps = (m_fDeltaTime > 0.0f) ? 1.0f / m_fDeltaTime : 0.0f;
     m_renderer->ShowFPS(fps);
-#endif // _DEBUG
+#endif
     m_renderer->RenderEnd();
 }

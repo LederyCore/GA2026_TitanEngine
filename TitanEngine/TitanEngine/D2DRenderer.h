@@ -25,6 +25,9 @@ namespace TitanEngine::Renderer
         ID2D1DeviceContext7*  GetContext() { return m_d2dContext.Get(); }
         ID2D1Device7*         GetDevice() { return m_d2dDevice.Get(); }  // 브러시 생성용
         ID2D1SolidColorBrush* GetBrush() { return m_brush.Get(); }       // 공용 브러시
+        UINT GetWidth()  const { return m_width; }   // ← 추가
+        UINT GetHeight() const { return m_height; }  // ← 추가
+
 
     private:
         void CreateDeviceAndSwapChain(HWND hwnd);
@@ -33,6 +36,8 @@ namespace TitanEngine::Renderer
 
     private:
         HWND m_hWnd = nullptr;
+        UINT m_width = 1280;   // ← 추가
+        UINT m_height = 720;    // ← 추가
 
         // D3D 인프라
         ComPtr<ID3D11Device>        m_d3dDevice;

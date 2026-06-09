@@ -1,3 +1,4 @@
+// Transform.cpp
 #include "pch.h"
 #include "Transform.h"
 #include "GameObject.h"
@@ -23,7 +24,6 @@ namespace TitanEngine
         auto* scene = m_owner ? static_cast<SceneManagement::Scene*>(m_owner->GetScene()) : nullptr;
         if (!scene) return;
 
-        // 기존 부모에서 제거
         if (m_parentIndex != -1)
         {
             Transform* oldParent = scene->GetTransform(m_parentIndex);
@@ -43,7 +43,6 @@ namespace TitanEngine
         m_parentIndex = parent->m_selfIndex;
         parent->m_childrenIndices.push_back(m_selfIndex);
 
-        // 부모가 자식보다 뒤에 있으면 swap
         if (m_parentIndex > m_selfIndex)
             scene->SwapTransforms(m_parentIndex, m_selfIndex);
     }
@@ -52,12 +51,10 @@ namespace TitanEngine
     {
         Transform* clone = new Transform(*this);
         InitClone(clone);
-
         clone->m_selfIndex = -1;
         clone->m_parentIndex = -1;
         clone->m_childrenIndices.clear();
         clone->m_owner = nullptr;
-
         return clone;
     }
 }

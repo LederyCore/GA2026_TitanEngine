@@ -12,6 +12,12 @@ bool TitanEngine::Renderer::D2DRenderer::Initialize(HWND hwnd)
 {
 	m_hWnd = hwnd;
 
+	// 초기 크기 가져오기
+	RECT rect;
+	GetClientRect(hwnd, &rect);
+	m_width = rect.right - rect.left;
+	m_height = rect.bottom - rect.top;
+
 	CreateDeviceAndSwapChain(hwnd);
 	CreateRenderTargets();
 
@@ -60,7 +66,8 @@ void TitanEngine::Renderer::D2DRenderer::UnInitialize()
 
 void TitanEngine::Renderer::D2DRenderer::Resize(UINT width, UINT height)
 {
-	LOG_DEBUG("Resize: %d x %d", width, height);  // 한글 제거
+	m_width = width;   // ← 추가
+	m_height = height;  // ← 추가
 
 	ReleaseRenderTargets();
 

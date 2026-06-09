@@ -26,7 +26,7 @@ namespace TitanEngine::SceneManagement
         void PropagateWorldMatrix();
         void Update(float deltaTime);
         void LateUpdate(float deltaTime);
-        void Render(ID2D1DeviceContext7* ctx);
+        void Render(ID2D1DeviceContext7* ctx, float screenWidth, float screenHeight);
 
         GameObject* AddObject(const std::string& name);
         void        RegisterObject(GameObject* go);

@@ -55,6 +55,8 @@ namespace TitanEngine
 
     protected :
         void InitClone(Component* clone);
+        GameObject* GetOwner() { return m_owner; }
+        const GameObject* GetOwner() const { return m_owner; }
 
     private :
         bool m_isActive = true;

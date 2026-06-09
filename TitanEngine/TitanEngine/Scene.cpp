@@ -59,10 +59,17 @@ namespace TitanEngine::SceneManagement
             c->LateUpdate(deltaTime);
     }
 
-    void Scene::Render(ID2D1DeviceContext7* ctx)
+    void Scene::Render(ID2D1DeviceContext7* ctx, float screenWidth, float screenHeight)
     {
+        D2D1::Matrix3x2F screenTransform =
+            D2D1::Matrix3x2F::Translation(screenWidth * 0.5f, screenHeight * 0.5f);
+
+        ctx->SetTransform(screenTransform);
+
         for (auto* c : m_renderList)
             c->Render(ctx);
+
+        ctx->SetTransform(D2D1::Matrix3x2F::Identity());
     }
 
     void Scene::RegisterComponent(Component* comp)
@@ -166,21 +173,19 @@ namespace TitanEngine::SceneManagement
 
     void Scene::PropagateWorldMatrix()
     {
-        // 인덱스 순서 = 부모가 항상 앞 → 단순 선형 순회로 OK
         for (int i = 0; i < (int)m_transforms.size(); i++)
         {
             Transform& t = m_transforms[i];
 
-            D2D1::Matrix3x2F local =
-                D2D1::Matrix3x2F::Scale(t.GetLocalScale().x, t.GetLocalScale().y)
-                * D2D1::Matrix3x2F::Rotation(t.GetLocalRotation())
-                * D2D1::Matrix3x2F::Translation(t.GetLocalPosition().x, t.GetLocalPosition().y);
+            Matrix local =
+                Matrix::CreateScale(t.GetLocalScale().x, t.GetLocalScale().y, 1.0f)
+                * Matrix::CreateRotationZ(DirectX::XMConvertToRadians(t.GetLocalRotation()))
+                * Matrix::CreateTranslation(t.GetLocalPosition().x, t.GetLocalPosition().y, 0.0f);
 
             if (t.m_parentIndex == -1)
-                t.SetWorldMatrix(local);
+                t.SetWorldMatrix(local);  // 오프셋 없음
             else
                 t.SetWorldMatrix(local * m_transforms[t.m_parentIndex].GetWorldMatrix());
-            //                           ↑ 부모가 항상 앞 → 이미 계산된 상태
         }
     }
 
