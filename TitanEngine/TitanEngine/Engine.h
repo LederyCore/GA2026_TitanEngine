@@ -4,8 +4,6 @@ namespace Platform
 {
 	class IWindow;
 }
-
-
 namespace TitanEngine
 {
 	namespace Time
@@ -21,7 +19,7 @@ namespace TitanEngine
 
 	namespace Renderer
 	{
-		class IRenderer;
+		class D2DRenderer;
 	}
 	class Engine
 	{
@@ -42,17 +40,11 @@ namespace TitanEngine
 	private:
 		Time::GameTimer* m_timer = nullptr;
 		Platform::IWindow* m_window = nullptr;
-		Renderer::IRenderer* m_renderer = nullptr;
+		Renderer::D2DRenderer* m_renderer = nullptr;
 
 		SceneManagement::Scene* m_currentFrameActiveScene = nullptr;
 
 		float m_fDeltaTime = 0;
 		float m_fFrameCount = 0;
-
-	public:
-		ComPtr<ID2D1Bitmap1> m_bitmapCat;
-
 	};
-
-
 }

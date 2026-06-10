@@ -1,63 +1,60 @@
+// Transform.cpp
 #include "pch.h"
 #include "Transform.h"
+#include "GameObject.h"
+#include "Scene.h"
 
 namespace TitanEngine
 {
-    void Transform::SetParent(Transform* newParent)
+    Transform* Transform::GetParent() const
     {
-        if (parent == newParent) return;
-
-        DetachFromParent();
-
-        parent = newParent;
-
-        if (newParent)
-        {
-            // 형제 리스트 앞에 삽입
-            nextSibling = newParent->firstChild;
-            newParent->firstChild = this;
-        }
+        if (m_parentIndex == -1) return nullptr;
+        auto* scene = static_cast<SceneManagement::Scene*>(m_owner->GetScene());
+        return scene ? scene->GetTransform(m_parentIndex) : nullptr;
     }
 
-    void Transform::DetachFromParent()
+    Transform* Transform::GetChild(int index) const
     {
-        if (!parent) return;
+        auto* scene = static_cast<SceneManagement::Scene*>(m_owner->GetScene());
+        return scene ? scene->GetTransform(m_childrenIndices[index]) : nullptr;
+    }
 
-        // 형제 리스트에서 자신 제거
-        Transform** curr = &parent->firstChild;
-        while (*curr)
+    void Transform::SetParent(Transform* parent)
+    {
+        auto* scene = m_owner ? static_cast<SceneManagement::Scene*>(m_owner->GetScene()) : nullptr;
+        if (!scene) return;
+
+        if (m_parentIndex != -1)
         {
-            if (*curr == this)
-            {
-                *curr = nextSibling;
-                break;
-            }
-            curr = &(*curr)->nextSibling;
+            Transform* oldParent = scene->GetTransform(m_parentIndex);
+            auto& siblings = oldParent->m_childrenIndices;
+            siblings.erase(
+                std::remove(siblings.begin(), siblings.end(), m_selfIndex),
+                siblings.end()
+            );
         }
 
-        parent = nullptr;
-        nextSibling = nullptr;
+        if (parent == nullptr)
+        {
+            m_parentIndex = -1;
+            return;
+        }
+
+        m_parentIndex = parent->m_selfIndex;
+        parent->m_childrenIndices.push_back(m_selfIndex);
+
+        if (m_parentIndex > m_selfIndex)
+            scene->SwapTransforms(m_parentIndex, m_selfIndex);
     }
 
-    void Transform::AddChild(Transform* child)
+    Object* Transform::Clone()
     {
-        if (child)
-            child->SetParent(this);
-    }
-
-    void Transform::UpdateWorldMatrix(const DirectX::SimpleMath::Matrix& parentWorld)
-    {
-        worldMatrix = CalcLocalMatrix() * parentWorld;
-    }
-
-    DirectX::SimpleMath::Matrix Transform::CalcLocalMatrix() const
-    {
-        using namespace DirectX::SimpleMath;
-
-        Matrix scale = Matrix::CreateScale(localScale.x, localScale.y, 1.f);
-        Matrix rotation = Matrix::CreateRotationZ(DirectX::XMConvertToRadians(localRotation));
-        Matrix trans = Matrix::CreateTranslation(localPosition.x, localPosition.y, 0.f);
-
-        return scale * rotation * trans;
+        Transform* clone = new Transform(*this);
+        InitClone(clone);
+        clone->m_selfIndex = -1;
+        clone->m_parentIndex = -1;
+        clone->m_childrenIndices.clear();
+        clone->m_owner = nullptr;
+        return clone;
     }
 }

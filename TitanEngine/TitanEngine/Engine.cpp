@@ -1,8 +1,9 @@
 #include "pch.h"
 #include "Engine.h"
 #include "SceneManager.h"
-#include "Scene.h"
+#include "TestScene.h"
 #include "Win32Window/IWindow.h"
+#include "Win32Window/Win32Window.h"
 #include "InputSystem/InputSystem.h"
 #include "DebugConsole/DebugConsole.h"
 #include "GameTimer.h"
@@ -18,10 +19,12 @@ using namespace TitanEngine::Time;
 TitanEngine::Engine::Engine()
 {
     m_timer = new GameTimer();
+    m_renderer = new D2DRenderer();
 }
 
 TitanEngine::Engine::~Engine()
 {
+    delete m_renderer;
     delete m_timer;
 }
 
@@ -29,6 +32,7 @@ bool TitanEngine::Engine::Initialize(IWindow& window, const wchar_t* windowName,
 {
 	m_window = &window;
 	void* handle = m_window->Create(windowName, width, height);
+    auto* wnd = static_cast<Win32Window*>(m_window);
 
     if (!handle)
     {
@@ -49,17 +53,18 @@ bool TitanEngine::Engine::Initialize(IWindow& window, const wchar_t* windowName,
         return false;
     }
 
-    m_renderer = new D2DRenderer(width, height, m_window->GetHWND());
-    if (!m_renderer->Initialize())
+    if (false == m_renderer->Initialize(m_window->GetHWND()))
     {
         LOG_ERROR("D2D 렌더 시스템이 초기화 되지 않았습니다.");
         return false;
     }
 
-    m_renderer->CreateBitmapFromFile(L"./Resource/cat.png", *m_bitmapCat.GetAddressOf());
+    // 씬 등록 + 전환 예약  ← 추가
+    auto testScene = std::make_shared<TestScene>("TestScene");
+    SceneManager::Instance().RegisterScene("TestScene", testScene);
+    SceneManager::Instance().LoadScene("TestScene");
 
-
-
+    wnd->AddObserver(WM_SIZE, m_renderer);
     m_timer->Reset();
 
     LOG_DEBUG("엔진이 성공적으로 초기화 되었습니다.");
@@ -93,8 +98,6 @@ void TitanEngine::Engine::Run()
             // 이 프레임에서 사용될 씬 그래프 가져오기
             m_currentFrameActiveScene = SceneManager::Instance().GetActiveScene();
             if (!m_currentFrameActiveScene) continue;
-            // SceneGraph가 유효한지 체크
-            if (!m_currentFrameActiveScene->GetSceneGraph()) continue;
 
             // 누적 프레임이 물리 계산할 시간 기준점을 넘었으면 물리 연산 실행
             while (m_fFrameCount >= FIXED_TIMESTEP)
@@ -112,47 +115,37 @@ void TitanEngine::Engine::Run()
 
 void TitanEngine::Engine::Finalize()
 {
-    SceneManager::Instance().Shutdown();
-    m_renderer->ShutDown();
+    SceneManager::Instance().UnInitialize();
+    m_renderer->UnInitialize();
 }
 
 void TitanEngine::Engine::FixedUpdate(float fixedTime)
 {
-    // IPhysics 구현한 것만 물리 연산 수행
-    m_currentFrameActiveScene->GetPhysicsSystem()->FixedUpdate(fixedTime);
-
-    // 컴포넌트의 FixedUpdate 오버라이드한 것만 물리 결과 기반 게임 로직
-    m_currentFrameActiveScene->GetUpdateSystem()->FixedUpdate(fixedTime);
+    m_currentFrameActiveScene->FixedUpdate(fixedTime);
 }
 
 void TitanEngine::Engine::Update(float deltaTime)
 {
-    m_currentFrameActiveScene->GetSceneGraph()->PropagateWorldMatrix();
-
-    m_currentFrameActiveScene->GetUpdateSystem()->Update(deltaTime);
+    m_currentFrameActiveScene->PropagateWorldMatrix();
+    m_currentFrameActiveScene->Update(deltaTime);
 }
 
 void TitanEngine::Engine::LateUpdate(float deltaTime)
 {
-    m_currentFrameActiveScene->GetUpdateSystem()->LateUpdate(deltaTime);
+    m_currentFrameActiveScene->LateUpdate(deltaTime);
 }
 
 void TitanEngine::Engine::Render()
 {
     m_renderer->RenderBegin();
-
-    #ifdef _DEBUG
-        float fps = 1.0f / m_fDeltaTime;
-        m_renderer->ShowFPS(fps);
-    #endif // _DEBUG
-    
-        // TEST
-        m_renderer->DrawCircle(600, 600, 30, D2D1::ColorF::Tomato);
-
-        D2D1_RECT_F dest = D2D1::RectF(0, 0, 200, 200);
-        m_renderer->DrawBitmap(m_bitmapCat.Get(), dest);
-
-        // RenderSystem에 DeviceContext 넘겨서 일괄 드로우
-		m_renderer->RenderScene(m_currentFrameActiveScene->GetRenderSystem());
+    m_currentFrameActiveScene->Render(
+        m_renderer->GetContext(),
+        (float)m_renderer->GetWidth(),
+        (float)m_renderer->GetHeight()
+    );
+#ifdef _DEBUG
+    float fps = (m_fDeltaTime > 0.0f) ? 1.0f / m_fDeltaTime : 0.0f;
+    m_renderer->ShowFPS(fps);
+#endif
     m_renderer->RenderEnd();
 }

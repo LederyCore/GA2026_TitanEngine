@@ -1,125 +1,75 @@
+// GameObject.h
 #pragma once
 #include "Transform.h"
-#include "SystemLocator.h"
-#include "UpdateSystem.h"
-#include "RenderSystem.h"
-#include "PhysicsSystem.h"
-#include "IRenderable.h"
-#include "IPhysics.h"
+#include "Component.h"
 #include <string>
-#include <unordered_map>
 #include <vector>
-#include <memory>
 
+namespace TitanEngine::SceneManagement { class Scene; }
 namespace TitanEngine
 {
-    class GameObject final
+    class GameObject final : public Object
     {
-    public:
-        Transform transform;
+        friend class SceneManagement::Scene;
+        friend class Component;
+        friend class Transform;
 
     public:
-        GameObject() = delete;
-        explicit GameObject(const std::string& name);
-        ~GameObject() = default;
+        GameObject() = default;
+        GameObject(const std::string& name) : m_name(name) {}
+        ~GameObject();
+        Object* Clone() override;
 
+        Transform* GetTransform() { return m_transform; }
         const std::string& GetName()             const { return m_name; }
-        bool               IsActive()            const { return m_isActive; }
-        void               SetActive(bool value);
-
-        template<typename T>
-        T& AddComponent()
+        void               SetName(const std::string& name) { m_name = name; }
+        bool               GetActive()           const { return m_isActive; }
+        void               SetActive(bool value)
         {
-            static_assert(std::is_base_of<Component, T>::value,
-                "T must derive from Component");
+            if (m_isActive == value) return;
 
-            TypeId id = TitanEngine::GetTypeId<T>();
-            auto   comp = std::make_unique<T>();
-            T* ptr = comp.get();
-            ptr->m_owner = this;
+            m_isActive = value;
 
-            auto* ps = SystemLocator::GetPhysicsSystem();
-            auto* us = SystemLocator::GetUpdateSystem();
-            auto* rs = SystemLocator::GetRenderSystem();
-
-            // 컴파일 타임 검사 PhysicsSystem
-            if constexpr (std::is_base_of_v<IPhysics, T>)
-                if (ps) ps->Register(static_cast<IPhysics*>(ptr));
-
-            // 컴파일 타임 검사 UpdateSystem
-            if (us)
+            for (Component* comp : m_components)
             {
-                if constexpr (&T::FixedUpdate != &Component::FixedUpdate)
-                    us->RegisterFixed(ptr);
-                if constexpr (&T::Update != &Component::Update)
-                    us->RegisterUpdate(ptr);
-                if constexpr (&T::LateUpdate != &Component::LateUpdate)
-                    us->RegisterLate(ptr);
+                if (value)
+                    comp->OnEnable();
+                else
+                    comp->OnDisable();
             }
-
-            // 컴파일 타임 감지 RenderSystem
-            if constexpr (std::is_base_of_v<IRenderable, T>)
-                if (rs) rs->Register(static_cast<IRenderable*>(ptr));
-
-            m_components[id].push_back(std::move(comp));
-
-            ptr->Awake();
-
-            // 오브젝트가 활성이고 컴포넌트가 enabled면 OnEnable 호출
-            if (m_isActive && ptr->IsEnabled())
-                ptr->OnEnable();
-
-            if (us) us->RegisterStart(ptr);
-
-            return *ptr;
         }
 
         template<typename T>
-        T* GetComponent() const
+        T* GetComponent()
         {
-            static_assert(std::is_base_of<Component, T>::value,
-                "T must derive from Component");
-
-            TypeId id = TitanEngine::GetTypeId<T>();
-            auto   it = m_components.find(id);
-
-            if (it == m_components.end() || it->second.empty())
-                return nullptr;
-
-            return static_cast<T*>(it->second[0].get());
-        }
-
-        template<>
-        inline Transform* GetComponent<Transform>() const
-        {
-            return const_cast<Transform*>(&transform);
+            for (Component* comp : m_components)
+            {
+                T* result = dynamic_cast<T*>(comp);
+                if (result) return result;
+            }
+            return nullptr;
         }
 
         template<typename T>
-        std::vector<T*> GetComponents() const
+        T* AddComponent()
         {
-            static_assert(std::is_base_of<Component, T>::value,
-                "T must derive from Component");
+            static_assert(std::is_base_of<Component, T>::value, "T must derive from Component");
 
-            TypeId          id = TitanEngine::GetTypeId<T>();
-            std::vector<T*> result;
-            auto            it = m_components.find(id);
+            T* comp = new T();
+            comp->m_owner = this;
+            m_components.push_back(comp);
+            RegisterComponent(comp);
 
-            if (it == m_components.end()) return result;
-
-            for (auto& comp : it->second)
-                result.push_back(static_cast<T*>(comp.get()));
-
-            return result;
+            return comp;
         }
+
+    private :
+        void RegisterComponent(Component* comp); 
 
     private:
-        friend class Component;
-
-        std::string m_name;
-        bool        m_isActive = true;
-
-        std::unordered_map<TypeId,
-            std::vector<std::unique_ptr<Component>>> m_components;
+        Transform* m_transform = nullptr;  // Scene이 소유, 포인터만 참조
+        std::string             m_name = "EmptyObject";
+        bool                    m_isActive = true;
+        std::vector<Component*> m_components;
     };
 }

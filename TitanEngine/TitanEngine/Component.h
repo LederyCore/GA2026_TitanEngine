@@ -1,60 +1,65 @@
 #pragma once
-#include "SystemLocator.h"
-#include <cstdint>
+#include "Object.h"
 
 namespace TitanEngine
 {
     class GameObject;
-    class UpdateSystem;
-
-    using TypeId = uintptr_t;
-
-    template<typename T>
-    TypeId GetTypeId()
+    class IFixedUpdateable
     {
-        static char dummy;
-        return reinterpret_cast<TypeId>(&dummy);
-    }
-
-    class Component
-    {
-    public:
-        Component() = default;
-
-        // 소멸 시 UpdateSystem 자동 해제
-        virtual ~Component();
-
-        virtual TypeId GetTypeId() const = 0;
-
-        virtual void Awake() {}
-        virtual void OnEnable() {}
-        virtual void Start() {}
-        virtual void FixedUpdate(float fixedTime) {}
-        virtual void Update(float deltaTime) {}
-        virtual void LateUpdate(float deltaTime) {}
-        virtual void OnDisable() {}
-        virtual void OnDestroy() {}
-
-        bool IsEnabled() const { return m_enabled; }
-        void SetEnabled(bool value);
-
-        bool IsActiveInHierarchy() const;
-
-        GameObject* GetGameObject() const { return m_owner; }
-
-    protected:
-        GameObject* m_owner = nullptr;
-
-    private:
-        friend class GameObject;
-        bool m_enabled = true;
+    public :
+        virtual void FixedUpdate(float fixedTime) = 0;
+        virtual ~IFixedUpdateable() = default;
     };
 
-    template<typename T>
-    class ComponentBase : public Component
+    class IUpdateable
     {
     public:
-        TypeId GetTypeId() const override { return TitanEngine::GetTypeId<T>(); }
-        static TypeId StaticTypeId() { return TitanEngine::GetTypeId<T>(); }
+        virtual void Update(float deltaTime) = 0;
+        virtual ~IUpdateable() = default;
+    };
+
+    class ILateUpdateable
+    {
+    public:
+        virtual void LateUpdate(float deltaTime) = 0;
+        virtual ~ILateUpdateable() = default;
+    };
+
+    class IRenderable
+    {
+    public:
+        virtual void Render(ID2D1DeviceContext7* ctx) = 0;
+        virtual ~IRenderable() = default;
+    };
+
+    class Component : protected Object
+    {
+        friend class GameObject;
+        friend class SceneManagement::Scene;
+        GameObject* m_owner = nullptr;
+
+    public :
+        virtual ~Component() = default;
+        Object* Clone() override = 0;
+
+        virtual void OnAwake() {}
+        virtual void OnEnable() {}
+        virtual void OnStart() {}
+        virtual void OnDisable() {}
+        virtual void OnDestory() {}
+
+        const bool GetActive() { return m_isActive; }
+        void SetActive(bool value);
+     
+        const GameObject* GetGameGameObject() { return m_owner; }
+
+    protected :
+        void InitClone(Component* clone);
+        GameObject* GetOwner() { return m_owner; }
+        const GameObject* GetOwner() const { return m_owner; }
+
+    private :
+        bool m_isActive = true;
+
     };
 }

@@ -1,29 +1,33 @@
 #include "pch.h"
 #include "Component.h"
 #include "GameObject.h"
-#include "UpdateSystem.h"
+#include "Scene.h"
 
 namespace TitanEngine
 {
-    Component::~Component()
-    {
-        auto* us = SystemLocator::GetUpdateSystem();
-        if (us) us->Unregister(this);
-    }
-    bool Component::IsActiveInHierarchy() const
-    {
-        return m_enabled && m_owner && m_owner->IsActive();
-    }
+	void Component::SetActive(bool value)
+	{
+        if (m_isActive == value) return;
+        m_isActive = value;
 
-    void Component::SetEnabled(bool value)
-    {
-        if (m_enabled == value) return;
-        m_enabled = value;
+        auto* scene = m_currentScene;
+        if (!scene) return;
 
-        // 오브젝트 자체가 꺼져 있으면 OnEnable/OnDisable 전파 안 함
-        if (!m_owner || !m_owner->IsActive()) return;
+        if (value)
+        {
+            scene->RegisterComponent(this);
+            OnEnable();
+        }
+        else
+        {
+            scene->UnRegisterComponent(this);
+            OnDisable();
+        }
+	}
 
-        if (m_enabled) OnEnable();
-        else           OnDisable();
-    }
+	void Component::InitClone(Component* clone)
+	{
+		clone->m_owner = nullptr;
+		clone->m_isActive = m_isActive;
+	}
 }
