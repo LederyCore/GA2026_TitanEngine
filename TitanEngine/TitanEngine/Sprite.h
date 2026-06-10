@@ -1,5 +1,6 @@
 #pragma once
 #include <memory>
+#include <optional>
 #include <d2d1_3.h>
 
 namespace TitanEngine
@@ -13,6 +14,9 @@ namespace TitanEngine
     public:
         std::shared_ptr<Texture2D> texture;
 
+        // nullopt = 텍스처 전체. Animator가 프레임마다 설정한다.
+        std::optional<D2D1_RECT_F> srcRect;
+
         // RGBA 각 채널 0~1. 흰색(1,1,1,1)이면 원본 그대로.
         D2D1_COLOR_F tint = { 1.f, 1.f, 1.f, 1.f };
 
@@ -20,6 +24,7 @@ namespace TitanEngine
         D2D1_POINT_2F pivot = { 0.5f, 0.5f };
 
         ID2D1Bitmap1* GetBitmap() const;
+        // srcRect가 설정된 경우 해당 영역의 크기를 반환
         UINT GetWidth()  const;
         UINT GetHeight() const;
     };

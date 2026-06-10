@@ -37,36 +37,35 @@ bool TitanEngine::Engine::Initialize(IWindow& window, const wchar_t* windowName,
 
     if (!handle)
     {
-        LOG_ERROR("������ �ڵ��� �Ҵ���� �ʾҽ��ϴ�.");
+        LOG_ERROR("윈도우 핸들이 초기화 되지 않았습니다.");
         return false;
     }
 
     if (false == InputSystem::Instance().Initialize(m_window->GetHWND()))
     {
-        LOG_ERROR("��ǲ �ý����� �ʱ�ȭ ���� �ʾҽ��ϴ�.");
+        LOG_ERROR("인풋 시스템이 초기화 되지 않았습니다.");
         return false;
     }
     InputSystem::Instance().SetDebuging(false);
 
     if (false == m_renderer->Initialize(m_window->GetHWND()))
     {
-        LOG_ERROR("D2D ���� �ý����� �ʱ�ȭ ���� �ʾҽ��ϴ�.");
+        LOG_ERROR("D2D 렌더링 시스템이 초기화 되지 않았습니다.");
         return false;
     }
 
     if (false == ResourceManager::Instance().Initialize(m_renderer->GetContext()))
     {
-        LOG_ERROR("���ҽ� �Ŵ����� �ʱ�ȭ ���� �ʾҽ��ϴ�.");
+        LOG_ERROR("리소스 매니저가 초기화 되지 않았습니다.");
         return false;
     }
 
     if (false == SceneManager::Instance().Initialize())
     {
-        LOG_ERROR("���Ŵ����� �ʱ�ȭ ���� �ʾҽ��ϴ�.");
+        LOG_ERROR("씬 매니저가 초기화 되지 않았습니다.");
         return false;
     }
 
-    // �� ��� + ��ȯ ����  �� �߰�
     auto testScene = std::make_shared<TestScene>("TestScene");
     SceneManager::Instance().RegisterScene("TestScene", testScene);
     SceneManager::Instance().LoadScene("TestScene");
@@ -75,7 +74,7 @@ bool TitanEngine::Engine::Initialize(IWindow& window, const wchar_t* windowName,
     wnd->AddObserver(WM_EXITSIZEMOVE, m_renderer);
     m_timer->Reset();
 
-    LOG_DEBUG("������ ���������� �ʱ�ȭ �Ǿ����ϴ�.");
+    LOG_DEBUG("게임엔진이 성공적으로 초기화 되었습니다.");
 	return true;
 }
 
@@ -94,19 +93,17 @@ void TitanEngine::Engine::Run()
         }
         else
         {
-            // ���� Ÿ�̸� �ð� 1ƽ ���
             m_timer->Tick();
-            m_fDeltaTime = m_timer->DeltaTime();   // �� ������ ����
+            m_fDeltaTime = m_timer->DeltaTime();   
             m_fFrameCount += m_fDeltaTime;
 
-            // ������ ����
             SceneManager::Instance().FlushFrame();
 
-            // �� �����ӿ��� ���� �� �׷��� ��������
+
             m_currentFrameActiveScene = SceneManager::Instance().GetActiveScene();
             if (!m_currentFrameActiveScene) continue;
 
-            // ���� �������� ���� ����� �ð� �������� �Ѿ����� ���� ���� ����
+
             while (m_fFrameCount >= FIXED_TIMESTEP)
             {
                 FixedUpdate(FIXED_TIMESTEP);

@@ -70,6 +70,12 @@
     <ClCompile Include="TestScene.cpp">
       <Filter>__Test</Filter>
     </ClCompile>
+    <ClCompile Include="ResourceManager.cpp" />
+    <ClCompile Include="Sprite.cpp" />
+    <ClCompile Include="SpriteRenderer.cpp" />
+    <ClCompile Include="Texture2D.cpp" />
+    <ClCompile Include="AnimationClip.cpp" />
+    <ClCompile Include="Animator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -111,5 +117,12 @@
     <ClInclude Include="TestScene.h">
       <Filter>__Test</Filter>
     </ClInclude>
+    <ClInclude Include="Resource.h" />
+    <ClInclude Include="ResourceManager.h" />
+    <ClInclude Include="Sprite.h" />
+    <ClInclude Include="SpriteRenderer.h" />
+    <ClInclude Include="Texture2D.h" />
+    <ClInclude Include="AnimationClip.h" />
+    <ClInclude Include="Animator.h" />
   </ItemGroup>
 </Project>
