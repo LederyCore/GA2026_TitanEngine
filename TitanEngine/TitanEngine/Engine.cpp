@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Engine.h"
+#include "ResourceManager.h"
 #include "SceneManager.h"
 #include "TestScene.h"
 #include "Win32Window/IWindow.h"
@@ -47,15 +48,21 @@ bool TitanEngine::Engine::Initialize(IWindow& window, const wchar_t* windowName,
     }
     InputSystem::Instance().SetDebuging(false);
 
-    if (false == SceneManager::Instance().Initialize())
-    {
-        LOG_ERROR("씬매니저가 초기화 되지 않았습니다.");
-        return false;
-    }
-
     if (false == m_renderer->Initialize(m_window->GetHWND()))
     {
         LOG_ERROR("D2D 렌더 시스템이 초기화 되지 않았습니다.");
+        return false;
+    }
+
+    if (false == ResourceManager::Instance().Initialize(m_renderer->GetContext()))
+    {
+        LOG_ERROR("리소스 매니저가 초기화 되지 않았습니다.");
+        return false;
+    }
+
+    if (false == SceneManager::Instance().Initialize())
+    {
+        LOG_ERROR("씬매니저가 초기화 되지 않았습니다.");
         return false;
     }
 
@@ -93,7 +100,6 @@ void TitanEngine::Engine::Run()
             m_fFrameCount += m_fDeltaTime;
 
             // 프레임 시작
-            InputSystem::Instance().FlushFrame(); 
             SceneManager::Instance().FlushFrame();
 
             // 이 프레임에서 사용될 씬 그래프 가져오기
@@ -110,6 +116,7 @@ void TitanEngine::Engine::Run()
             Update(m_fDeltaTime);
             LateUpdate(m_fDeltaTime);
             Render();
+            InputSystem::Instance().FlushFrame(); 
         }
     }
 }

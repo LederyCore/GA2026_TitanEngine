@@ -50,6 +50,11 @@ namespace TitanEngine
             return nullptr;
         }
 
+        const std::vector<Component*>& GetComponents()
+        {
+            return m_components;
+        }
+
         template<typename T>
         T* AddComponent()
         {

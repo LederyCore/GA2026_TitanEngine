@@ -50,8 +50,6 @@ namespace TitanEngine
 
         const bool GetActive() { return m_isActive; }
         void SetActive(bool value);
-     
-        const GameObject* GetGameGameObject() { return m_owner; }
 
     protected :
         void InitClone(Component* clone);

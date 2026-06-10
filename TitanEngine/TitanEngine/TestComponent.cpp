@@ -42,6 +42,11 @@ void TitanEngine::TestComponent::Update(float deltaTime)
 	if (input.GetKeyDown(VK_RIGHT)) dx += m_speed * deltaTime;
 	if (input.GetKeyDown(VK_UP))    dy -= m_speed * deltaTime;
 	if (input.GetKeyDown(VK_DOWN))  dy += m_speed * deltaTime;
+	if (input.GetKeyPressed(VK_SPACE))
+	{
+		LOG_DEBUG("삭제하라");
+		Destroy(GetOwner());
+	}
 
 	if (dx != 0.0f || dy != 0.0f)
 		t->SetLocalPosition(pos.x + dx, pos.y + dy);
