@@ -54,14 +54,14 @@ namespace Platform
 
         // ── 키보드 ──────────────────────────────────────────
         bool GetKeyDown(UINT vk) const { return m_keyDown[vk]; }
-        bool GetKeyPressed(UINT vk) { bool p = m_keyEdge[vk].pressed;  m_keyEdge[vk].pressed = false; return p; }
-        bool GetKeyReleased(UINT vk) { bool r = m_keyEdge[vk].released; m_keyEdge[vk].released = false; return r; }
+        bool GetKeyPressed(UINT vk) const { return m_keyEdge[vk].pressed; }
+        bool GetKeyReleased(UINT vk) const { return m_keyEdge[vk].released; }
 
         // ── 마우스 ──────────────────────────────────────────
         // btn: 0=Left, 1=Right, 2=Middle
         bool GetMouseDown(int btn) const { return btn == 0 ? m_curMouse.leftPressed : btn == 1 ? m_curMouse.rightPressed : m_curMouse.middlePressed; }
-        bool GetMousePressed(int btn) { bool p = m_mouseEdge[btn].pressed;  m_mouseEdge[btn].pressed = false; return p; }
-        bool GetMouseReleased(int btn) { bool r = m_mouseEdge[btn].released; m_mouseEdge[btn].released = false; return r; }
+        bool GetMousePressed(int btn) const { return m_mouseEdge[btn].pressed; }
+        bool GetMouseReleased(int btn) const { return m_mouseEdge[btn].released; }
         POINT GetMousePos()         const { return m_curMouse.pos; }
         int   GetMouseDeltaX()         const { return m_curMouse.deltaX; }
         int   GetMouseDeltaY()         const { return m_curMouse.deltaY; }

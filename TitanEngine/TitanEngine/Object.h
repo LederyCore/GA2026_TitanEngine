@@ -3,6 +3,8 @@ namespace TitanEngine
 {
     namespace SceneManagement { class Scene; }
     class Transform;
+    class GameObject;
+    class Component;
     class Object
     {
 
@@ -12,8 +14,8 @@ namespace TitanEngine
         virtual Object* Clone() = 0;
 
         // Destroy
-        static void Destroy(Object* obj);
-        static void Destroy(Object* obj, float delay);  // 지연 삭제
+        static void Destroy(GameObject* obj);
+        static void Destroy(GameObject* obj, float delay);  // 지연 삭제
 
         SceneManagement::Scene* GetScene() const { return m_currentScene; }
 

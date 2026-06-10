@@ -30,7 +30,7 @@ namespace TitanEngine::SceneManagement
 
         GameObject* AddObject(const std::string& name);
         void        RegisterObject(GameObject* go);
-        void        RemoveObject(Object* obj);
+        void        RemoveObject(GameObject* obj);
 
         // 인덱스 기반 Transform 접근
         Transform* GetTransform(int index) { return &m_transforms[index]; }
@@ -60,6 +60,6 @@ namespace TitanEngine::SceneManagement
         std::vector<IUpdateable*>      m_updateableList;
         std::vector<ILateUpdateable*>  m_lateUpdateList;
         std::vector<IRenderable*>      m_renderList;
-        std::vector<Object*>           m_pendingDestroyList;
+        std::vector<GameObject*>       m_pendingDestroyList;
     };
 }
