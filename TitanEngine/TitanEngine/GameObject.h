@@ -41,7 +41,7 @@ namespace TitanEngine
 
         template<typename T>
         T* GetComponent()
-        {
+        { 
             for (Component* comp : m_components)
             {
                 T* result = dynamic_cast<T*>(comp);
