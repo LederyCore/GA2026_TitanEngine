@@ -17,7 +17,7 @@ void TestScene::OnLoad()
 
     // ---- cat ----
     GameObject* catObj = AddObject("Cat");
-    catObj->GetTransform()->SetLocalPosition(400, 300);
+    catObj->GetTransform()->SetLocalPosition(0, 0);
     catObj->GetTransform()->SetLocalScale(0.5f, 0.5f);
     auto* sr = catObj->AddComponent<SpriteRenderer>();
     auto tex = ResourceManager::Load<Texture2D>(L"Resource/cat.png");

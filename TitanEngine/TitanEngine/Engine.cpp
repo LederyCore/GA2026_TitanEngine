@@ -15,7 +15,7 @@ using namespace TitanEngine::Renderer;
 using namespace TitanEngine::SceneManagement;
 using namespace TitanEngine::Time;
 
-#define FIXED_TIMESTEP 0.02f    // ĳ�־� ���� ����
+#define FIXED_TIMESTEP 0.02f    
 
 TitanEngine::Engine::Engine()
 {
