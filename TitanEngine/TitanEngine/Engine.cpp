@@ -15,7 +15,7 @@ using namespace TitanEngine::Renderer;
 using namespace TitanEngine::SceneManagement;
 using namespace TitanEngine::Time;
 
-#define FIXED_TIMESTEP 0.02f    // Ä³ÁÖ¾ó °ÔÀÓ ±âÁØ
+#define FIXED_TIMESTEP 0.02f    // Ä³ï¿½Ö¾ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
 TitanEngine::Engine::Engine()
 {
@@ -37,36 +37,36 @@ bool TitanEngine::Engine::Initialize(IWindow& window, const wchar_t* windowName,
 
     if (!handle)
     {
-        LOG_ERROR("À©µµ¿ì ÇÚµéÀÌ ÇÒ´çµÇÁö ¾Ê¾Ò½À´Ï´Ù.");
+        LOG_ERROR("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Úµï¿½ï¿½ï¿½ ï¿½Ò´ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¾Ò½ï¿½ï¿½Ï´ï¿½.");
         return false;
     }
 
     if (false == InputSystem::Instance().Initialize(m_window->GetHWND()))
     {
-        LOG_ERROR("ÀÎÇ² ½Ã½ºÅÛÀÌ ÃÊ±âÈ­ µÇÁö ¾Ê¾Ò½À´Ï´Ù.");
+        LOG_ERROR("ï¿½ï¿½Ç² ï¿½Ã½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½È­ ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¾Ò½ï¿½ï¿½Ï´ï¿½.");
         return false;
     }
     InputSystem::Instance().SetDebuging(false);
 
     if (false == m_renderer->Initialize(m_window->GetHWND()))
     {
-        LOG_ERROR("D2D ·»´õ ½Ã½ºÅÛÀÌ ÃÊ±âÈ­ µÇÁö ¾Ê¾Ò½À´Ï´Ù.");
+        LOG_ERROR("D2D ï¿½ï¿½ï¿½ï¿½ ï¿½Ã½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½È­ ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¾Ò½ï¿½ï¿½Ï´ï¿½.");
         return false;
     }
 
     if (false == ResourceManager::Instance().Initialize(m_renderer->GetContext()))
     {
-        LOG_ERROR("¸®¼Ò½º ¸Å´ÏÀú°¡ ÃÊ±âÈ­ µÇÁö ¾Ê¾Ò½À´Ï´Ù.");
+        LOG_ERROR("ï¿½ï¿½ï¿½Ò½ï¿½ ï¿½Å´ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½È­ ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¾Ò½ï¿½ï¿½Ï´ï¿½.");
         return false;
     }
 
     if (false == SceneManager::Instance().Initialize())
     {
-        LOG_ERROR("¾À¸Å´ÏÀú°¡ ÃÊ±âÈ­ µÇÁö ¾Ê¾Ò½À´Ï´Ù.");
+        LOG_ERROR("ï¿½ï¿½ï¿½Å´ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½È­ ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¾Ò½ï¿½ï¿½Ï´ï¿½.");
         return false;
     }
 
-    // ¾À µî·Ï + ÀüÈ¯ ¿¹¾à  ¡ç Ãß°¡
+    // ï¿½ï¿½ ï¿½ï¿½ï¿½ + ï¿½ï¿½È¯ ï¿½ï¿½ï¿½ï¿½  ï¿½ï¿½ ï¿½ß°ï¿½
     auto testScene = std::make_shared<TestScene>("TestScene");
     SceneManager::Instance().RegisterScene("TestScene", testScene);
     SceneManager::Instance().LoadScene("TestScene");
@@ -75,7 +75,7 @@ bool TitanEngine::Engine::Initialize(IWindow& window, const wchar_t* windowName,
     wnd->AddObserver(WM_EXITSIZEMOVE, m_renderer);
     m_timer->Reset();
 
-    LOG_DEBUG("¿£ÁøÀÌ ¼º°øÀûÀ¸·Î ÃÊ±âÈ­ µÇ¾ú½À´Ï´Ù.");
+    LOG_DEBUG("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½È­ ï¿½Ç¾ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.");
 	return true;
 }
 
@@ -94,19 +94,19 @@ void TitanEngine::Engine::Run()
         }
         else
         {
-            // °ÔÀÓ Å¸ÀÌ¸Ó ½Ã°£ 1Æ½ °è»ê
+            // ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½Ì¸ï¿½ ï¿½Ã°ï¿½ 1Æ½ ï¿½ï¿½ï¿½
             m_timer->Tick();
-            m_fDeltaTime = m_timer->DeltaTime();   // ÃÊ ´ÜÀ§·Î ÅëÀÏ
+            m_fDeltaTime = m_timer->DeltaTime();   // ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
             m_fFrameCount += m_fDeltaTime;
 
-            // ÇÁ·¹ÀÓ ½ÃÀÛ
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
             SceneManager::Instance().FlushFrame();
 
-            // ÀÌ ÇÁ·¹ÀÓ¿¡¼­ »ç¿ëµÉ ¾À ±×·¡ÇÁ °¡Á®¿À±â
+            // ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ó¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½×·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             m_currentFrameActiveScene = SceneManager::Instance().GetActiveScene();
             if (!m_currentFrameActiveScene) continue;
 
-            // ´©Àû ÇÁ·¹ÀÓÀÌ ¹°¸® °è»êÇÒ ½Ã°£ ±âÁØÁ¡À» ³Ñ¾úÀ¸¸é ¹°¸® ¿¬»ê ½ÇÇà
+            // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ã°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
             while (m_fFrameCount >= FIXED_TIMESTEP)
             {
                 FixedUpdate(FIXED_TIMESTEP);
@@ -124,6 +124,8 @@ void TitanEngine::Engine::Run()
 void TitanEngine::Engine::Finalize()
 {
     SceneManager::Instance().UnInitialize();
+    m_renderer->FlushAndClearTarget();
+    ResourceManager::Instance().UnLoadAll();
     m_renderer->UnInitialize();
 }
 

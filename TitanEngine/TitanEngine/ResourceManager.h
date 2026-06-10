@@ -1,4 +1,6 @@
 #pragma once
+#include "Resource.h"
+#include "DebugConsole/DebugConsole.h"
 #include <memory>
 #include <filesystem>
 #include <unordered_map>
@@ -8,7 +10,6 @@ using Microsoft::WRL::ComPtr;
 
 namespace TitanEngine
 {
-    class Resource;
 
 	class ResourceManager
 	{
@@ -26,13 +27,12 @@ namespace TitanEngine
         template<typename T>
         static std::shared_ptr<T> Load(const std::filesystem::path& path)
         {
-            return Instance().LoadImpl<T>(path);  // 실제 로직은 non-static으로 위임
+            return Instance().LoadImpl<T>(path);
         }
 
         void UnLoadAll();
     
 
-        ID2D1Factory8* GetD2DFactory() { return m_d2dFactory.Get(); }
         IDWriteFactory* GetDWriteFactory() { return m_dwriteFactory.Get(); }
         IWICImagingFactory* GetWICFactory() { return m_wicFactory.Get(); }
 
@@ -50,7 +50,7 @@ namespace TitanEngine
             auto res = std::make_shared<T>();
             if (!res->Load(m_context, path))
             {
-                LOG_ERROR("리소스 로드 실패: %ls", path.c_str());
+                LOG_ERROR("Resource load failed: %ls", path.c_str());
                 return nullptr;
             }
             m_cache[key] = res;
@@ -59,7 +59,6 @@ namespace TitanEngine
 
     private :
         ID2D1DeviceContext7*       m_context = nullptr;
-        ComPtr<ID2D1Factory8>      m_d2dFactory;
         ComPtr<IDWriteFactory>     m_dwriteFactory;
         ComPtr<IWICImagingFactory> m_wicFactory;
         std::unordered_map<std::wstring,
