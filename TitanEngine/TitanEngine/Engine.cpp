@@ -63,13 +63,14 @@ bool TitanEngine::Engine::Initialize(IWindow& window, const wchar_t* windowName,
     // 씬 등록 + 전환 예약  ← 추가
     auto testScene = std::make_shared<TestScene>("TestScene");
     SceneManager::Instance().RegisterScene("TestScene", testScene);
-    SceneManager::Instance().LoadScene("TestScene");
+    //SceneManager::Instance().LoadScene("TestScene");
+    
 
     auto inGameScene = std::make_shared<InGameScene>("InGameScene");
     SceneManager::Instance().RegisterScene("InGameScene", inGameScene);
     SceneManager::Instance().LoadScene("InGameScene");
 
-    wnd->AddObserver(WM_SIZE, m_renderer);
+	wnd->AddObserver(WM_SIZE, m_renderer);
     wnd->AddObserver(WM_EXITSIZEMOVE, m_renderer);
     m_timer->Reset();
 
@@ -98,7 +99,6 @@ void TitanEngine::Engine::Run()
             m_fFrameCount += m_fDeltaTime;
 
             // 프레임 시작
-            InputSystem::Instance().FlushFrame(); 
             SceneManager::Instance().FlushFrame();
 
             // 이 프레임에서 사용될 씬 그래프 가져오기
@@ -115,6 +115,7 @@ void TitanEngine::Engine::Run()
             Update(m_fDeltaTime);
             LateUpdate(m_fDeltaTime);
             Render();
+            InputSystem::Instance().FlushFrame(); 
         }
     }
 }
