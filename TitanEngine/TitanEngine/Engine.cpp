@@ -8,6 +8,7 @@
 #include "DebugConsole/DebugConsole.h"
 #include "GameTimer.h"
 #include "D2DRenderer.h"
+#include "InGameScene.h"
 
 using namespace Platform;
 using namespace TitanEngine::Renderer;
@@ -63,6 +64,10 @@ bool TitanEngine::Engine::Initialize(IWindow& window, const wchar_t* windowName,
     auto testScene = std::make_shared<TestScene>("TestScene");
     SceneManager::Instance().RegisterScene("TestScene", testScene);
     SceneManager::Instance().LoadScene("TestScene");
+
+    auto inGameScene = std::make_shared<InGameScene>("InGameScene");
+    SceneManager::Instance().RegisterScene("InGameScene", inGameScene);
+    SceneManager::Instance().LoadScene("InGameScene");
 
     wnd->AddObserver(WM_SIZE, m_renderer);
     m_timer->Reset();
