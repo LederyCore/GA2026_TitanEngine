@@ -16,6 +16,7 @@ namespace TitanEngine::Renderer
         void UnInitialize();
         void Resize(UINT width, UINT height);
         void OnResize(int width, int height) override;
+        void OnExitSizeMove() override;
         void ShowFPS(float fps);
 
         void RenderBegin();
@@ -38,6 +39,11 @@ namespace TitanEngine::Renderer
         HWND m_hWnd = nullptr;
         UINT m_width = 1280; 
         UINT m_height = 720; 
+
+        bool m_isDrawing = false;
+        bool m_needsResize = false;
+        UINT m_pendingWidth = 0;
+        UINT m_pendingHeight = 0;
 
         // D3D ¿Œ«¡∂Û
         ComPtr<ID3D11Device>        m_d3dDevice;
