@@ -70,6 +70,7 @@ bool TitanEngine::Engine::Initialize(IWindow& window, const wchar_t* windowName,
     SceneManager::Instance().LoadScene("InGameScene");
 
     wnd->AddObserver(WM_SIZE, m_renderer);
+    wnd->AddObserver(WM_EXITSIZEMOVE, m_renderer);
     m_timer->Reset();
 
     LOG_DEBUG("엔진이 성공적으로 초기화 되었습니다.");

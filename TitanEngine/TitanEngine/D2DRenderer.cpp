@@ -66,19 +66,35 @@ void TitanEngine::Renderer::D2DRenderer::UnInitialize()
 
 void TitanEngine::Renderer::D2DRenderer::Resize(UINT width, UINT height)
 {
-	m_width = width;   // ← 추가
-	m_height = height;  // ← 추가
+	m_width = width;
+	m_height = height;
 
 	ReleaseRenderTargets();
 
-	DX::ThrowIfFailed(m_swapChain->ResizeBuffers(0, width, height, DXGI_FORMAT_UNKNOWN, 0));
+	// 스왑체인 생성 시 DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING 사용했으므로
+	// ResizeBuffers에도 동일하게 전달해야 함
+	DX::ThrowIfFailed(m_swapChain->ResizeBuffers(
+		0,
+		width,
+		height,
+		DXGI_FORMAT_UNKNOWN,
+		DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING));   // ← 0 대신 플래그 전달
 
 	CreateRenderTargets();
 }
 
 void TitanEngine::Renderer::D2DRenderer::OnResize(int width, int height)
 {
-	Resize(width, height);
+	m_pendingWidth = static_cast<UINT>(width);
+	m_pendingHeight = static_cast<UINT>(height);
+	m_needsResize = true;
+}
+
+void TitanEngine::Renderer::D2DRenderer::OnExitSizeMove()
+{
+	if (!m_needsResize) return;
+	Resize(m_pendingWidth, m_pendingHeight);
+	m_needsResize = false;
 }
 
 void TitanEngine::Renderer::D2DRenderer::ShowFPS(float fps)
@@ -108,14 +124,15 @@ void TitanEngine::Renderer::D2DRenderer::RenderBegin()
 {
 	m_d2dContext->BeginDraw();
 	m_d2dContext->Clear(D2D1::ColorF(D2D1::ColorF::White));
+	m_isDrawing = true;
 }
 
 void TitanEngine::Renderer::D2DRenderer::RenderEnd()
 {
+	m_isDrawing = false;
 	m_d2dContext->EndDraw();
 
 	HRESULT hr = m_swapChain->Present(0, DXGI_PRESENT_ALLOW_TEARING);
-
 	if (hr == DXGI_ERROR_DEVICE_REMOVED || hr == DXGI_ERROR_DEVICE_RESET)
 	{
 		UnInitialize();
@@ -254,9 +271,18 @@ void TitanEngine::Renderer::D2DRenderer::ReleaseRenderTargets()
 {
 	if (m_d2dContext)
 	{
+		// BeginDraw 중이었다면 먼저 닫기
+		if (m_isDrawing)
+		{
+			m_d2dContext->EndDraw();
+			m_isDrawing = false;
+		}
+
+		// 렌더 타겟 해제 (스왑체인 버퍼 참조 끊기)
 		m_d2dContext->SetTarget(nullptr);
 	}
 
-	m_targetBitmap.Reset();
-	m_brush.Reset();
+	// COM 참조 해제 — 이 순서가 중요
+	m_brush.Reset();           // 1. 브러시
+	m_targetBitmap.Reset();    // 2. 백버퍼 래핑 비트맵
 }
