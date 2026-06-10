@@ -36,8 +36,8 @@ namespace TitanEngine::Renderer
 
     private:
         HWND m_hWnd = nullptr;
-        UINT m_width = 1280;   // ← 추가
-        UINT m_height = 720;    // ← 추가
+        UINT m_width = 1280; 
+        UINT m_height = 720; 
 
         // D3D 인프라
         ComPtr<ID3D11Device>        m_d3dDevice;

@@ -2,7 +2,6 @@
 #include "GameObject.h"
 #include "TestScene.h"
 #include "TestComponent.h"
-#include "FollowComponent.h"
 #include "DebugConsole/DebugConsole.h"
 
 using namespace TitanEngine;

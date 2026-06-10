@@ -70,7 +70,6 @@
     <ClCompile Include="TestScene.cpp">
       <Filter>__Test</Filter>
     </ClCompile>
-    <ClCompile Include="FollowComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -112,6 +111,5 @@
     <ClInclude Include="TestScene.h">
       <Filter>__Test</Filter>
     </ClInclude>
-    <ClInclude Include="FollowComponent.h" />
   </ItemGroup>
 </Project>
