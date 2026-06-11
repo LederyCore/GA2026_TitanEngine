@@ -146,6 +146,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AnimationClip.cpp" />
+    <ClCompile Include="Button.cpp" />
     <ClCompile Include="Animator.cpp" />
     <ClCompile Include="Component.cpp" />
     <ClCompile Include="D2DRenderer.cpp" />
@@ -170,6 +171,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationClip.h" />
+    <ClInclude Include="Button.h" />
     <ClInclude Include="Animator.h" />
     <ClInclude Include="Component.h" />
     <ClInclude Include="D2DRenderer.h" />

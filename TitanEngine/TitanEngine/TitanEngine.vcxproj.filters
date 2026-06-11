@@ -26,6 +26,9 @@
     <Filter Include="__Test">
       <UniqueIdentifier>{c4dadfe7-f8bc-4b7c-8819-4f17635ed9d2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="TitanEngineCore\ResourceManagement">
+      <UniqueIdentifier>{9c5ea07b-82af-4db3-bc1d-4ee63b13a01a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -70,12 +73,24 @@
     <ClCompile Include="TestScene.cpp">
       <Filter>__Test</Filter>
     </ClCompile>
-    <ClCompile Include="ResourceManager.cpp" />
-    <ClCompile Include="Sprite.cpp" />
-    <ClCompile Include="SpriteRenderer.cpp" />
-    <ClCompile Include="Texture2D.cpp" />
-    <ClCompile Include="AnimationClip.cpp" />
-    <ClCompile Include="Animator.cpp" />
+    <ClCompile Include="AnimationClip.cpp">
+      <Filter>TitanEngineCore\TitanEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="Animator.cpp">
+      <Filter>TitanEngineCore\TitanEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="Sprite.cpp">
+      <Filter>TitanEngineCore\TitanEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="SpriteRenderer.cpp">
+      <Filter>TitanEngineCore\TitanEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceManager.cpp">
+      <Filter>TitanEngineCore\ResourceManagement</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture2D.cpp">
+      <Filter>TitanEngineCore\ResourceManagement</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
@@ -117,12 +132,26 @@
     <ClInclude Include="TestScene.h">
       <Filter>__Test</Filter>
     </ClInclude>
-    <ClInclude Include="Resource.h" />
-    <ClInclude Include="ResourceManager.h" />
-    <ClInclude Include="Sprite.h" />
-    <ClInclude Include="SpriteRenderer.h" />
-    <ClInclude Include="Texture2D.h" />
-    <ClInclude Include="AnimationClip.h" />
-    <ClInclude Include="Animator.h" />
+    <ClInclude Include="AnimationClip.h">
+      <Filter>TitanEngineCore\TitanEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="Animator.h">
+      <Filter>TitanEngineCore\TitanEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="Sprite.h">
+      <Filter>TitanEngineCore\TitanEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="SpriteRenderer.h">
+      <Filter>TitanEngineCore\TitanEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>TitanEngineCore\ResourceManagement</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceManager.h">
+      <Filter>TitanEngineCore\ResourceManagement</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture2D.h">
+      <Filter>TitanEngineCore\ResourceManagement</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
