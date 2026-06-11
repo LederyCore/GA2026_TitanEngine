@@ -11,7 +11,7 @@
 
 # 기기별 디버그 실행 경로가 달라 집↔인재원 충돌 원인
 *.vcxproj.user
-!*.vcxproj.filters
+
 
 # IntelliSense 캐시 (기기마다 다르게 생성됨)
 ipch/
@@ -97,3 +97,5 @@ packages/
 *_VS.h
 *_PS.h
 *_CS.h
+
+!*.vcxproj.filters
