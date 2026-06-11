@@ -68,7 +68,11 @@ bool TitanEngine::Engine::Initialize(IWindow& window, const wchar_t* windowName,
     }
 
     auto testScene = std::make_shared<TestScene>("TestScene");
+    /*auto titleScene = std::make_shared<TestScene>("TitleScene");
+    auto ingameScene = std::make_shared<TestScene>("InGameScene");*/
     SceneManager::Instance().RegisterScene("TestScene", testScene);
+    //SceneManager::Instance().RegisterScene("TitleScene", titleScene);
+    //SceneManager::Instance().RegisterScene("InGameScene", ingameScene);
     SceneManager::Instance().LoadScene("TestScene");
 
     wnd->AddObserver(WM_SIZE, m_renderer);
