@@ -1,5 +1,6 @@
 #pragma once
 #include "Component.h"
+#include "Sprite.h"
 #include <functional>
 #include <string>
 #include <wrl/client.h>
@@ -31,10 +32,15 @@ namespace TitanEngine
         float width  = 160.f;
         float height = 30.f;
 
+        // Sprite image: set texture to render as a sprite button (Unity Image component equiv.)
+        // Leave texture null to render the default colored rect.
+        Sprite image;
+
         std::wstring text;
         D2D1_COLOR_F textColor;
         float        fontSize = 14.f;
 
+        // targetGraphic: applies tint to an external SpriteRenderer instead of image.
         SpriteRenderer* targetGraphic = nullptr;
 
         Object* Clone() override;
@@ -57,6 +63,7 @@ namespace TitanEngine
         Microsoft::WRL::ComPtr<ID2D1SolidColorBrush> m_textBrush;
         Microsoft::WRL::ComPtr<IDWriteFactory>        m_dwriteFactory;
         Microsoft::WRL::ComPtr<IDWriteTextFormat>     m_textFormat;
+        Microsoft::WRL::ComPtr<ID2D1Effect>           m_colorEffect;
 
         bool         IsPointInBounds(float px, float py);
         D2D1_COLOR_F GetTargetColor() const;
