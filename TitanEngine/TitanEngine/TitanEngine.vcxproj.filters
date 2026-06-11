@@ -10,9 +10,6 @@
     <ClCompile Include="GameTimer.cpp">
       <Filter>TitanEngine</Filter>
     </ClCompile>
-    <ClCompile Include="main.cpp">
-      <Filter>TitanEngine</Filter>
-    </ClCompile>
     <ClCompile Include="Sprite.cpp">
       <Filter>TitanEngine</Filter>
     </ClCompile>
@@ -37,9 +34,6 @@
     <ClCompile Include="GameObject.cpp">
       <Filter>TitanEngine\Core</Filter>
     </ClCompile>
-    <ClCompile Include="pch.cpp">
-      <Filter>TitanEngine</Filter>
-    </ClCompile>
     <ClCompile Include="Object.cpp">
       <Filter>TitanEngine\Core</Filter>
     </ClCompile>
@@ -61,9 +55,6 @@
     <ClCompile Include="Enemy.cpp">
       <Filter>_Content</Filter>
     </ClCompile>
-    <ClCompile Include="Engine.cpp">
-      <Filter>_Content</Filter>
-    </ClCompile>
     <ClCompile Include="InGameScene.cpp">
       <Filter>_Content</Filter>
     </ClCompile>
@@ -73,7 +64,18 @@
     <ClCompile Include="TitleScene.cpp">
       <Filter>_Content</Filter>
     </ClCompile>
-    <ClCompile Include="InGameTimer.cpp" />
+    <ClCompile Include="InGameTimer.cpp">
+      <Filter>_Content</Filter>
+    </ClCompile>
+    <ClCompile Include="pch.cpp">
+      <Filter>_EntryPoint</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>_EntryPoint</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine.cpp">
+      <Filter>TitanEngine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Animator.h">
@@ -83,9 +85,6 @@
       <Filter>TitanEngine</Filter>
     </ClInclude>
     <ClInclude Include="GameTimer.h">
-      <Filter>TitanEngine</Filter>
-    </ClInclude>
-    <ClInclude Include="pch.h">
       <Filter>TitanEngine</Filter>
     </ClInclude>
     <ClInclude Include="Sprite.h">
@@ -136,9 +135,6 @@
     <ClInclude Include="Enemy.h">
       <Filter>_Content</Filter>
     </ClInclude>
-    <ClInclude Include="Engine.h">
-      <Filter>_Content</Filter>
-    </ClInclude>
     <ClInclude Include="InGameScene.h">
       <Filter>_Content</Filter>
     </ClInclude>
@@ -148,7 +144,15 @@
     <ClInclude Include="TitleScene.h">
       <Filter>_Content</Filter>
     </ClInclude>
-    <ClInclude Include="InGameTimer.h" />
+    <ClInclude Include="InGameTimer.h">
+      <Filter>_Content</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.h">
+      <Filter>_EntryPoint</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine.h">
+      <Filter>TitanEngine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="TitanEngine">
@@ -171,6 +175,9 @@
     </Filter>
     <Filter Include="_Content">
       <UniqueIdentifier>{938c1089-44e4-4c9b-971f-a593d480e500}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="_EntryPoint">
+      <UniqueIdentifier>{34b52f6f-e5a1-4875-95de-5f5d6cbe4b41}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

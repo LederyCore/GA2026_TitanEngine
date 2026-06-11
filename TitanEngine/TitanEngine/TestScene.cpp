@@ -16,6 +16,12 @@ void TestScene::OnLoad()
 {
     LOG_DEBUG("TestScene Load");
 
+
+
+
+
+
+
     // ---- cat ----
     GameObject* catObj = AddObject("Cat");
     catObj->GetTransform()->SetLocalPosition(0, 0);
@@ -95,6 +101,124 @@ void TestScene::OnLoad()
         // 클릭 처리
         LOG_DEBUG("버튼 클릭");
         };
+
+
+
+    // ---- player animation ----
+    auto playerTex1 = ResourceManager::Load<Texture2D>(L"Resource/Player_Idle.png");
+    if (playerTex1)
+    {
+        LOG_DEBUG("Player.png loaded OK (%u x %u)", playerTex1->GetWidth(), playerTex1->GetHeight());
+
+        auto clip22 = std::make_shared<AnimationClip>();
+        clip22->name = "player_idle";
+        clip22->loop = true;
+        clip22->SetTexture(playerTex1);
+        clip22->AddFrames(112, 80, 12, 1.0f); 
+
+        GameObject* playerObj1 = AddObject("player_idle");
+        playerObj1->GetTransform()->SetLocalPosition(200, 0);
+        playerObj1->GetTransform()->SetLocalScale(3.f, 3.f);
+
+        playerObj1->AddComponent<SpriteRenderer>();
+
+        auto* anim = playerObj1->AddComponent<Animator>();
+        anim->AddClip(clip22);
+        anim->Play("player_idle");
+    }
+
+    // ---- player animation ----
+    auto playerTex2 = ResourceManager::Load<Texture2D>(L"Resource/Player_Attack.png");
+    if (playerTex2)
+    {
+        LOG_DEBUG("Player.png loaded OK (%u x %u)", playerTex2->GetWidth(), playerTex2->GetHeight());
+
+        auto clip22 = std::make_shared<AnimationClip>();
+        clip22->name = "Player_Attack";
+        clip22->loop = true;
+        clip22->SetTexture(playerTex2);
+        clip22->AddFrames(112, 80, 13, 1.0f);
+
+        GameObject* playerObj2 = AddObject("Player_Attack");
+        playerObj2->GetTransform()->SetLocalPosition(-200, 0);
+        playerObj2->GetTransform()->SetLocalScale(3.f, 3.f);
+
+        playerObj2->AddComponent<SpriteRenderer>();
+
+        auto* anim = playerObj2->AddComponent<Animator>();
+        anim->AddClip(clip22);
+        anim->Play("Player_Attack");
+    }
+
+
+    // ---- player animation ----
+    auto effect1 = ResourceManager::Load<Texture2D>(L"Resource/Effect_Hit.png");
+    if (effect1)
+    {
+        LOG_DEBUG("Effect_Hit.png loaded OK (%u x %u)", effect1->GetWidth(), effect1->GetHeight());
+
+        auto clip223 = std::make_shared<AnimationClip>();
+        clip223->name = "Effect_Hit";
+        clip223->loop = true;
+        clip223->SetTexture(effect1);
+        clip223->AddFrames(96, 96, 7, 0.4f);
+
+        GameObject* effectObj1 = AddObject("Effect_Hit");
+        effectObj1->GetTransform()->SetLocalPosition(-300, -100);
+        effectObj1->GetTransform()->SetLocalScale(1.f, 1.f);
+
+        effectObj1->AddComponent<SpriteRenderer>();
+
+        auto* anim = effectObj1->AddComponent<Animator>();
+        anim->AddClip(clip223);
+        anim->Play("Effect_Hit");
+    }
+
+    // ---- player animation ----
+    auto monster1Tex = ResourceManager::Load<Texture2D>(L"Resource/Monster_Idle.png");
+    if (monster1Tex)
+    {
+        LOG_DEBUG("Monster_Idle.png loaded OK (%u x %u)", monster1Tex->GetWidth(), monster1Tex->GetHeight());
+
+        auto clip223 = std::make_shared<AnimationClip>();
+        clip223->name = "Monster_Idle";
+        clip223->loop = true;
+        clip223->SetTexture(monster1Tex);
+        clip223->AddFrames(128, 64, 10, 1.f);
+
+        GameObject* m1 = AddObject("Monster_Idle");
+        m1->GetTransform()->SetLocalPosition(-300, -300);
+        m1->GetTransform()->SetLocalScale(1.5f, 1.5f);
+
+        m1->AddComponent<SpriteRenderer>();
+
+        auto* anim = m1->AddComponent<Animator>();
+        anim->AddClip(clip223);
+        anim->Play("Monster_Idle");
+    }
+
+    // ---- player animation ----
+    auto monster2Tex = ResourceManager::Load<Texture2D>(L"Resource/Monster_Attack.png");
+    if (monster2Tex)
+    {
+        LOG_DEBUG("Monster_Attack.png loaded OK (%u x %u)", monster2Tex->GetWidth(), monster2Tex->GetHeight());
+
+        auto clip223 = std::make_shared<AnimationClip>();
+        clip223->name = "Monster_Attack";
+        clip223->loop = true;
+        clip223->SetTexture(monster2Tex);
+        clip223->AddFrames(128, 64, 17, 1.f);
+
+        GameObject* m2 = AddObject("Monster_Attack");
+        m2->GetTransform()->SetLocalPosition(300, -300);
+        m2->GetTransform()->SetLocalScale(1.5f, 1.5f);
+
+        m2->AddComponent<SpriteRenderer>();
+
+        auto* anim = m2->AddComponent<Animator>();
+        anim->AddClip(clip223);
+        anim->Play("Monster_Attack");
+    }
 }
 
 void TestScene::OnUnLoad()
