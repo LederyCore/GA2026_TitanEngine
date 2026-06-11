@@ -52,9 +52,6 @@
     <ClCompile Include="Enemy.cpp">
       <Filter>_Content</Filter>
     </ClCompile>
-    <ClCompile Include="Engine.cpp">
-      <Filter>_Content</Filter>
-    </ClCompile>
     <ClCompile Include="InGameScene.cpp">
       <Filter>_Content</Filter>
     </ClCompile>
@@ -72,6 +69,9 @@
     </ClCompile>
     <ClCompile Include="GameTimer.cpp">
       <Filter>TitanEngine\Time</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine.cpp">
+      <Filter>TitanEngine\Core</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -129,9 +129,6 @@
     <ClInclude Include="Enemy.h">
       <Filter>_Content</Filter>
     </ClInclude>
-    <ClInclude Include="Engine.h">
-      <Filter>_Content</Filter>
-    </ClInclude>
     <ClInclude Include="InGameScene.h">
       <Filter>_Content</Filter>
     </ClInclude>
@@ -146,6 +143,9 @@
     </ClInclude>
     <ClInclude Include="GameTimer.h">
       <Filter>TitanEngine\Time</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine.h">
+      <Filter>TitanEngine\Core</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
