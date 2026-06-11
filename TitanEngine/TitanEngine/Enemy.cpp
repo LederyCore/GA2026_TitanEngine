@@ -4,6 +4,7 @@
 #include <DebugConsole/DebugConsole.h>
 #include <InputSystem/InputSystem.h>
 
+#include "GameObject.h"
 #include "SceneManager.h"
 
 //using namespace TitanEngine;
@@ -11,7 +12,6 @@
 void TitanEngine::Enemy::OnAwake()
 {
 	LOG_DEBUG("Enemy OnAwake");
-
 }
 
 void TitanEngine::Enemy::OnEnable()
@@ -20,6 +20,7 @@ void TitanEngine::Enemy::OnEnable()
 
 void TitanEngine::Enemy::OnStart()
 {
+	m_Animator = GetOwner()->GetComponent<Animator>();
 }
 
 void TitanEngine::Enemy::Update(float deltaTime)
@@ -31,10 +32,6 @@ void TitanEngine::Enemy::Update(float deltaTime)
 		TakeDamage(10.f);
 	};
 
-	if (input.GetKeyPressed(VK_SPACE))
-	{
-		SceneManagement::SceneManager::Instance().LoadScene("TestScene");
-	}
 }
 
 void TitanEngine::Enemy::OnDisable()
@@ -58,11 +55,13 @@ void TitanEngine::Enemy::TakeDamage(float amount)
 {
 	m_CurrHealth -= amount;
 
+	m_Animator->Play("panda_hit");
+
 	if (m_CurrHealth <= 0)
 	{
 		LOG_DEBUG("Enemy Destroy");
 
-		//Destroy(this);
+		Destroy(GetOwner());
 	}
 	LOG_DEBUG("Enemy OnAwake : %f ", m_CurrHealth);
 

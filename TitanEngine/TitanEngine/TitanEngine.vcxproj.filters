@@ -73,6 +73,7 @@
     <ClCompile Include="TitleScene.cpp">
       <Filter>_Content</Filter>
     </ClCompile>
+    <ClCompile Include="InGameTimer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Animator.h">
@@ -147,6 +148,7 @@
     <ClInclude Include="TitleScene.h">
       <Filter>_Content</Filter>
     </ClInclude>
+    <ClInclude Include="InGameTimer.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="TitanEngine">

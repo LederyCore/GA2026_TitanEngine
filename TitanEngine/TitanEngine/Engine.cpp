@@ -10,6 +10,8 @@
 #include "DebugConsole/DebugConsole.h"
 #include "GameTimer.h"
 #include "D2DRenderer.h"
+#include "InGameScene.h"
+#include "TitleScene.h"
 
 using namespace Platform;
 using namespace TitanEngine::Renderer;
@@ -67,13 +69,19 @@ bool TitanEngine::Engine::Initialize(IWindow& window, const wchar_t* windowName,
         return false;
     }
 
-    auto testScene = std::make_shared<TestScene>("TestScene");
-    /*auto titleScene = std::make_shared<TestScene>("TitleScene");
-    auto ingameScene = std::make_shared<TestScene>("InGameScene");*/
+   /* auto testScene = std::make_shared<TestScene>("TestScene");
     SceneManager::Instance().RegisterScene("TestScene", testScene);
-    //SceneManager::Instance().RegisterScene("TitleScene", titleScene);
-    //SceneManager::Instance().RegisterScene("InGameScene", ingameScene);
-    SceneManager::Instance().LoadScene("TestScene");
+    SceneManager::Instance().LoadScene("TestScene");*/
+
+    auto titleScene = std::make_shared<TitleScene>("TitleScene");
+    SceneManager::Instance().RegisterScene("TitleScene", titleScene);
+
+    auto inGameScene = std::make_shared<InGameScene>("InGameScene");
+    SceneManager::Instance().RegisterScene("InGameScene", inGameScene);
+
+
+    SceneManager::Instance().LoadScene("TitleScene");
+
 
     wnd->AddObserver(WM_SIZE, m_renderer);
     wnd->AddObserver(WM_EXITSIZEMOVE, m_renderer);

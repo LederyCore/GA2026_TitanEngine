@@ -1,5 +1,7 @@
 #pragma once
+#include "Animator.h"
 #include "Component.h"
+
 
 namespace TitanEngine
 {
@@ -16,6 +18,9 @@ namespace TitanEngine
 		// Component을(를) 통해 상속됨
 		Object* Clone() override;
 
+
+	public:
+		Animator* m_Animator;
 
 	public:
 		float m_MaxHealth = 100.0f;
