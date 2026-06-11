@@ -41,13 +41,18 @@ namespace TitanEngine
 
         template<typename T>
         T* GetComponent()
-        {
+        { 
             for (Component* comp : m_components)
             {
                 T* result = dynamic_cast<T*>(comp);
                 if (result) return result;
             }
             return nullptr;
+        }
+
+        const std::vector<Component*>& GetComponents()
+        {
+            return m_components;
         }
 
         template<typename T>

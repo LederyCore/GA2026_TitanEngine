@@ -11,18 +11,19 @@ namespace TitanEngine
         m_currentScene = SceneManagement::SceneManager::Instance().GetActiveScene();
     }
 
-    void Object::Destroy(Object* obj)
+    void Object::Destroy(GameObject* obj)
     {
         if (obj == nullptr) return;
         if (obj->m_currentScene != nullptr)
             obj->m_currentScene->RemoveObject(obj);
     }
 
-    void Object::Destroy(Object* obj, float delay)
+    void Object::Destroy(GameObject* obj, float delay)
     {
         if (obj == nullptr) return;
         obj->m_pendingDestroy = true;
         obj->m_destroyDelay = delay;
+        Destroy(obj);
     }
 
     Object* Object::Instantiate(Object* original)

@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "Scene.h"
 #include "DebugConsole/DebugConsole.h"
 #include <algorithm>
@@ -15,7 +15,7 @@ namespace TitanEngine::SceneManagement
         m_renderList.clear();
         m_pendingDestroyList.clear();
 
-        m_allGameObjects.clear();  // unique_ptr ¼Ò¸ê ¡æ ~GameObject() ¡æ ~Component() ÀÚµ¿
+        m_allGameObjects.clear();  // unique_ptr ì†Œë©¸ â†’ ~GameObject() â†’ ~Component() ìë™
         m_transforms.clear();
     }
 
@@ -27,7 +27,7 @@ namespace TitanEngine::SceneManagement
 
     void Scene::Update(float deltaTime)
     {
-        // 1. Start Ã³¸®
+        // 1. Start ì²˜ë¦¬
         for (Component* comp : m_pendingStartList)
         {
             if (comp->GetActive())
@@ -35,11 +35,11 @@ namespace TitanEngine::SceneManagement
         }
         m_pendingStartList.clear();
 
-        // 2. ÀÏ¹İ ¾÷µ¥ÀÌÆ®
+        // 2. ì¼ë°˜ ì—…ë°ì´íŠ¸
         for (auto* c : m_updateableList)
             c->Update(deltaTime);
 
-        // 3. Áö¿¬ »èÁ¦ Å¸ÀÌ¸Ó
+        // 3. ì§€ì—° ì‚­ì œ íƒ€ì´ë¨¸
         for (auto& go : m_allGameObjects)
         {
             if (go->m_pendingDestroy)
@@ -49,6 +49,7 @@ namespace TitanEngine::SceneManagement
                     RemoveObject(go.get());
             }
         }
+
 
         FlushDestroyQueue();
     }
@@ -117,23 +118,25 @@ namespace TitanEngine::SceneManagement
                 std::remove(m_renderList.begin(), m_renderList.end(), c),
                 m_renderList.end());
     }
+
     GameObject* Scene::AddObject(const std::string& name)
     {
         if ((int)m_transforms.size() >= MAX_GAMEOBJECTS)
         {
-            LOG_ERROR("MAX_GAMEOBJECTS(%d) ÃÊ°ú", MAX_GAMEOBJECTS);
+            LOG_ERROR("MAX_GAMEOBJECTS(%d) ì´ˆê³¼", MAX_GAMEOBJECTS);
             return nullptr;
         }
 
         int index = (int)m_transforms.size();
 
-        // Transform ¸ÕÀú ¹è¿­¿¡ Ãß°¡
+        // Transform ë¨¼ì € ë°°ì—´ì— ì¶”ê°€
         m_transforms.emplace_back();
         Transform* t = &m_transforms.back();
         t->m_selfIndex = index;
 
-        // GameObject »ı¼º
-        auto go = std::make_unique<GameObject>(name);
+        // GameObject ìƒì„±
+        std::unique_ptr<GameObject> go = std::make_unique<GameObject>(name);
+
         go->m_transform = t;
         t->m_owner = go.get();
 
@@ -147,17 +150,17 @@ namespace TitanEngine::SceneManagement
     {
         std::swap(m_transforms[a], m_transforms[b]);
 
-        // selfIndex °»½Å
+        // selfIndex ê°±ì‹ 
         m_transforms[a].m_selfIndex = a;
         m_transforms[b].m_selfIndex = b;
 
-        // m_owner->m_transform Æ÷ÀÎÅÍ °»½Å
+        // m_owner->m_transform í¬ì¸í„° ê°±ì‹ 
         if (m_transforms[a].m_owner)
             m_transforms[a].m_owner->m_transform = &m_transforms[a];
         if (m_transforms[b].m_owner)
             m_transforms[b].m_owner->m_transform = &m_transforms[b];
 
-        // ÀüÃ¼ ¹è¿­ÀÇ parentIndex, childrenIndices Áß a¡êb ±³Ã¼
+        // ì „ì²´ ë°°ì—´ì˜ parentIndex, childrenIndices ì¤‘ aâ†”b êµì²´
         for (Transform& t : m_transforms)
         {
             if (t.m_parentIndex == a)       t.m_parentIndex = b;
@@ -183,7 +186,7 @@ namespace TitanEngine::SceneManagement
                 * Matrix::CreateTranslation(t.GetLocalPosition().x, t.GetLocalPosition().y, 0.0f);
 
             if (t.m_parentIndex == -1)
-                t.SetWorldMatrix(local);  // ¿ÀÇÁ¼Â ¾øÀ½
+                t.SetWorldMatrix(local);  // ì˜¤í”„ì…‹ ì—†ìŒ
             else
                 t.SetWorldMatrix(local * m_transforms[t.m_parentIndex].GetWorldMatrix());
         }
@@ -194,7 +197,7 @@ namespace TitanEngine::SceneManagement
         if (go == nullptr) return;
         if ((int)m_transforms.size() >= MAX_GAMEOBJECTS)
         {
-            LOG_ERROR("MAX_GAMEOBJECTS(%d) ÃÊ°ú", MAX_GAMEOBJECTS);
+            LOG_ERROR("MAX_GAMEOBJECTS(%d) ì´ˆê³¼", MAX_GAMEOBJECTS);
             return;
         }
 
@@ -204,9 +207,9 @@ namespace TitanEngine::SceneManagement
         Transform* t = &m_transforms.back();
         t->m_selfIndex = index;
 
-        // ±âÁ¸ Transform °ª º¹»ç
+        // ê¸°ì¡´ Transform ê°’ ë³µì‚¬
         *t = *go->m_transform;
-        t->m_selfIndex = index;  // º¹»ç ÈÄ ÀÎµ¦½º Àç¼³Á¤
+        t->m_selfIndex = index;  // ë³µì‚¬ í›„ ì¸ë±ìŠ¤ ì¬ì„¤ì •
         go->m_transform = t;
         t->m_owner = go;
 
@@ -215,61 +218,50 @@ namespace TitanEngine::SceneManagement
 
     void Scene::FlushDestroyQueue()
     {
-        // Àç±ÍÀûÀ¸·Î ÀÚ½Ä Æ÷ÇÔ ÆÄ±« ´ë»ó ¼öÁı
         std::vector<int> toRemoveIndices;
 
         std::function<void(int)> collectWithChildren = [&](int idx)
             {
-                // ÀÌ¹Ì ¼öÁıµÈ ÀÎµ¦½º¸é ½ºÅµ
                 if (std::find(toRemoveIndices.begin(), toRemoveIndices.end(), idx) != toRemoveIndices.end())
                     return;
-
                 toRemoveIndices.push_back(idx);
-
-                // ÀÚ½Äµéµµ Àç±Í ¼öÁı
                 for (int childIdx : m_transforms[idx].m_childrenIndices)
                     collectWithChildren(childIdx);
             };
 
-        for (Object* obj : m_pendingDestroyList)
+        for (GameObject* obj : m_pendingDestroyList)
         {
-            GameObject* go = dynamic_cast<GameObject*>(obj);
-            if (go && go->m_transform)
-                collectWithChildren(go->m_transform->m_selfIndex);
+            if (obj && obj->m_transform)
+                collectWithChildren(obj->m_transform->m_selfIndex);
         }
 
-        // ÀÎµ¦½º ³»¸²Â÷¼ø Á¤·Ä (µÚ¿¡¼­ºÎÅÍ Á¦°ÅÇØ¾ß ÀÎµ¦½º ¹Ğ¸² ¾øÀ½)
         std::sort(toRemoveIndices.rbegin(), toRemoveIndices.rend());
 
         for (int idx : toRemoveIndices)
         {
             GameObject* go = m_transforms[idx].m_owner;
 
-            // ¾÷µ¥ÀÌÆ® ¸®½ºÆ®¿¡¼­ Á¦°Å
             if (go)
             {
-                m_fixedUpdateList.erase(
-                    std::remove_if(m_fixedUpdateList.begin(), m_fixedUpdateList.end(),
-                        [go](IFixedUpdateable* c) { return c == dynamic_cast<IFixedUpdateable*>(go); }),
-                    m_fixedUpdateList.end());
-                m_updateableList.erase(
-                    std::remove_if(m_updateableList.begin(), m_updateableList.end(),
-                        [go](IUpdateable* c) { return c == dynamic_cast<IUpdateable*>(go); }),
-                    m_updateableList.end());
-                m_lateUpdateList.erase(
-                    std::remove_if(m_lateUpdateList.begin(), m_lateUpdateList.end(),
-                        [go](ILateUpdateable* c) { return c == dynamic_cast<ILateUpdateable*>(go); }),
-                    m_lateUpdateList.end());
-                m_renderList.erase(
-                    std::remove_if(m_renderList.begin(), m_renderList.end(),
-                        [go](IRenderable* c) { return c == dynamic_cast<IRenderable*>(go); }),
-                    m_renderList.end());
+                // GOê°€ ì†Œìœ í•œ ì»´í¬ë„ŒíŠ¸ë“¤ì„ ê° ë¦¬ìŠ¤íŠ¸ì—ì„œ ì œê±°
+                for (auto& comp : go->GetComponents())
+                {
+                    Component* c = comp;
+
+                    // PendingStart ë¦¬ìŠ¤íŠ¸ì—ì„œ ì œê±°
+                    m_pendingStartList.erase(
+                        std::remove(m_pendingStartList.begin(), m_pendingStartList.end(), c),
+                        m_pendingStartList.end());
+
+                    // ì¸í„°í˜ì´ìŠ¤ë³„ ë¦¬ìŠ¤íŠ¸ì—ì„œ ì œê±°
+                    UnRegisterComponent(c);
+                }
             }
 
-            // Transform Á¦°Å
+            // Transform ì œê±°
             m_transforms.erase(m_transforms.begin() + idx);
 
-            // Á¦°Å ÈÄ ÀÎµ¦½º °»½Å
+            // ì¸ë±ìŠ¤ ì¬ì •ë¹„
             for (int i = idx; i < (int)m_transforms.size(); i++)
             {
                 m_transforms[i].m_selfIndex = i;
@@ -278,7 +270,7 @@ namespace TitanEngine::SceneManagement
             }
             for (Transform& t : m_transforms)
             {
-                if (t.m_parentIndex > idx)       t.m_parentIndex--;
+                if (t.m_parentIndex > idx)  t.m_parentIndex--;
                 else if (t.m_parentIndex == idx) t.m_parentIndex = -1;
 
                 for (int& ci : t.m_childrenIndices)
@@ -289,7 +281,7 @@ namespace TitanEngine::SceneManagement
                     t.m_childrenIndices.end());
             }
 
-            // GameObject Á¦°Å
+            // GameObject ì†Œìœ ê¶Œ í•´ì œ (unique_ptr ì†Œë©¸ â†’ ~Component ìë™ í˜¸ì¶œ)
             m_allGameObjects.erase(
                 std::remove_if(m_allGameObjects.begin(), m_allGameObjects.end(),
                     [go](const std::unique_ptr<GameObject>& g) { return g.get() == go; }),
@@ -299,8 +291,8 @@ namespace TitanEngine::SceneManagement
         m_pendingDestroyList.clear();
     }
 
-    // ³ª¸ÓÁö µ¿ÀÏ
-    void Scene::RemoveObject(Object* obj) { m_pendingDestroyList.push_back(obj); }
+    // ë‚˜ë¨¸ì§€ ë™ì¼
+    void Scene::RemoveObject(GameObject* obj) { m_pendingDestroyList.push_back(obj); }
     void Scene::AddToPendingStartList(Component* c) { m_pendingStartList.push_back(c); }
     void Scene::AddToFixedUpdateList(IFixedUpdateable* c) { m_fixedUpdateList.push_back(c); }
     void Scene::AddToUpdateList(IUpdateable* c) { m_updateableList.push_back(c); }

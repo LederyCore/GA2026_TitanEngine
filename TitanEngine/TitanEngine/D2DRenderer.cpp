@@ -60,6 +60,7 @@ void TitanEngine::Renderer::D2DRenderer::UnInitialize()
 	m_brush = nullptr;
 	m_d2dContext = nullptr;
 	m_d2dDevice = nullptr;
+	m_d2dFactory = nullptr;
 	m_swapChain = nullptr;
 	m_d3dDevice = nullptr;
 }
@@ -195,10 +196,8 @@ void TitanEngine::Renderer::D2DRenderer::CreateDeviceAndSwapChain(HWND hwnd)
 
 	DX::ThrowIfFailed(hr);
 
-	// 3. ID2D1Factory4 생성
+	// 3. ID2D1Factory8 creation — stored as member so it outlives all D2D resources
 	D2D1_FACTORY_OPTIONS opts = {};
-	ComPtr<ID2D1Factory8> d2dFactory;
-
 #if defined(_DEBUG)
 	opts.debugLevel = D2D1_DEBUG_LEVEL_INFORMATION;
 #endif
@@ -207,13 +206,13 @@ void TitanEngine::Renderer::D2DRenderer::CreateDeviceAndSwapChain(HWND hwnd)
 		D2D1_FACTORY_TYPE_SINGLE_THREADED,
 		__uuidof(ID2D1Factory8),
 		&opts,
-		reinterpret_cast<void**>(d2dFactory.GetAddressOf()));
+		reinterpret_cast<void**>(m_d2dFactory.GetAddressOf()));
 
 	DX::ThrowIfFailed(hr);
 
-	// 4. ID2D1Device4 생성
+	// 4. ID2D1Device7 ����
 	ComPtr<ID2D1Device> baseDevice;
-	hr = d2dFactory->CreateDevice(dxgiDevice.Get(), &baseDevice);
+	hr = m_d2dFactory->CreateDevice(dxgiDevice.Get(), &baseDevice);
 
 	DX::ThrowIfFailed(hr);
 
@@ -265,6 +264,20 @@ void TitanEngine::Renderer::D2DRenderer::CreateRenderTargets()
 		&m_brush);
 
 	DX::ThrowIfFailed(hr);
+}
+
+void TitanEngine::Renderer::D2DRenderer::FlushAndClearTarget()
+{
+	if (!m_d2dContext) return;
+
+	// Ensure BeginDraw/EndDraw are balanced before releasing resources
+	if (m_isDrawing)
+	{
+		m_d2dContext->EndDraw();
+		m_isDrawing = false;
+	}
+
+	m_d2dContext->SetTarget(nullptr);
 }
 
 void TitanEngine::Renderer::D2DRenderer::ReleaseRenderTargets()

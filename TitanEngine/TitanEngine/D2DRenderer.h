@@ -22,12 +22,13 @@ namespace TitanEngine::Renderer
         void RenderBegin();
         void RenderEnd();
 
-        // 외부에 제공하는 것
+        void FlushAndClearTarget();
+
         ID2D1DeviceContext7*  GetContext() { return m_d2dContext.Get(); }
-        ID2D1Device7*         GetDevice() { return m_d2dDevice.Get(); }  // 브러시 생성용
-        ID2D1SolidColorBrush* GetBrush() { return m_brush.Get(); }       // 공용 브러시
-        UINT GetWidth()  const { return m_width; }   // ← 추가
-        UINT GetHeight() const { return m_height; }  // ← 추가
+        ID2D1Device7*         GetDevice() { return m_d2dDevice.Get(); }  
+        ID2D1SolidColorBrush* GetBrush() { return m_brush.Get(); }      
+        UINT GetWidth()  const { return m_width; }  
+        UINT GetHeight() const { return m_height; }  
 
 
     private:
@@ -45,16 +46,16 @@ namespace TitanEngine::Renderer
         UINT m_pendingWidth = 0;
         UINT m_pendingHeight = 0;
 
-        // D3D 인프라
+        // D3D 
         ComPtr<ID3D11Device>        m_d3dDevice;
         ComPtr<IDXGISwapChain1>     m_swapChain;
 
-        // D2D 인프라
+        // D2D 
+        ComPtr<ID2D1Factory8>       m_d2dFactory;  
         ComPtr<ID2D1Device7>        m_d2dDevice;
         ComPtr<ID2D1DeviceContext7> m_d2dContext;
         ComPtr<ID2D1Bitmap1>        m_targetBitmap;
 
-        // 공용 리소스
         ComPtr<ID2D1SolidColorBrush> m_brush;
 
         ComPtr<IDWriteFactory>       m_dwriteFactory;   
