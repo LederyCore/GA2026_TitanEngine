@@ -9,6 +9,7 @@
 #include "Texture2D.h"
 #include "DebugConsole/DebugConsole.h"
 #include "Button.h"
+#include "Slider.h"
 
 using namespace TitanEngine;
 
@@ -58,6 +59,9 @@ void TestScene::OnLoad()
         auto* anim = pandaObj->AddComponent<Animator>();
         anim->AddClip(clip);
         anim->Play("panda_run");
+
+
+
     }
 
     // ---- parent / child ----
@@ -219,6 +223,24 @@ void TestScene::OnLoad()
         anim->AddClip(clip223);
         anim->Play("Monster_Attack");
     }
+
+
+    auto* hpgo = AddObject("HPBar");
+    hpgo->GetTransform()->SetLocalPosition(0, -250);
+
+    auto* hp = hpgo->AddComponent<Slider>();
+    hp->minValue = 0.f;
+    hp->maxValue = 100.f;
+    hp->SetValue(75.f);               // HP 75/100
+    hp->width = 300.f;
+    hp->height = 24.f;
+    hp->fillColor = D2D1::ColorF(0.2f, 0.85f, 0.2f, 1.f);  // 초록
+
+    hp->onValueChanged = [](float v) {
+
+        LOG_DEBUG("체력 변화");
+        // HP 변경 감지
+        };
 }
 
 void TestScene::OnUnLoad()
