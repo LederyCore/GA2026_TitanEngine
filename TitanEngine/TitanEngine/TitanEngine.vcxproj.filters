@@ -7,12 +7,6 @@
     <ClCompile Include="Button.cpp">
       <Filter>TitanEngine</Filter>
     </ClCompile>
-    <ClCompile Include="GameTimer.cpp">
-      <Filter>TitanEngine</Filter>
-    </ClCompile>
-    <ClCompile Include="main.cpp">
-      <Filter>TitanEngine</Filter>
-    </ClCompile>
     <ClCompile Include="Sprite.cpp">
       <Filter>TitanEngine</Filter>
     </ClCompile>
@@ -36,9 +30,6 @@
     </ClCompile>
     <ClCompile Include="GameObject.cpp">
       <Filter>TitanEngine\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="pch.cpp">
-      <Filter>TitanEngine</Filter>
     </ClCompile>
     <ClCompile Include="Object.cpp">
       <Filter>TitanEngine\Core</Filter>
@@ -73,18 +64,21 @@
     <ClCompile Include="TitleScene.cpp">
       <Filter>_Content</Filter>
     </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>_EntryPoint</Filter>
+    </ClCompile>
+    <ClCompile Include="pch.cpp">
+      <Filter>_EntryPoint</Filter>
+    </ClCompile>
+    <ClCompile Include="GameTimer.cpp">
+      <Filter>TitanEngine\Time</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Animator.h">
       <Filter>TitanEngine</Filter>
     </ClInclude>
     <ClInclude Include="Button.h">
-      <Filter>TitanEngine</Filter>
-    </ClInclude>
-    <ClInclude Include="GameTimer.h">
-      <Filter>TitanEngine</Filter>
-    </ClInclude>
-    <ClInclude Include="pch.h">
       <Filter>TitanEngine</Filter>
     </ClInclude>
     <ClInclude Include="Sprite.h">
@@ -147,6 +141,12 @@
     <ClInclude Include="TitleScene.h">
       <Filter>_Content</Filter>
     </ClInclude>
+    <ClInclude Include="pch.h">
+      <Filter>_EntryPoint</Filter>
+    </ClInclude>
+    <ClInclude Include="GameTimer.h">
+      <Filter>TitanEngine\Time</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="TitanEngine">
@@ -169,6 +169,12 @@
     </Filter>
     <Filter Include="_Content">
       <UniqueIdentifier>{938c1089-44e4-4c9b-971f-a593d480e500}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="_EntryPoint">
+      <UniqueIdentifier>{0eb7e28a-998d-42ee-9e07-d4011a49e896}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TitanEngine\Time">
+      <UniqueIdentifier>{1299099b-30f2-4d8d-affa-28c2865eeaf2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
