@@ -1,157 +1,174 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="리소스 파일">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
-    <Filter Include="_EntryPoint">
-      <UniqueIdentifier>{360bb9f1-298e-48ed-b7d3-8b755105f489}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="TitanEngineCore">
-      <UniqueIdentifier>{2175f85d-14ce-47d6-b8d4-e381a734d49e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="TitanEngineCore\Time">
-      <UniqueIdentifier>{71da633e-27e6-4aeb-9891-427a37e607d2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="TitanEngineCore\SceneManagement">
-      <UniqueIdentifier>{7632b069-2bd3-45b7-aa60-dd9ab5fc8ab7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="TitanEngineCore\Renderer">
-      <UniqueIdentifier>{95051d19-be7e-4a19-a4fd-76fbbc9f7a32}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="TitanEngineCore\TitanEngine">
-      <UniqueIdentifier>{75b7d86b-dc55-4fd0-b2e5-f6def078cd7d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="__Test">
-      <UniqueIdentifier>{c4dadfe7-f8bc-4b7c-8819-4f17635ed9d2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="TitanEngineCore\ResourceManagement">
-      <UniqueIdentifier>{9c5ea07b-82af-4db3-bc1d-4ee63b13a01a}</UniqueIdentifier>
-    </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="pch.cpp">
-      <Filter>_EntryPoint</Filter>
+    <ClCompile Include="Animator.cpp">
+      <Filter>TitanEngine</Filter>
     </ClCompile>
-    <ClCompile Include="main.cpp">
-      <Filter>_EntryPoint</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine.cpp">
-      <Filter>TitanEngineCore</Filter>
+    <ClCompile Include="Button.cpp">
+      <Filter>TitanEngine</Filter>
     </ClCompile>
     <ClCompile Include="GameTimer.cpp">
-      <Filter>TitanEngineCore\Time</Filter>
+      <Filter>TitanEngine</Filter>
     </ClCompile>
-    <ClCompile Include="SceneManager.cpp">
-      <Filter>TitanEngineCore\SceneManagement</Filter>
-    </ClCompile>
-    <ClCompile Include="Scene.cpp">
-      <Filter>TitanEngineCore\SceneManagement</Filter>
-    </ClCompile>
-    <ClCompile Include="D2DRenderer.cpp">
-      <Filter>TitanEngineCore\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="GameObject.cpp">
-      <Filter>TitanEngineCore\TitanEngine</Filter>
-    </ClCompile>
-    <ClCompile Include="Transform.cpp">
-      <Filter>TitanEngineCore\TitanEngine</Filter>
-    </ClCompile>
-    <ClCompile Include="Component.cpp">
-      <Filter>TitanEngineCore\TitanEngine</Filter>
-    </ClCompile>
-    <ClCompile Include="D2DRenderer.cpp">
-      <Filter>TitanEngineCore\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="TestComponent.cpp">
-      <Filter>__Test</Filter>
-    </ClCompile>
-    <ClCompile Include="Object.cpp">
-      <Filter>TitanEngineCore\TitanEngine</Filter>
-    </ClCompile>
-    <ClCompile Include="TestScene.cpp">
-      <Filter>__Test</Filter>
-    </ClCompile>
-    <ClCompile Include="AnimationClip.cpp">
-      <Filter>TitanEngineCore\TitanEngine</Filter>
-    </ClCompile>
-    <ClCompile Include="Animator.cpp">
-      <Filter>TitanEngineCore\TitanEngine</Filter>
+    <ClCompile Include="main.cpp">
+      <Filter>TitanEngine</Filter>
     </ClCompile>
     <ClCompile Include="Sprite.cpp">
-      <Filter>TitanEngineCore\TitanEngine</Filter>
+      <Filter>TitanEngine</Filter>
     </ClCompile>
     <ClCompile Include="SpriteRenderer.cpp">
-      <Filter>TitanEngineCore\TitanEngine</Filter>
+      <Filter>TitanEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="Transform.cpp">
+      <Filter>TitanEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>TitanEngine\SceneManagement</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneManager.cpp">
+      <Filter>TitanEngine\SceneManagement</Filter>
+    </ClCompile>
+    <ClCompile Include="D2DRenderer.cpp">
+      <Filter>TitanEngine\Render</Filter>
+    </ClCompile>
+    <ClCompile Include="Component.cpp">
+      <Filter>TitanEngine\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="GameObject.cpp">
+      <Filter>TitanEngine\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="pch.cpp">
+      <Filter>TitanEngine</Filter>
+    </ClCompile>
+    <ClCompile Include="Object.cpp">
+      <Filter>TitanEngine\Core</Filter>
     </ClCompile>
     <ClCompile Include="ResourceManager.cpp">
-      <Filter>TitanEngineCore\ResourceManagement</Filter>
+      <Filter>TitanEngine\ResourceManagement</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimationClip.cpp">
+      <Filter>TitanEngine\ResourceManagement</Filter>
     </ClCompile>
     <ClCompile Include="Texture2D.cpp">
-      <Filter>TitanEngineCore\ResourceManagement</Filter>
+      <Filter>TitanEngine\ResourceManagement</Filter>
+    </ClCompile>
+    <ClCompile Include="TestComponent.cpp">
+      <Filter>_Test</Filter>
+    </ClCompile>
+    <ClCompile Include="TestScene.cpp">
+      <Filter>_Test</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemy.cpp">
+      <Filter>_Content</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine.cpp">
+      <Filter>_Content</Filter>
+    </ClCompile>
+    <ClCompile Include="InGameScene.cpp">
+      <Filter>_Content</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>_Content</Filter>
+    </ClCompile>
+    <ClCompile Include="TitleScene.cpp">
+      <Filter>_Content</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="pch.h">
-      <Filter>_EntryPoint</Filter>
+    <ClInclude Include="Animator.h">
+      <Filter>TitanEngine</Filter>
     </ClInclude>
-    <ClInclude Include="Engine.h">
-      <Filter>TitanEngineCore</Filter>
+    <ClInclude Include="Button.h">
+      <Filter>TitanEngine</Filter>
     </ClInclude>
     <ClInclude Include="GameTimer.h">
-      <Filter>TitanEngineCore\Time</Filter>
+      <Filter>TitanEngine</Filter>
     </ClInclude>
-    <ClInclude Include="Scene.h">
-      <Filter>TitanEngineCore\SceneManagement</Filter>
-    </ClInclude>
-    <ClInclude Include="SceneManager.h">
-      <Filter>TitanEngineCore\SceneManagement</Filter>
-    </ClInclude>
-    <ClInclude Include="D2DRenderer.h">
-      <Filter>TitanEngineCore\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="Transform.h">
-      <Filter>TitanEngineCore\TitanEngine</Filter>
-    </ClInclude>
-    <ClInclude Include="Component.h">
-      <Filter>TitanEngineCore\TitanEngine</Filter>
-    </ClInclude>
-    <ClInclude Include="GameObject.h">
-      <Filter>TitanEngineCore\TitanEngine</Filter>
-    </ClInclude>
-    <ClInclude Include="D2DRenderer.h">
-      <Filter>TitanEngineCore\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="TestComponent.h">
-      <Filter>__Test</Filter>
-    </ClInclude>
-    <ClInclude Include="Object.h">
-      <Filter>TitanEngineCore\TitanEngine</Filter>
-    </ClInclude>
-    <ClInclude Include="TestScene.h">
-      <Filter>__Test</Filter>
-    </ClInclude>
-    <ClInclude Include="AnimationClip.h">
-      <Filter>TitanEngineCore\TitanEngine</Filter>
-    </ClInclude>
-    <ClInclude Include="Animator.h">
-      <Filter>TitanEngineCore\TitanEngine</Filter>
+    <ClInclude Include="pch.h">
+      <Filter>TitanEngine</Filter>
     </ClInclude>
     <ClInclude Include="Sprite.h">
-      <Filter>TitanEngineCore\TitanEngine</Filter>
+      <Filter>TitanEngine</Filter>
     </ClInclude>
     <ClInclude Include="SpriteRenderer.h">
-      <Filter>TitanEngineCore\TitanEngine</Filter>
+      <Filter>TitanEngine</Filter>
     </ClInclude>
-    <ClInclude Include="Resource.h">
-      <Filter>TitanEngineCore\ResourceManagement</Filter>
+    <ClInclude Include="Transform.h">
+      <Filter>TitanEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>TitanEngine\SceneManagement</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneManager.h">
+      <Filter>TitanEngine\SceneManagement</Filter>
+    </ClInclude>
+    <ClInclude Include="D2DRenderer.h">
+      <Filter>TitanEngine\Render</Filter>
+    </ClInclude>
+    <ClInclude Include="Component.h">
+      <Filter>TitanEngine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>TitanEngine\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Object.h">
+      <Filter>TitanEngine\Core</Filter>
     </ClInclude>
     <ClInclude Include="ResourceManager.h">
-      <Filter>TitanEngineCore\ResourceManagement</Filter>
+      <Filter>TitanEngine\ResourceManagement</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>TitanEngine\ResourceManagement</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimationClip.h">
+      <Filter>TitanEngine\ResourceManagement</Filter>
     </ClInclude>
     <ClInclude Include="Texture2D.h">
-      <Filter>TitanEngineCore\ResourceManagement</Filter>
+      <Filter>TitanEngine\ResourceManagement</Filter>
     </ClInclude>
+    <ClInclude Include="TestScene.h">
+      <Filter>_Test</Filter>
+    </ClInclude>
+    <ClInclude Include="TestComponent.h">
+      <Filter>_Test</Filter>
+    </ClInclude>
+    <ClInclude Include="Enemy.h">
+      <Filter>_Content</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine.h">
+      <Filter>_Content</Filter>
+    </ClInclude>
+    <ClInclude Include="InGameScene.h">
+      <Filter>_Content</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>_Content</Filter>
+    </ClInclude>
+    <ClInclude Include="TitleScene.h">
+      <Filter>_Content</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="TitanEngine">
+      <UniqueIdentifier>{823ce3d5-a2c7-4b30-8ff7-4793c5628541}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TitanEngine\SceneManagement">
+      <UniqueIdentifier>{4fc3b9e3-934e-4d69-aa9f-d7347a3b68e5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TitanEngine\Render">
+      <UniqueIdentifier>{c6fe202c-34f7-4c1b-9a52-cf33c7ac9b83}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TitanEngine\Core">
+      <UniqueIdentifier>{6808b0fa-ec3d-4583-ad06-63d61e3a669f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TitanEngine\ResourceManagement">
+      <UniqueIdentifier>{15bb0464-3c89-4d9f-964d-24490f73386a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="_Test">
+      <UniqueIdentifier>{acd47a59-2f62-402c-8852-6c4e8769614a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="_Content">
+      <UniqueIdentifier>{938c1089-44e4-4c9b-971f-a593d480e500}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>
