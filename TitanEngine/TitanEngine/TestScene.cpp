@@ -8,6 +8,7 @@
 #include "ResourceManager.h"
 #include "Texture2D.h"
 #include "DebugConsole/DebugConsole.h"
+#include "Button.h"
 
 using namespace TitanEngine;
 
@@ -66,6 +67,19 @@ void TestScene::OnLoad()
     childRender->m_color = D2D1::ColorF(D2D1::ColorF::Red);
     childRender->m_radius = 15.0f;
     childRender->m_speed = 0.f;
+
+    auto* go = AddObject("Button");
+    go->GetTransform()->SetLocalPosition(-100, -200);
+
+
+    auto* btn = go->AddComponent<Button>();
+    btn->width = 160.f;
+    btn->height = 40.f;
+    btn->text = L"Click Me";
+    btn->onClick = []() {
+        // 클릭 처리
+        LOG_DEBUG("버튼 클릭");
+        };
 }
 
 void TestScene::OnUnLoad()

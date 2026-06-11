@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Engine.h"
+#include "Button.h"
 #include "ResourceManager.h"
 #include "SceneManager.h"
 #include "TestScene.h"
@@ -74,7 +75,7 @@ bool TitanEngine::Engine::Initialize(IWindow& window, const wchar_t* windowName,
     wnd->AddObserver(WM_EXITSIZEMOVE, m_renderer);
     m_timer->Reset();
 
-    LOG_DEBUG("게임엔진이 성공적으로 초기화 되었습니다.");
+    
 	return true;
 }
 
@@ -144,6 +145,9 @@ void TitanEngine::Engine::LateUpdate(float deltaTime)
 
 void TitanEngine::Engine::Render()
 {
+    // Button 히트 테스트에 필요한 화면 크기 동기화 (리사이즈 대응)
+    Button::SetScreenSize((float)m_renderer->GetWidth(), (float)m_renderer->GetHeight());
+
     m_renderer->RenderBegin();
     m_currentFrameActiveScene->Render(
         m_renderer->GetContext(),
