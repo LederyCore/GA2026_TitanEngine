@@ -62,7 +62,7 @@ void TitanEngine::Enemy::TakeDamage(float amount)
 	{
 		LOG_DEBUG("Enemy Destroy");
 
-		Destroy(this);
+		//Destroy(this);
 	}
 	LOG_DEBUG("Enemy OnAwake : %f ", m_CurrHealth);
 
