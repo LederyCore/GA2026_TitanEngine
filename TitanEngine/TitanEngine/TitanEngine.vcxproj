@@ -170,6 +170,7 @@
     <ClCompile Include="TestComponent.cpp" />
     <ClCompile Include="TestScene.cpp" />
     <ClCompile Include="Texture2D.cpp" />
+    <ClCompile Include="TitleScene.cpp" />
     <ClCompile Include="Transform.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -195,6 +196,7 @@
     <ClInclude Include="TestComponent.h" />
     <ClInclude Include="TestScene.h" />
     <ClInclude Include="Texture2D.h" />
+    <ClInclude Include="TitleScene.h" />
     <ClInclude Include="Transform.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
