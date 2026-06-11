@@ -18,38 +18,87 @@ void InGameScene::OnLoad()
 {
     GameObject* enemy = AddObject("Enemy");
     enemy->AddComponent<Enemy>();
+    enemy->AddComponent<SpriteRenderer>();
+    auto* enemyAnim = enemy->AddComponent<Animator>();
 
-    // ---- panda animation ----
-   // PandaSpriteSheet.png : 1472 x 64 pixels, 23 frames (each 64 x 64)
-    auto pandaTex = ResourceManager::Load<Texture2D>(L"Resource/PandaSpriteSheet.png");
-    if (pandaTex)
+    auto enemyIdleTex = ResourceManager::Load<Texture2D>(L"Resource/Monster_Idle.png");
+    if (enemyIdleTex)
     {
-        LOG_DEBUG("PandaSpriteSheet.png loaded OK (%u x %u)", pandaTex->GetWidth(), pandaTex->GetHeight());
-
         auto Idle = std::make_shared<AnimationClip>();
-        Idle->name = "panda_run";
+        Idle->name = "enemy_idle";
         Idle->loop = true;
-        Idle->SetTexture(pandaTex);
-        Idle->AddFrames(64, 64, 23, 2.0f);  // 64x64 px, 23 frames, 2 seconds total
+        Idle->SetTexture(enemyIdleTex);
+        Idle->AddFrames(128, 64, 10, 1.0f);  
 
-        auto hit = std::make_shared<AnimationClip>();
-        hit->name = "panda_hit";
-        hit->loop = false;
-        hit->SetTexture(pandaTex);
-        hit->AddFrames(64, 64, 23, 0.5f);  // 64x64 px, 23 frames, 2 seconds total
-
-        enemy->AddComponent<SpriteRenderer>();
-
-        auto* anim = enemy->AddComponent<Animator>();
-        anim->AddClip(Idle);
-        anim->AddClip(hit);
-        anim->Play("panda_run");
-
+        enemyAnim->AddClip(Idle);
+        enemyAnim->Play("enemy_idle");
     }
 
+    GameObject* player = AddObject("Player");
+    player->AddComponent<Player>();
+    player->AddComponent<SpriteRenderer>();
+    auto* playerAnim = player->AddComponent<Animator>();
+
+    auto playerIdleTex = ResourceManager::Load<Texture2D>(L"Resource/Player_Idle.png");
+    if (playerIdleTex)
+    {
+        auto clip = std::make_shared<AnimationClip>();
+        clip->name = "player_idle";
+        clip->loop = true;
+        clip->SetTexture(playerIdleTex);
+        clip->AddFrames(112, 80, 12, 1.0f); 
+
+        playerAnim->AddClip(clip);
+        playerAnim->Play(clip->name);
+    }
+
+    auto playerAttack1Tex = ResourceManager::Load<Texture2D>(L"Resource/Player_Attack.png");
+    if (playerAttack1Tex)
+    {
+        auto clip = std::make_shared<AnimationClip>();
+        clip->name = "player_attack1";
+        clip->loop = false;
+        clip->SetTexture(playerAttack1Tex);
+        clip->AddFrames(112, 80, 13, 0.2f);
+
+        playerAnim->AddClip(clip);
+    }
+
+    auto playerAttack2Tex = ResourceManager::Load<Texture2D>(L"Resource/Player_Attack2.png");
+    if (playerAttack2Tex)
+    {
+        auto clip = std::make_shared<AnimationClip>();
+        clip->name = "player_attack2";
+        clip->loop = false;
+        clip->SetTexture(playerAttack2Tex);
+        clip->AddFrames(112, 80, 12, 0.2f);
+
+        playerAnim->AddClip(clip);
+    }
+
+    auto playerAttack3Tex = ResourceManager::Load<Texture2D>(L"Resource/Player_Attack3.png");
+    if (playerAttack3Tex)
+    {
+        auto clip = std::make_shared<AnimationClip>();
+        clip->name = "player_attack3";
+        clip->loop = false;
+        clip->SetTexture(playerAttack3Tex);
+        clip->AddFrames(112, 80, 15, 0.2f);
+
+        playerAnim->AddClip(clip);
+    }
+
+    player->GetTransform()->SetLocalPosition(-100, 0);
+    player->GetTransform()->SetLocalScale(3, 3);
+
+    enemy->GetTransform()->SetLocalPosition(100, 0);
+    enemy->GetTransform()->SetLocalScale(3, 3);
+
+    
+
     // 게임 승패 구분하기 위한 타이머
-    GameObject* timer = AddObject("Timer");
-    timer->AddComponent<InGameTimer>();
+    /*GameObject* timer = AddObject("Timer");
+    timer->AddComponent<InGameTimer>();*/
 
 
 }

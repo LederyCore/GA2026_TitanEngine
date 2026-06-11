@@ -13,6 +13,7 @@ void InGameTimer::OnEnable()
 
 void InGameTimer::OnStart()
 {
+
 }
 
 void InGameTimer::Update(float deltaTime)
@@ -32,4 +33,5 @@ void InGameTimer::OnDestory()
 
 Object* InGameTimer::Clone()
 {
+	return nullptr;
 }

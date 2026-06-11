@@ -3,35 +3,35 @@
 #include "Component.h"
 
 
-namespace TitanEngine
+using namespace TitanEngine;
+
+class Enemy : public Component, public IUpdateable, public IRenderable
 {
-	class Enemy : public Component, public IUpdateable, public IRenderable
-	{
-	public:
-		void OnAwake() override;
-		void OnEnable() override;
-		void OnStart() override;
-		void Update(float deltaTime) override;
-		void OnDisable() override;
-		void OnDestory() override;
+public:
+	void OnAwake() override;
+	void OnEnable() override;
+	void OnStart() override;
+	void Update(float deltaTime) override;
+	void OnDisable() override;
+	void OnDestory() override;
 
-		// Component을(를) 통해 상속됨
-		Object* Clone() override;
+	// Component을(를) 통해 상속됨
+	Object* Clone() override;
 
 
-	public:
-		Animator* m_Animator;
+public:
+	Animator* m_Animator;
 
-	public:
-		float m_MaxHealth = 100.0f;
-		float m_CurrHealth = m_MaxHealth;
+public:
+	float m_MaxHealth = 100.0f;
+	float m_CurrHealth = m_MaxHealth;
 
-		void TakeDamage(float amount);
+	void TakeDamage(float amount);
 
-	private:
-		// IRenderable을(를) 통해 상속됨
-		void Render(ID2D1DeviceContext7* ctx) override;
+private:
+	// IRenderable을(를) 통해 상속됨
+	void Render(ID2D1DeviceContext7* ctx) override;
 
-	};
-}
+};
+
 
