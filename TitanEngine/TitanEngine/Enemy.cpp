@@ -20,6 +20,14 @@ void Enemy::OnEnable()
 void Enemy::OnStart()
 {
 	m_Animator = GetOwner()->GetComponent<Animator>();
+
+	m_Slider->minValue = 0.f;
+	m_Slider->maxValue = m_MaxHealth;
+	m_Slider->SetValue(m_MaxHealth);               
+	m_Slider->width = 300.f;
+	m_Slider->height = 24.f;
+	m_Slider->fillColor = D2D1::ColorF(0.2f, 0.85f, 0.2f, 1.f);  // ÃÊ·Ï
+
 }
 
 void Enemy::Update(float deltaTime)
@@ -28,7 +36,7 @@ void Enemy::Update(float deltaTime)
 
 	if (input.GetMousePressed(0))
 	{
-		TakeDamage(10.f);
+		TakeDamage(1.f);
 	};
 
 }
@@ -53,12 +61,13 @@ Object* Enemy::Clone()
 void Enemy::TakeDamage(float amount)
 {
 	m_CurrHealth -= amount;
+	m_Slider->SetValue(m_CurrHealth);
 
 	if (m_CurrHealth <= 0)
 	{
 		LOG_DEBUG("Enemy Destroy");
 
-		//Destroy(GetOwner());
+		Destroy(GetOwner());
 	}
 	LOG_DEBUG("Enemy OnAwake : %f ", m_CurrHealth);
 

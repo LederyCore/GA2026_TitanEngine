@@ -10,6 +10,7 @@
 #include "Texture2D.h"
 #include "AnimationClip.h"
 #include "InGameTimer.h"
+#include "Slider.h"
 #include "SpriteRenderer.h"
 
 using namespace TitanEngine;
@@ -34,7 +35,18 @@ void InGameScene::OnLoad()
         enemyAnim->Play("enemy_idle");
     }
 
-    GameObject* player = AddObject("Player");
+    enemy->GetTransform()->SetLocalPosition(100, 0);
+    enemy->GetTransform()->SetLocalScale(-3, 3);
+
+    auto* healthSlider = AddObject("HealthSlider");
+    healthSlider->AddComponent<Slider>();
+    healthSlider->GetTransform()->SetLocalPosition(0, -200);
+    
+    enemy->GetComponent<Enemy>()->m_Slider = healthSlider->GetComponent<Slider>();
+
+    // ========================================================================================================
+    
+	GameObject* player = AddObject("Player");
     player->AddComponent<Player>();
     player->AddComponent<SpriteRenderer>();
     auto* playerAnim = player->AddComponent<Animator>();
@@ -91,16 +103,19 @@ void InGameScene::OnLoad()
     player->GetTransform()->SetLocalPosition(-100, 0);
     player->GetTransform()->SetLocalScale(3, 3);
 
-    enemy->GetTransform()->SetLocalPosition(100, 0);
-    enemy->GetTransform()->SetLocalScale(3, 3);
-
     
+    // ========================================================================================================
 
     // 게임 승패 구분하기 위한 타이머
-    /*GameObject* timer = AddObject("Timer");
-    timer->AddComponent<InGameTimer>();*/
+    GameObject* timer = AddObject("Timer");
+    timer->AddComponent<InGameTimer>();
+    
+    auto* timerSlider = AddObject("TimerSlider");
+    timerSlider->AddComponent<Slider>();
+    timerSlider->GetTransform()->SetLocalPosition(0, -345);
 
-
+    timer->GetComponent<InGameTimer>()->m_Slider = timerSlider->GetComponent<Slider>();
+    timer->GetComponent<InGameTimer>()->m_Enemy = enemy->GetComponent<Enemy>();
 }
 
 void InGameScene::OnUnLoad()

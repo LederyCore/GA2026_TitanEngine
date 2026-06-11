@@ -1,5 +1,7 @@
 #pragma once
 #include "Component.h"
+#include "Enemy.h"
+#include "Slider.h"
 
 using namespace TitanEngine;
 
@@ -17,6 +19,16 @@ public:
 	// Component을(를) 통해 상속됨
 	Object* Clone() override;
 
+private:
+	// IRenderable을(를) 통해 상속됨
+	void Render(ID2D1DeviceContext7* ctx) override;
+
+public:
+	Slider* m_Slider;
+	Enemy* m_Enemy;
+private:
+	float m_MaxTime = 60.f;
+	float m_CurTime = m_MaxTime;
 };
 
 

@@ -1,6 +1,7 @@
 #pragma once
 #include "Animator.h"
 #include "Component.h"
+#include "Slider.h"
 
 
 using namespace TitanEngine;
@@ -21,7 +22,7 @@ public:
 
 public:
 	Animator* m_Animator;
-
+	Slider* m_Slider;
 public:
 	float m_MaxHealth = 100.0f;
 	float m_CurrHealth = m_MaxHealth;
