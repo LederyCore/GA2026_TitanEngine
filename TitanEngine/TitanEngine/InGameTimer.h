@@ -1,6 +1,6 @@
 #pragma once
+#include "Button.h"
 #include "Component.h"
-#include "Enemy.h"
 #include "Slider.h"
 
 using namespace TitanEngine;
@@ -25,9 +25,10 @@ private:
 
 public:
 	Slider* m_Slider;
-	Enemy* m_Enemy;
-private:
-	float m_MaxTime = 60.f;
+	Button* m_RestartBtn;
+	Button* m_MainBtn;
+public:
+	float m_MaxTime = 5.f;
 	float m_CurTime = m_MaxTime;
 };
 

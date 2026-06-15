@@ -22,6 +22,12 @@ void Player::Update(float deltaTime)
 {
 	auto& input = Platform::InputSystem::Instance();
 
+	if (m_Timer->m_CurTime <= 0)
+	{
+		m_Animator->SetSpeed(0);
+		return;
+	}
+
 	if (input.GetMousePressed(0))
 	{
 		if (animCnt == 0)

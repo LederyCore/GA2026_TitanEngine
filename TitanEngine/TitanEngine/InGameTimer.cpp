@@ -3,6 +3,8 @@
 
 #include <DebugConsole/DebugConsole.h>
 
+#include "Scene.h"
+
 void InGameTimer::OnAwake()
 {
 
@@ -21,11 +23,19 @@ void InGameTimer::OnStart()
 	m_Slider->width = 1075.f;
 	m_Slider->height = 24.f;
 	m_Slider->fillColor = D2D1::ColorF(0.2f, 0.85f, 0.2f, 1.f);  // ÃÊ·Ï
+
+	m_RestartBtn->SetActive(false);
+	m_MainBtn->SetActive(false);
 }
 
 void InGameTimer::Update(float deltaTime)
 {
-	if (m_Enemy)
+	if (m_CurTime <= 0)
+	{
+		m_RestartBtn->SetActive(true);
+		m_MainBtn->SetActive(true);
+	}
+	else
 	{
 		LOG_DEBUG("%f", m_CurTime);
 
