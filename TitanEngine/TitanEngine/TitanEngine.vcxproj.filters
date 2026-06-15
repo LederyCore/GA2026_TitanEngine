@@ -76,6 +76,13 @@
     <ClCompile Include="Engine.cpp">
       <Filter>TitanEngine</Filter>
     </ClCompile>
+    <ClCompile Include="Slider.cpp" />
+    <ClCompile Include="Bubble.cpp">
+      <Filter>_Content</Filter>
+    </ClCompile>
+    <ClCompile Include="BubbleCircle.cpp">
+      <Filter>_Content</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Animator.h">
@@ -152,6 +159,13 @@
     </ClInclude>
     <ClInclude Include="Engine.h">
       <Filter>TitanEngine</Filter>
+    </ClInclude>
+    <ClInclude Include="Slider.h" />
+    <ClInclude Include="Bubble.h">
+      <Filter>_Content</Filter>
+    </ClInclude>
+    <ClInclude Include="BubbleCircle.h">
+      <Filter>_Content</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

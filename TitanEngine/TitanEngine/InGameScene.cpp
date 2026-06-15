@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "InGameScene.h"
 
+#include <random>
 #include <DebugConsole/DebugConsole.h>
 
 #include "Animator.h"
@@ -9,6 +10,8 @@
 #include "ResourceManager.h"
 #include "Texture2D.h"
 #include "AnimationClip.h"
+#include "Bubble.h"
+#include "BubbleCircle.h"
 #include "Button.h"
 #include "InGameTimer.h"
 #include "SceneManager.h"
@@ -108,7 +111,7 @@ void InGameScene::OnLoad()
     
     // ========================================================================================================
 
-    // 게임 승패 구분하기 위한 타이머
+    // 게임 타이머
     GameObject* timer = AddObject("Timer");
     timer->AddComponent<InGameTimer>();
     
@@ -142,7 +145,6 @@ void InGameScene::OnLoad()
 
     timer->GetComponent<InGameTimer>()->m_RestartBtn = btnGo->GetComponent<Button>();
 
-
     // 재시작 버튼
     auto* btnGo2 = AddObject("RestartButton");
     btnGo2->GetTransform()->SetLocalPosition(0, 200);
@@ -155,8 +157,59 @@ void InGameScene::OnLoad()
         LOG_DEBUG("메인화면으로");
         SceneManager::Instance().LoadScene("TitleScene");
         };
+
     timer->GetComponent<InGameTimer>()->m_MainBtn = btnGo2->GetComponent<Button>();
 
+
+    // 버블 ===============================================================================================
+    GameObject* bubble = AddObject("Bubble");
+    bubble->AddComponent<Bubble>();
+    bubble->AddComponent<SpriteRenderer>();
+    auto* bubbleAnim = bubble->AddComponent<Animator>();
+
+	auto bubbleTex = ResourceManager::Load<Texture2D>(L"Resource/Bubble_Icon.png");
+    bubble->GetComponent<SpriteRenderer>()->sprite.texture = bubbleTex;
+
+    
+    GameObject* bubbleCircle = AddObject("BubbleCircle");
+    bubbleCircle->AddComponent<BubbleCircle>();
+    bubbleCircle->AddComponent<SpriteRenderer>();
+
+    auto bubbleCircleTex = ResourceManager::Load<Texture2D>(L"Resource/Bubble_ScaleCircle.png");
+    bubbleCircle->GetComponent<SpriteRenderer>()->sprite.texture = bubbleCircleTex;
+
+    bubbleCircle->GetTransform()->SetParent(bubble->GetTransform());
+
+    /*if (bubbleTex)
+    {
+        auto clip = std::make_shared<AnimationClip>();
+        clip->name = "bubble_Idle";
+        clip->loop = false;
+        clip->SetTexture(bubbleTex);
+        clip->AddFrames(32, 32, 1, 1.0f);
+
+        bubbleAnim->AddClip(clip);
+        bubbleAnim->Play(clip->name);
+
+    }*/
+
+   /* std::default_random_engine generator;
+    std::uniform_int_distribution distribution(0, 100);*/
+
+    //bubble->GetTransform()->SetLocalPosition(distribution(generator), distribution(generator));
+
+
+   /* auto bubbleCircleTex = ResourceManager::Load<Texture2D>(L"Resource/Bubble_ScaleCircle.png");
+    if (bubbleCircleTex)
+    {
+        auto clip = std::make_shared<AnimationClip>();
+        clip->name = "pop";
+        clip->loop = false;
+        clip->SetTexture(playerIdleTex);
+        clip->AddFrames(112, 80, 12, 1.0f);
+
+        playerAnim->AddClip(clip);
+    }*/
 }
 
 void InGameScene::OnUnLoad()

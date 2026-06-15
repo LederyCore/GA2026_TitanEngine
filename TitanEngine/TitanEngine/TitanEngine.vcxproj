@@ -146,6 +146,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AnimationClip.cpp" />
+    <ClCompile Include="Bubble.cpp" />
+    <ClCompile Include="BubbleCircle.cpp" />
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="Slider.cpp" />
     <ClCompile Include="Animator.cpp" />
@@ -177,6 +179,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationClip.h" />
+    <ClInclude Include="Bubble.h" />
+    <ClInclude Include="BubbleCircle.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="Slider.h" />
     <ClInclude Include="Animator.h" />

@@ -37,7 +37,7 @@ void InGameTimer::Update(float deltaTime)
 	}
 	else
 	{
-		LOG_DEBUG("%f", m_CurTime);
+		//LOG_DEBUG("%f", m_CurTime);
 
 		m_CurTime -= deltaTime;
 		m_Slider->SetValue(m_CurTime);
