@@ -21,6 +21,7 @@ private:
 	// IRenderable을(를) 통해 상속됨
 	auto Render(ID2D1DeviceContext7* ctx) -> void override;
 
+public:
 	float m_currSize = 3;
 };
 
