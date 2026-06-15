@@ -1,6 +1,7 @@
 #pragma once
 #include "Animator.h"
 #include "Component.h"
+#include "InGameTimer.h"
 
 using namespace TitanEngine;
 
@@ -21,10 +22,11 @@ private:
 	// IRenderable을(를) 통해 상속됨
 	void Render(ID2D1DeviceContext7* ctx) override;
 
-
 public:
 	Animator* m_Animator;
-
 	int animCnt = 0;
+
+
+	InGameTimer* m_Timer;
 };
 

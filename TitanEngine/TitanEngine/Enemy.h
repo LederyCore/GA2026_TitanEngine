@@ -1,6 +1,7 @@
 #pragma once
 #include "Animator.h"
 #include "Component.h"
+#include "InGameTimer.h"
 #include "Slider.h"
 
 
@@ -23,6 +24,8 @@ public:
 public:
 	Animator* m_Animator;
 	Slider* m_Slider;
+	InGameTimer* m_Timer;
+
 public:
 	float m_MaxHealth = 100.0f;
 	float m_CurrHealth = m_MaxHealth;

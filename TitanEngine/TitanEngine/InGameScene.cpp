@@ -9,7 +9,9 @@
 #include "ResourceManager.h"
 #include "Texture2D.h"
 #include "AnimationClip.h"
+#include "Button.h"
 #include "InGameTimer.h"
+#include "SceneManager.h"
 #include "Slider.h"
 #include "SpriteRenderer.h"
 
@@ -115,7 +117,46 @@ void InGameScene::OnLoad()
     timerSlider->GetTransform()->SetLocalPosition(0, -345);
 
     timer->GetComponent<InGameTimer>()->m_Slider = timerSlider->GetComponent<Slider>();
-    timer->GetComponent<InGameTimer>()->m_Enemy = enemy->GetComponent<Enemy>();
+
+
+    player->GetComponent<Player>()->m_Timer = timer->GetComponent<InGameTimer>();
+    enemy->GetComponent<Enemy>()->m_Timer = timer->GetComponent<InGameTimer>();
+
+
+    auto* go = AddObject("Button");
+    go->GetTransform()->SetLocalPosition(-100, -200);
+
+
+    // 재시작 버튼
+    auto* btnGo = AddObject("RestartButton");
+    btnGo->GetTransform()->SetLocalPosition(0, 0);
+
+    auto* btn_restart = btnGo->AddComponent<Button>();
+    btn_restart->width = 160.f;
+    btn_restart->height = 40.f;
+    btn_restart->text = L"재시작";
+    btn_restart->onClick = []() {
+        LOG_DEBUG("재시작");
+        SceneManager::Instance().LoadScene("InGameScene");
+        };
+
+    timer->GetComponent<InGameTimer>()->m_RestartBtn = btnGo->GetComponent<Button>();
+
+
+    // 재시작 버튼
+    auto* btnGo2 = AddObject("RestartButton");
+    btnGo2->GetTransform()->SetLocalPosition(0, 200);
+
+    auto* btn_Main = btnGo2->AddComponent<Button>();
+    btn_Main->width = 160.f;
+    btn_Main->height = 40.f;
+    btn_Main->text = L"메인화면으로";
+    btn_Main->onClick = []() {
+        LOG_DEBUG("메인화면으로");
+        SceneManager::Instance().LoadScene("TitleScene");
+        };
+    timer->GetComponent<InGameTimer>()->m_MainBtn = btnGo2->GetComponent<Button>();
+
 }
 
 void InGameScene::OnUnLoad()
