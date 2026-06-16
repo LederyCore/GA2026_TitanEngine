@@ -26,7 +26,7 @@ void Enemy::OnStart()
 	m_Slider->SetValue(m_MaxHealth);               
 	m_Slider->width = 300.f;
 	m_Slider->height = 24.f;
-	m_Slider->fillColor = D2D1::ColorF(0.2f, 0.85f, 0.2f, 1.f);  // ÃÊ·Ï
+	m_Slider->fillColor = D2D1::ColorF(0.2f, 0.85f, 0.2f, 1.f);  // ï¿½Ê·ï¿½
 
 }
 
@@ -42,7 +42,8 @@ void Enemy::Update(float deltaTime)
 
 	if (input.GetMousePressed(0))
 	{
-		TakeDamage(1.f);
+		//float dmg = m_Player ? (float)m_Player->m_AttackPower : 1.f;
+		TakeDamage((float)m_Player->m_AttackPower);
 	};
 
 }

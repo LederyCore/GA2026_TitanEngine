@@ -2,6 +2,7 @@
 #include "Animator.h"
 #include "Component.h"
 #include "InGameTimer.h"
+#include "Player.h"
 #include "Slider.h"
 
 
@@ -17,7 +18,7 @@ public:
 	void OnDisable() override;
 	void OnDestory() override;
 
-	// Component을(를) 통해 상속됨
+	
 	Object* Clone() override;
 
 
@@ -25,6 +26,7 @@ public:
 	Animator* m_Animator;
 	Slider* m_Slider;
 	InGameTimer* m_Timer;
+	Player* m_Player = nullptr;
 
 public:
 	float m_MaxHealth = 100.0f;
@@ -33,7 +35,6 @@ public:
 	void TakeDamage(float amount);
 
 private:
-	// IRenderable을(를) 통해 상속됨
 	void Render(ID2D1DeviceContext7* ctx) override;
 
 };

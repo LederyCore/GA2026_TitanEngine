@@ -36,8 +36,11 @@ namespace TitanEngine::SceneManagement
         m_pendingStartList.clear();
 
         // 2. 일반 업데이트
-        for (auto* c : m_updateableList)
-            c->Update(deltaTime);
+        // 인덱스 기반 순회: Update 도중 새 컴포넌트가 push_back되어
+        // vector가 재할당되더라도 이터레이터 무효화를 방지
+        int updateCount = (int)m_updateableList.size();
+        for (int i = 0; i < updateCount; ++i)
+            m_updateableList[i]->Update(deltaTime);
 
         // 3. 지연 삭제 타이머
         for (auto& go : m_allGameObjects)

@@ -10,8 +10,7 @@
 #include "ResourceManager.h"
 #include "Texture2D.h"
 #include "AnimationClip.h"
-#include "Bubble.h"
-#include "BubbleCircle.h"
+#include "BubbleSpawner.h"
 #include "Button.h"
 #include "InGameTimer.h"
 #include "SceneManager.h"
@@ -49,7 +48,7 @@ void InGameScene::OnLoad()
     
     enemy->GetComponent<Enemy>()->m_Slider = healthSlider->GetComponent<Slider>();
 
-    // ========================================================================================================
+    // ÌîåÎ†àÏù¥Ïñ¥ ========================================================================================================
     
 	GameObject* player = AddObject("Player");
     player->AddComponent<Player>();
@@ -109,9 +108,9 @@ void InGameScene::OnLoad()
     player->GetTransform()->SetLocalScale(3, 3);
 
     
-    // ========================================================================================================
+    // ÌÉÄÏù¥Î®∏========================================================================================================
 
-    // ∞‘¿” ≈∏¿Ã∏”
+   
     GameObject* timer = AddObject("Timer");
     timer->AddComponent<InGameTimer>();
     
@@ -123,93 +122,57 @@ void InGameScene::OnLoad()
 
 
     player->GetComponent<Player>()->m_Timer = timer->GetComponent<InGameTimer>();
-    enemy->GetComponent<Enemy>()->m_Timer = timer->GetComponent<InGameTimer>();
+    enemy->GetComponent<Enemy>()->m_Timer  = timer->GetComponent<InGameTimer>();
+    enemy->GetComponent<Enemy>()->m_Player = player->GetComponent<Player>();
 
 
     auto* go = AddObject("Button");
     go->GetTransform()->SetLocalPosition(-100, -200);
 
 
-    // ¿ÁΩ√¿€ πˆ∆∞
+    // Ïû¨ÏãúÏûë Î≤ÑÌäº
     auto* btnGo = AddObject("RestartButton");
     btnGo->GetTransform()->SetLocalPosition(0, 0);
 
     auto* btn_restart = btnGo->AddComponent<Button>();
     btn_restart->width = 160.f;
     btn_restart->height = 40.f;
-    btn_restart->text = L"¿ÁΩ√¿€";
+    btn_restart->text = L"restart";
     btn_restart->onClick = []() {
-        LOG_DEBUG("¿ÁΩ√¿€");
+        //LOG_DEBUG("Ïû¨ÏãúÏûë");
         SceneManager::Instance().LoadScene("InGameScene");
         };
 
     timer->GetComponent<InGameTimer>()->m_RestartBtn = btnGo->GetComponent<Button>();
 
-    // ¿ÁΩ√¿€ πˆ∆∞
+    // Î©îÏù∏ÌôîÎ©¥ Î≤ÑÌäº
     auto* btnGo2 = AddObject("RestartButton");
     btnGo2->GetTransform()->SetLocalPosition(0, 200);
 
     auto* btn_Main = btnGo2->AddComponent<Button>();
     btn_Main->width = 160.f;
     btn_Main->height = 40.f;
-    btn_Main->text = L"∏ﬁ¿Œ»≠∏È¿∏∑Œ";
+    btn_Main->text = L"Main";
     btn_Main->onClick = []() {
-        LOG_DEBUG("∏ﬁ¿Œ»≠∏È¿∏∑Œ");
+        LOG_DEBUG("btn_Main");
         SceneManager::Instance().LoadScene("TitleScene");
         };
 
     timer->GetComponent<InGameTimer>()->m_MainBtn = btnGo2->GetComponent<Button>();
 
 
-    // πˆ∫Ì ===============================================================================================
-    GameObject* bubble = AddObject("Bubble");
-    bubble->AddComponent<Bubble>();
-    bubble->AddComponent<SpriteRenderer>();
-    auto* bubbleAnim = bubble->AddComponent<Animator>();
+    // Î≤ÑÎ∏î Ïä§Ìè¨ÎÑà ===============================================================================================
+    auto bubbleTex  = ResourceManager::Load<Texture2D>(L"Resource/Bubble_Icon.png");
+    auto circleTex  = ResourceManager::Load<Texture2D>(L"Resource/Bubble_ScaleCircle.png");
 
-	auto bubbleTex = ResourceManager::Load<Texture2D>(L"Resource/Bubble_Icon.png");
-    bubble->GetComponent<SpriteRenderer>()->sprite.texture = bubbleTex;
-
-    
-    GameObject* bubbleCircle = AddObject("BubbleCircle");
-    bubbleCircle->AddComponent<BubbleCircle>();
-    bubbleCircle->AddComponent<SpriteRenderer>();
-
-    auto bubbleCircleTex = ResourceManager::Load<Texture2D>(L"Resource/Bubble_ScaleCircle.png");
-    bubbleCircle->GetComponent<SpriteRenderer>()->sprite.texture = bubbleCircleTex;
-
-    bubbleCircle->GetTransform()->SetParent(bubble->GetTransform());
-
-    /*if (bubbleTex)
-    {
-        auto clip = std::make_shared<AnimationClip>();
-        clip->name = "bubble_Idle";
-        clip->loop = false;
-        clip->SetTexture(bubbleTex);
-        clip->AddFrames(32, 32, 1, 1.0f);
-
-        bubbleAnim->AddClip(clip);
-        bubbleAnim->Play(clip->name);
-
-    }*/
-
-   /* std::default_random_engine generator;
-    std::uniform_int_distribution distribution(0, 100);*/
-
-    //bubble->GetTransform()->SetLocalPosition(distribution(generator), distribution(generator));
-
-
-   /* auto bubbleCircleTex = ResourceManager::Load<Texture2D>(L"Resource/Bubble_ScaleCircle.png");
-    if (bubbleCircleTex)
-    {
-        auto clip = std::make_shared<AnimationClip>();
-        clip->name = "pop";
-        clip->loop = false;
-        clip->SetTexture(playerIdleTex);
-        clip->AddFrames(112, 80, 12, 1.0f);
-
-        playerAnim->AddClip(clip);
-    }*/
+    GameObject* spawnerGO = AddObject("BubbleSpawner");
+    auto* spawner = spawnerGO->AddComponent<BubbleSpawner>();
+    spawner->m_Player     = player->GetComponent<Player>();
+    spawner->m_Timer      = timer->GetComponent<InGameTimer>();
+    spawner->m_BubbleTex  = bubbleTex;
+    spawner->m_CircleTex  = circleTex;
+    spawner->m_MinInterval = 1.0f;
+    spawner->m_MaxInterval = 3.0f;
 }
 
 void InGameScene::OnUnLoad()

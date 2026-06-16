@@ -16,11 +16,10 @@ public:
 	void OnDisable() override;
 	void OnDestory() override;
 
-	// Component을(를) 통해 상속됨
 	Object* Clone() override;
 
 private:
-	// IRenderable을(를) 통해 상속됨
+	
 	void Render(ID2D1DeviceContext7* ctx) override;
 
 public:
@@ -28,7 +27,7 @@ public:
 	Button* m_RestartBtn;
 	Button* m_MainBtn;
 public:
-	float m_MaxTime = 5.f;
+	float m_MaxTime = 30.f;
 	float m_CurTime = m_MaxTime;
 };
 

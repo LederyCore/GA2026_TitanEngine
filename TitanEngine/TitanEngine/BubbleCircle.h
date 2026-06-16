@@ -14,15 +14,14 @@ public:
 	void OnDisable() override;
 	void OnDestory() override;
 
-	// Component을(를) 통해 상속됨
 	Object* Clone() override;
 
 private:
-	// IRenderable을(를) 통해 상속됨
 	auto Render(ID2D1DeviceContext7* ctx) -> void override;
 
 public:
-	float m_currSize = 3;
+	float m_currSize = 3.0f;
+	bool IsSweetSpot() const { return m_currSize >= 0.2f && m_currSize <= 0.5f; }
 };
 
 

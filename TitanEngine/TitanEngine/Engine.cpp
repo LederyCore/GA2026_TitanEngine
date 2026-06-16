@@ -10,6 +10,7 @@
 #include "DebugConsole/DebugConsole.h"
 #include "GameTimer.h"
 #include "D2DRenderer.h"
+#include "Bubble.h"
 #include "InGameScene.h"
 #include "TitleScene.h"
 
@@ -157,8 +158,11 @@ void TitanEngine::Engine::LateUpdate(float deltaTime)
 
 void TitanEngine::Engine::Render()
 {
-    // Button 히트 테스트에 필요한 화면 크기 동기화 (리사이즈 대응)
-    Button::SetScreenSize((float)m_renderer->GetWidth(), (float)m_renderer->GetHeight());
+    // 히트 테스트에 필요한 화면 크기 동기화 (리사이즈 대응)
+    float w = (float)m_renderer->GetWidth();
+    float h = (float)m_renderer->GetHeight();
+    Button::SetScreenSize(w, h);
+    Bubble::SetScreenSize(w, h);
 
     m_renderer->RenderBegin();
     m_currentFrameActiveScene->Render(

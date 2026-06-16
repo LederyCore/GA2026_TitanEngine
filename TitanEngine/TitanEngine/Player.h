@@ -15,18 +15,18 @@ public:
 	void OnDisable() override;
 	void OnDestory() override;
 
-	// ComponentÀ»(¸¦) ÅëÇØ »ó¼ÓµÊ
+	// Componentï¿½ï¿½(ï¿½ï¿½) ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Óµï¿½
 	Object* Clone() override;
 
 private:
-	// IRenderableÀ»(¸¦) ÅëÇØ »ó¼ÓµÊ
+	// IRenderableï¿½ï¿½(ï¿½ï¿½) ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Óµï¿½
 	void Render(ID2D1DeviceContext7* ctx) override;
 
 public:
 	Animator* m_Animator;
 	int animCnt = 0;
 
-
 	InGameTimer* m_Timer;
+	int m_AttackPower = 1;
 };
 

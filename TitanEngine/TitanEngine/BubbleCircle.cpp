@@ -2,9 +2,11 @@
 #include "BubbleCircle.h"
 
 #include <DebugConsole/DebugConsole.h>
-#include <InputSystem/InputSystem.h>
+
+#include <algorithm>
 
 #include "GameObject.h"
+#include "Transform.h"
 
 
 void BubbleCircle::OnAwake()
@@ -25,17 +27,19 @@ void BubbleCircle::OnStart()
 
 void BubbleCircle::Update(float deltaTime)
 {
-	if (m_currSize <= 0.4)
-		return;
-
-	m_currSize -= deltaTime;
-	GetOwner()->GetTransform()->SetLocalScale(m_currSize, m_currSize);
-	auto& input = Platform::InputSystem::Instance();
-
-	if (input.GetMousePressed(0))
+	if (m_currSize <= 0.0f)
 	{
-		//if ()
-	};
+		// 시간 초과 - 부모 Bubble GameObject 파괴
+		Transform* parent = GetOwner()->GetTransform()->GetParent();
+		if (parent)
+			Destroy(parent->GetOwner());
+		return;
+	}
+
+	m_currSize -= deltaTime * 2;
+	m_currSize = std::max(m_currSize, 0.0f);
+
+	GetOwner()->GetTransform()->SetLocalScale(m_currSize, m_currSize);
 }
 
 void BubbleCircle::OnDisable()
