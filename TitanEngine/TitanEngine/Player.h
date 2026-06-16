@@ -15,11 +15,9 @@ public:
 	void OnDisable() override;
 	void OnDestory() override;
 
-	// Component��(��) ���� ��ӵ�
 	Object* Clone() override;
 
 private:
-	// IRenderable��(��) ���� ��ӵ�
 	void Render(ID2D1DeviceContext7* ctx) override;
 
 public:

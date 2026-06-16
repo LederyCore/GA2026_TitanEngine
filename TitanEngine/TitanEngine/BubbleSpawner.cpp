@@ -60,6 +60,7 @@ void BubbleSpawner::SpawnBubble()
 	GameObject* circleGO = GetScene()->AddObject("BubbleCircle");
 	auto* circleComp = circleGO->AddComponent<BubbleCircle>();
 	auto* circleSR   = circleGO->AddComponent<SpriteRenderer>();
+	circleComp->m_Timer = m_Timer;
 
 	if (m_CircleTex)
 		circleSR->sprite.texture = m_CircleTex;

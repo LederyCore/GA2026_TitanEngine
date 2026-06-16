@@ -38,6 +38,8 @@ void InGameTimer::Update(float deltaTime)
 	else
 	{
 		//LOG_DEBUG("%f", m_CurTime);
+		if (m_isGameClear)
+			return;
 
 		m_CurTime -= deltaTime;
 		m_Slider->SetValue(m_CurTime);
@@ -61,4 +63,12 @@ Object* InGameTimer::Clone()
 
 void InGameTimer::Render(ID2D1DeviceContext7* ctx)
 {
+}
+
+void InGameTimer::GameClear()
+{
+	m_isGameClear = true;
+
+	m_RestartBtn->SetActive(true);
+	m_MainBtn->SetActive(true);
 }

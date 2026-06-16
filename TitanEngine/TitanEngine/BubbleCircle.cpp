@@ -3,8 +3,7 @@
 
 #include <DebugConsole/DebugConsole.h>
 
-#include <algorithm>
-
+#include "Bubble.h"
 #include "GameObject.h"
 #include "Transform.h"
 
@@ -23,6 +22,8 @@ void BubbleCircle::OnStart()
 
 	GetOwner()->GetTransform()->SetLocalPosition(0, 0);
 	GetOwner()->GetTransform()->SetLocalScale(0.5, 0.5);
+
+	//m_Timer = GetOwner()->GetTransform()->GetParent()->GetOwner()->GetComponent<Bubble>()->m_Timer;
 }
 
 void BubbleCircle::Update(float deltaTime)
@@ -35,6 +36,9 @@ void BubbleCircle::Update(float deltaTime)
 			Destroy(parent->GetOwner());
 		return;
 	}
+
+	if (m_Timer->m_CurTime <= 0.0f || m_Timer->IsGameClear())
+		return;
 
 	m_currSize -= deltaTime * 2;
 	m_currSize = std::max(m_currSize, 0.0f);

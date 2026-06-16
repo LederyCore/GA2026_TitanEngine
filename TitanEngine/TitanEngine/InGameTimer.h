@@ -27,8 +27,12 @@ public:
 	Button* m_RestartBtn;
 	Button* m_MainBtn;
 public:
-	float m_MaxTime = 30.f;
+	float m_MaxTime = 10.f;
 	float m_CurTime = m_MaxTime;
+
+	void GameClear();
+	bool m_isGameClear;
+	bool IsGameClear() const { return m_isGameClear; }
 };
 
 

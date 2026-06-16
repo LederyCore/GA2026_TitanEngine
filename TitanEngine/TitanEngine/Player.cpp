@@ -22,7 +22,7 @@ void Player::Update(float deltaTime)
 {
 	auto& input = Platform::InputSystem::Instance();
 
-	if (m_Timer->m_CurTime <= 0)
+	if (m_Timer->m_CurTime <= 0 || m_Timer->IsGameClear())
 	{
 		m_Animator->SetSpeed(0);
 		return;

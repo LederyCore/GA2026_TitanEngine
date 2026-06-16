@@ -1,5 +1,6 @@
 #pragma once
 #include "Component.h"
+#include "InGameTimer.h"
 
 using namespace TitanEngine;
 
@@ -19,9 +20,12 @@ public:
 private:
 	auto Render(ID2D1DeviceContext7* ctx) -> void override;
 
+	
 public:
 	float m_currSize = 3.0f;
 	bool IsSweetSpot() const { return m_currSize >= 0.2f && m_currSize <= 0.5f; }
+
+	InGameTimer* m_Timer;
 };
 
 
