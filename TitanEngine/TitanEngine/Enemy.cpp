@@ -47,7 +47,6 @@ void Enemy::Update(float deltaTime)
 
 	if (input.GetMousePressed(0))
 	{
-		//float dmg = m_Player ? (float)m_Player->m_AttackPower : 1.f;
 		TakeDamage((float)m_Player->m_AttackPower);
 	};
 
@@ -110,7 +109,16 @@ void Enemy::SpawnHitEffects()
 
 		GameObject* fxGO = GetScene()->AddObject("HitEffect");
 		fxGO->AddComponent<HitEffect>();
-		fxGO->AddComponent<SpriteRenderer>();
+		auto* sr = fxGO->AddComponent<SpriteRenderer>();
+
+		if (m_Player)
+		{
+			int atk = m_Player->m_AttackPower;
+			if (atk >= 4)
+				sr->sprite.tint = { 1.f, 0.f, 0.f, 1.f };   // 빨강
+			else if (atk >= 2)
+				sr->sprite.tint = { 0.5f, 0.f, 1.f, 1.f };  // 보라
+		}
 
 		auto* anim = fxGO->AddComponent<Animator>();
 		anim->AddClip(m_HitEffectClip);

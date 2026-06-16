@@ -72,7 +72,7 @@ void InGameScene::OnLoad()
     player->AddComponent<Player>();
     player->AddComponent<SpriteRenderer>();
     auto* playerAnim = player->AddComponent<Animator>();
-
+    
     auto playerIdleTex = ResourceManager::Load<Texture2D>(L"Resource/Player_Idle.png");
     if (playerIdleTex)
     {
@@ -84,11 +84,12 @@ void InGameScene::OnLoad()
         clip->loop = true;
         clip->SetTexture(playerIdleTex);
         clip->AddFrames(frameW, frameH, 12, 1.0f); 
-
+        
+        
         playerAnim->AddClip(clip);
         playerAnim->Play(clip->name);
     }
-
+    
     auto playerAttack1Tex = ResourceManager::Load<Texture2D>(L"Resource/Player_Attack.png");
     if (playerAttack1Tex)
     {
