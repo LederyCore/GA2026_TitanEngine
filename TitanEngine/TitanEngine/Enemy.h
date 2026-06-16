@@ -1,4 +1,6 @@
 #pragma once
+#include <memory>
+#include "AnimationClip.h"
 #include "Animator.h"
 #include "Component.h"
 #include "InGameTimer.h"
@@ -28,6 +30,8 @@ public:
 	InGameTimer* m_Timer;
 	Player* m_Player = nullptr;
 
+	std::shared_ptr<AnimationClip> m_HitEffectClip;
+
 public:
 	float m_MaxHealth = 100.0f;
 	float m_CurrHealth = m_MaxHealth;
@@ -35,6 +39,7 @@ public:
 	void TakeDamage(float amount);
 
 private:
+	void SpawnHitEffects();
 	void Render(ID2D1DeviceContext7* ctx) override;
 
 };

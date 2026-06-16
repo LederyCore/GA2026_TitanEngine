@@ -1,4 +1,6 @@
 #pragma once
+#include <memory>
+#include "AnimationClip.h"
 #include "BubbleCircle.h"
 #include "Component.h"
 #include "InGameTimer.h"
@@ -24,10 +26,12 @@ private:
 	void Render(ID2D1DeviceContext7* ctx) override;
 
 public:
-	Player*       m_Player      = nullptr;
-	InGameTimer*  m_Timer       = nullptr;
+	Player*       m_Player       = nullptr;
+	InGameTimer*  m_Timer        = nullptr;
 	BubbleCircle* m_BubbleCircle = nullptr;
-	float         m_hitRadius   = 40.f;
+	float         m_hitRadius    = 18.f;
+
+	std::shared_ptr<AnimationClip> m_BubbleHitClip;
 
 private:
 	static float s_screenW;

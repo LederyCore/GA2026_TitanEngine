@@ -1,11 +1,16 @@
 #include "pch.h"
 #include "Enemy.h"
 
+#include <random>
 #include <DebugConsole/DebugConsole.h>
 #include <InputSystem/InputSystem.h>
 
 #include "GameObject.h"
+#include "HitEffect.h"
+#include "Scene.h"
 #include "SceneManager.h"
+#include "SpriteRenderer.h"
+#include "Transform.h"
 
 
 void Enemy::OnAwake()
@@ -70,6 +75,9 @@ void Enemy::TakeDamage(float amount)
 	m_CurrHealth -= amount;
 	m_Slider->SetValue(m_CurrHealth);
 
+	if (m_HitEffectClip)
+		SpawnHitEffects();
+
 	if (m_CurrHealth <= 0)
 	{
 		LOG_DEBUG("Enemy Destroy");
@@ -77,8 +85,41 @@ void Enemy::TakeDamage(float amount)
 		m_Timer->GameClear();
 		Destroy(GetOwner());
 	}
-	LOG_DEBUG("Enemy OnAwake : %f ", m_CurrHealth);
+	LOG_DEBUG("Enemy TakeDamage : %f ", m_CurrHealth);
 
+}
+
+void Enemy::SpawnHitEffects()
+{
+	static std::random_device rd;
+	static std::default_random_engine gen(rd());
+	std::uniform_int_distribution<int>    countDist(2, 4);
+	std::uniform_real_distribution<float> offsetDist(-50.f, 50.f);
+	std::uniform_real_distribution<float> rotateDist(0.f, 360.f);
+	std::uniform_real_distribution<float> scaleDist(0.8f, 1.5f);
+
+	int count =1; //countDist(gen);
+	Vector2 enemyPos = GetOwner()->GetTransform()->GetWorldPosition();
+
+	for (int i = 0; i < count; ++i)
+	{
+		float ox  = offsetDist(gen);
+		float oy  = offsetDist(gen);
+		float rot = rotateDist(gen);
+		float sc  = scaleDist(gen);
+
+		GameObject* fxGO = GetScene()->AddObject("HitEffect");
+		fxGO->AddComponent<HitEffect>();
+		fxGO->AddComponent<SpriteRenderer>();
+
+		auto* anim = fxGO->AddComponent<Animator>();
+		anim->AddClip(m_HitEffectClip);
+		anim->Play(m_HitEffectClip->name);
+
+		fxGO->GetTransform()->SetLocalPosition(enemyPos.x + ox, enemyPos.y + oy);
+		//fxGO->GetTransform()->SetLocalRotation(rot);
+		fxGO->GetTransform()->SetLocalScale(sc, sc);
+	}
 }
 
 void Enemy::Render(ID2D1DeviceContext7* ctx)

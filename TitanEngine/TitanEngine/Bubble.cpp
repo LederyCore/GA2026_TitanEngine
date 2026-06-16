@@ -4,7 +4,11 @@
 #include <DebugConsole/DebugConsole.h>
 #include <InputSystem/InputSystem.h>
 
+#include "Animator.h"
 #include "GameObject.h"
+#include "HitEffect.h"
+#include "Scene.h"
+#include "SpriteRenderer.h"
 #include "Transform.h"
 
 float Bubble::s_screenW = 1280.f;
@@ -31,9 +35,11 @@ void Bubble::Update(float deltaTime)
 	if (!input.GetMousePressed(0)) return;
 
 	// 마우스 스크린 좌표 → 월드 좌표 변환
-	POINT mp = input.GetMousePos();
-	float wx = (float)mp.x - s_screenW * 0.5f;
-	float wy = (float)mp.y - s_screenH * 0.5f;
+
+	POINT p = input.GetMousePos();
+
+	float wx = (float)p.x - s_screenW * 0.5f;
+	float wy = (float)p.y - s_screenH * 0.5f;
 
 	Vector2 pos = GetOwner()->GetTransform()->GetWorldPosition();
 	float dx = wx - pos.x;
@@ -48,6 +54,23 @@ void Bubble::Update(float deltaTime)
 			{
 				m_Player->m_AttackPower++;
 				LOG_DEBUG("Bubble pop! AttackPower: %d", m_Player->m_AttackPower);
+			}
+
+			// 히트 애니메이션 스폰
+			if (m_BubbleHitClip)
+			{
+				Vector2 bubblePos = GetOwner()->GetTransform()->GetWorldPosition();
+
+				GameObject* fxGO = GetScene()->AddObject("BubbleHit");
+				fxGO->AddComponent<HitEffect>();
+				fxGO->AddComponent<SpriteRenderer>();
+
+				auto* anim = fxGO->AddComponent<Animator>();
+				anim->AddClip(m_BubbleHitClip);
+				anim->Play(m_BubbleHitClip->name);
+
+				fxGO->GetTransform()->SetLocalPosition(bubblePos.x, bubblePos.y);
+				fxGO->GetTransform()->SetLocalScale(1.5f, 1.5f);
 			}
 		}
 		Destroy(GetOwner());

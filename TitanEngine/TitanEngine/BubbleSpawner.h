@@ -1,5 +1,6 @@
 #pragma once
 #include <memory>
+#include "AnimationClip.h"
 #include "Component.h"
 #include "InGameTimer.h"
 #include "Player.h"
@@ -22,8 +23,9 @@ public:
 public:
 	Player*                     m_Player    = nullptr;
 	InGameTimer*                m_Timer     = nullptr;
-	std::shared_ptr<Texture2D>  m_BubbleTex;
-	std::shared_ptr<Texture2D>  m_CircleTex;
+	std::shared_ptr<Texture2D>      m_BubbleTex;
+	std::shared_ptr<Texture2D>      m_CircleTex;
+	std::shared_ptr<AnimationClip>  m_BubbleHitClip;
 
 	float m_MinInterval = 1.0f;
 	float m_MaxInterval = 3.0f;

@@ -42,6 +42,12 @@ void BubbleSpawner::SpawnBubble()
 	std::default_random_engine gen(rd());
 	std::uniform_int_distribution<int> posDist(-300, 300);
 
+	// BubbleCircle GameObject (Bubble의 자식)
+	GameObject* circleGO = GetScene()->AddObject("BubbleCircle");
+	auto* circleComp = circleGO->AddComponent<BubbleCircle>();
+	auto* circleSR   = circleGO->AddComponent<SpriteRenderer>();
+	circleComp->m_Timer = m_Timer;
+
 	// Bubble GameObject
 	GameObject* bubbleGO = GetScene()->AddObject("Bubble");
 	auto* bubbleComp = bubbleGO->AddComponent<Bubble>();
@@ -53,14 +59,10 @@ void BubbleSpawner::SpawnBubble()
 	bubbleGO->GetTransform()->SetLocalPosition(
 		(float)posDist(gen), (float)posDist(gen));
 
-	bubbleComp->m_Player = m_Player;
-	bubbleComp->m_Timer  = m_Timer;
+	bubbleComp->m_Player        = m_Player;
+	bubbleComp->m_Timer         = m_Timer;
+	bubbleComp->m_BubbleHitClip = m_BubbleHitClip;
 
-	// BubbleCircle GameObject (Bubble의 자식)
-	GameObject* circleGO = GetScene()->AddObject("BubbleCircle");
-	auto* circleComp = circleGO->AddComponent<BubbleCircle>();
-	auto* circleSR   = circleGO->AddComponent<SpriteRenderer>();
-	circleComp->m_Timer = m_Timer;
 
 	if (m_CircleTex)
 		circleSR->sprite.texture = m_CircleTex;
