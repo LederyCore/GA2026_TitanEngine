@@ -89,7 +89,7 @@ bool TitanEngine::Engine::Initialize(IWindow& window, const wchar_t* windowName,
 
 
     // Load TestScene to verify the BGM example. Change back to "TitleScene" to restore.
-    SceneManager::Instance().LoadScene("TestScene");
+    SceneManager::Instance().LoadScene("TitleScene");
 
 
     wnd->AddObserver(WM_SIZE, m_renderer);
