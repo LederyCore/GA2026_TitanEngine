@@ -108,16 +108,27 @@ void InGameScene::OnLoad()
     auto d8 = ResourceManager::Load<Texture2D>(L"Resource/DamageNumber_sheet8.webp");
     auto d9 = ResourceManager::Load<Texture2D>(L"Resource/DamageNumber_sheet9.webp");
 
-    enemy->GetComponent<Enemy>()->numbers.push_back(d0);
-    enemy->GetComponent<Enemy>()->numbers.push_back(d1);
-    enemy->GetComponent<Enemy>()->numbers.push_back(d2);
-    enemy->GetComponent<Enemy>()->numbers.push_back(d3);
-    enemy->GetComponent<Enemy>()->numbers.push_back(d4);
-    enemy->GetComponent<Enemy>()->numbers.push_back(d5);
-    enemy->GetComponent<Enemy>()->numbers.push_back(d6);
-    enemy->GetComponent<Enemy>()->numbers.push_back(d7);
-    enemy->GetComponent<Enemy>()->numbers.push_back(d8);
-    enemy->GetComponent<Enemy>()->numbers.push_back(d9);
+    enemy->GetComponent<Enemy>()->numbers.insert({'0', d0});
+    enemy->GetComponent<Enemy>()->numbers.insert({'1', d1});
+    enemy->GetComponent<Enemy>()->numbers.insert({'2', d2});
+    enemy->GetComponent<Enemy>()->numbers.insert({'3', d3});
+    enemy->GetComponent<Enemy>()->numbers.insert({'4', d4});
+    enemy->GetComponent<Enemy>()->numbers.insert({'5', d5});
+    enemy->GetComponent<Enemy>()->numbers.insert({'6', d6});
+    enemy->GetComponent<Enemy>()->numbers.insert({'7', d7});
+    enemy->GetComponent<Enemy>()->numbers.insert({'8', d8});
+    enemy->GetComponent<Enemy>()->numbers.insert({'9', d9});
+
+    //enemy->GetComponent<Enemy>()->numbers.push_back(d0);
+    //enemy->GetComponent<Enemy>()->numbers.push_back(d1);
+    //enemy->GetComponent<Enemy>()->numbers.push_back(d2);
+    //enemy->GetComponent<Enemy>()->numbers.push_back(d3);
+    //enemy->GetComponent<Enemy>()->numbers.push_back(d4);
+    //enemy->GetComponent<Enemy>()->numbers.push_back(d5);
+    //enemy->GetComponent<Enemy>()->numbers.push_back(d6);
+    //enemy->GetComponent<Enemy>()->numbers.push_back(d7);
+    //enemy->GetComponent<Enemy>()->numbers.push_back(d8);
+    //enemy->GetComponent<Enemy>()->numbers.push_back(d9);
 
 
     // 플레이어 ========================================================================================================
