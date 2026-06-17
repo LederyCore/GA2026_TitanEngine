@@ -29,6 +29,11 @@ void DamagePopup::Update(float deltaTime)
 	if (deleteTime >= 0)
 	{
 		deleteTime -= deltaTime;
+
+		for (int i=0; i<gos.size(); i++)
+		{
+			gos[i]->GetComponent<SpriteRenderer>()->sprite.tint.a -= deltaTime;
+		}
 	}
 	else
 	{
@@ -59,12 +64,13 @@ void DamagePopup::Init(std::string s)
 		GameObject* go = GetScene()->AddObject("Damage");
 		go->AddComponent<SpriteRenderer>();
 		go->GetComponent<SpriteRenderer>()->sprite.texture = numbers[s[i]];
-
 		Vector2 p = { -50,0 };
 		p.x += (float)i * 20;
 
 		go->GetTransform()->SetParent(GetOwner()->GetTransform());
 		go->GetTransform()->SetLocalPosition(p);
+
+		gos.push_back(go);
 	}
 }
 

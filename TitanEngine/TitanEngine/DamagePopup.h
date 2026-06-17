@@ -25,5 +25,7 @@ public:
 	std::string s;
 
 	float deleteTime = 2.0f;
+
+	std::vector<GameObject*> gos;
 };
 
