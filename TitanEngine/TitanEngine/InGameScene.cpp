@@ -92,6 +92,10 @@ void InGameScene::OnLoad()
     auto hBarTex = ResourceManager::Load<Texture2D>(L"Resource/HPbar_BG.webp");
     enemy->GetComponent<Enemy>()->m_healthBarTex = hBarTex;
 
+    // Enemy Hit SFX
+    auto hitSfx = ResourceManager::Load<AudioClip>(L"Resource/hit.mp3");
+    enemy->GetComponent<Enemy>()->m_hitSfx = hitSfx;
+
     // Enemy Damage Number
     auto d0 = ResourceManager::Load<Texture2D>(L"Resource/DamageNumber_sheet0.webp");
     auto d1 = ResourceManager::Load<Texture2D>(L"Resource/DamageNumber_sheet1.webp");

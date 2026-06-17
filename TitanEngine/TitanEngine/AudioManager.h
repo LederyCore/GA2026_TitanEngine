@@ -49,9 +49,11 @@ namespace TitanEngine
 
         // ─── 효과음(fire-and-forget) ──────────────────────────────
         // 클립을 즉시 1회 재생한다. 같은 클립을 겹쳐 재생할 수 있다.
+        // pitch = playback frequency ratio (1.0 = original, 0.5~2.0 recommended).
         void PlayOneShot(const std::shared_ptr<AudioClip>& clip,
                          float volume = 1.0f,
-                         AudioCategory category = AudioCategory::SFX);
+                         AudioCategory category = AudioCategory::SFX,
+                         float pitch = 1.0f);
 
         // ─── 배경음(BGM) ─────────────────────────────────────────
         void PlayBGM(const std::shared_ptr<AudioClip>& clip,

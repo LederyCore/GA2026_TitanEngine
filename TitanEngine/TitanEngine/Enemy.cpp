@@ -5,6 +5,7 @@
 #include <DebugConsole/DebugConsole.h>
 #include <InputSystem/InputSystem.h>
 
+#include "AudioManager.h"
 #include "GameObject.h"
 #include "HitEffect.h"
 #include "Scene.h"
@@ -89,6 +90,16 @@ Object* Enemy::Clone()
 
 void Enemy::TakeDamage(float amount)
 {
+	// Play the hit SFX on every hit (overlapping shots allowed via PlayOneShot).
+	// Slightly randomize the pitch each time so repeated hits sound varied.
+	if (m_hitSfx)
+	{
+		static std::random_device rd;
+		static std::default_random_engine gen(rd());
+		std::uniform_real_distribution<float> pitchDist(0.90f, 1.12f);
+		AudioManager::Instance().PlayOneShot(m_hitSfx, 1.0f, AudioCategory::SFX, pitchDist(gen));
+	}
+
 	m_CurrHealth -= amount;
 	m_Slider->SetValue(m_CurrHealth);
 
