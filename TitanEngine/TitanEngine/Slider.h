@@ -11,27 +11,46 @@ namespace TitanEngine
     public:
         enum class Direction { LeftToRight, RightToLeft, BottomToTop, TopToBottom };
 
-        // --- Value ---
+        // -----------------------------------------------------------------------
+        // RectLayout
+        // The TitanEngine equivalent of giving Unity's Background image and Fill
+        // image each their own child RectTransform (position / size / pivot).
+        // Every field is a local override; leaving it at its default makes the
+        // graphic inherit the slider's shared box, so old setups keep working.
+        // -----------------------------------------------------------------------
+        struct RectLayout
+        {
+            // Extra pixel offset for THIS graphic, added on top of Slider::offset.
+            // (Like nudging the child RectTransform's anchored position.)
+            D2D1_POINT_2F offset = { 0.f, 0.f };
+
+            // Box size in pixels. <= 0 means "inherit the slider's width / height".
+            float width  = -1.f;
+            float height = -1.f;
+
+            // Pivot/anchor inside this box, normalized 0~1.
+            // x < 0 means "inherit the slider's pivot".
+            // {0,0}=top-left, {0.5,0.5}=center, {1,1}=bottom-right.
+            D2D1_POINT_2F pivot = { -1.f, -1.f };
+        };
+
+        // --- Value range ---
         float minValue = 0.f;
         float maxValue = 1.f;
 
-        // --- Size ---
+        // --- Shared box (inherited by any graphic that does not override it) ---
         float width  = 200.f;
         float height = 20.f;
+        D2D1_POINT_2F pivot  = { 0.5f, 0.5f };  // shared pivot
+        D2D1_POINT_2F offset = { 0.f, 0.f };    // shared offset
 
-        // --- Layout (Unity RectTransform style) ---
-        // Pivot/anchor of the slider box (width x height), normalized 0~1.
-        // {0,0}=top-left, {0.5,0.5}=center, {1,1}=bottom-right.
-        // Both the color bar and the background image are laid out from this anchor.
-        D2D1_POINT_2F pivot = { 0.5f, 0.5f };
-
-        // Extra rendering start offset (in pixels) applied on top of the pivot,
-        // so the draw origin can be nudged freely like Unity.
-        D2D1_POINT_2F offset = { 0.f, 0.f };
+        // --- Independent layout per graphic (set these to place them freely) ---
+        RectLayout backgroundRect;   // background image / color bar
+        RectLayout fillRect;         // fill track; visible fill grows inside this box
 
         Direction direction = Direction::LeftToRight;
 
-        // --- Sprite mode: set texture to use images instead of solid colors ---
+        // --- Sprite mode: set a texture to render an image instead of a solid color ---
         Sprite backgroundImage;
         Sprite fillImage;
 
@@ -60,13 +79,23 @@ namespace TitanEngine
 
         void EnsureResources(ID2D1DeviceContext7* ctx);
 
-        // Local box-space transform anchored by pivot/offset (box = [0,0]~[width,height]).
-        D2D1::Matrix3x2F BuildBoxMatrix(const D2D1::Matrix3x2F& screen);
+        // Resolve only the box size of a layout (applies the shared-size fallback).
+        void ResolveSize(const RectLayout& layout, float& outW, float& outH) const;
 
-        // Sub-rect of the box that the fill covers for the current value/direction.
-        D2D1_RECT_F      ComputeFillRect(float t) const;
+        // Resolve a layout into size / pivot / offset against the shared defaults.
+        void ResolveLayout(const RectLayout& layout,
+                           float& outW, float& outH,
+                           D2D1_POINT_2F& outPivot,
+                           D2D1_POINT_2F& outOffset) const;
 
-        // Draw a sprite stretched into dstRect (optionally clipping a srcRect), with tint.
+        // Box-space transform for a graphic, anchored by pivot/offset (box = [0,0]~[w,h]).
+        D2D1::Matrix3x2F BuildBoxMatrix(const RectLayout& layout,
+                                        const D2D1::Matrix3x2F& screen);
+
+        // Sub-rect of a (w x h) box that the fill covers for value t / direction.
+        D2D1_RECT_F ComputeFillRect(float w, float h, float t) const;
+
+        // Draw a sprite stretched into dstRect (optionally clipping srcRect), with tint.
         void DrawSprite(ID2D1DeviceContext7* ctx, Sprite& spr,
                         const D2D1::Matrix3x2F& box,
                         const D2D1_RECT_F& dstRect,
