@@ -7,6 +7,8 @@
 #include "AnimationClip.h"
 #include "ResourceManager.h"
 #include "Texture2D.h"
+#include "AudioClip.h"
+#include "AudioManager.h"
 #include "DebugConsole/DebugConsole.h"
 #include "Button.h"
 #include "Slider.h"
@@ -17,7 +19,20 @@ void TestScene::OnLoad()
 {
     LOG_DEBUG("TestScene Load");
 
-
+    // ---- BGM ----
+    // Load an mp3 (cached via ResourceManager) and start playing it immediately.
+    // Put your file at: TitanEngine/TitanEngine/Resource/Bgm_Test.mp3
+    auto bgm = ResourceManager::Load<AudioClip>(L"Resource/BGM.mp3");
+    if (bgm)
+    {
+        LOG_DEBUG("Bgm_Test.mp3 loaded OK (%.2fs)", bgm->GetDurationSec());
+        // loop = true, volume = 0.5
+        AudioManager::Instance().PlayBGM(bgm, true, 0.5f);
+    }
+    else
+    {
+        LOG_ERROR("Bgm_Test.mp3 load failed - place the file in the Resource folder");
+    }
 
 
 
@@ -81,19 +96,19 @@ void TestScene::OnLoad()
     auto* go = AddObject("Button");
     go->GetTransform()->SetLocalPosition(-100, -200);
 
-    // ½ºÇÁ¶óÀÌÆ® »çÀÌÁî »ç¿ëÇÏ´Â ¹öÆ°
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½Æ°
     auto* btn = go->AddComponent<Button>();
     btn->image.texture = tex;
     btn->width = 160.f;
     btn->height = 40.f;
     btn->text = L"Click Me";
     btn->onClick = []() {
-        // Å¬¸¯ Ã³¸®
-        LOG_DEBUG("¹öÆ° Å¬¸¯");
+        // Å¬ï¿½ï¿½ Ã³ï¿½ï¿½
+        LOG_DEBUG("ï¿½ï¿½Æ° Å¬ï¿½ï¿½");
         };
 
 
-    // ±âº» ¹öÆ°
+    // ï¿½âº» ï¿½ï¿½Æ°
     auto* go22 = AddObject("Button2");
     go22->GetTransform()->SetLocalPosition(100, 000);
 
@@ -102,8 +117,8 @@ void TestScene::OnLoad()
     btn2->height = 40.f;
     btn2->text = L"Click Me";
     btn2->onClick = []() {
-        // Å¬¸¯ Ã³¸®
-        LOG_DEBUG("¹öÆ° Å¬¸¯");
+        // Å¬ï¿½ï¿½ Ã³ï¿½ï¿½
+        LOG_DEBUG("ï¿½ï¿½Æ° Å¬ï¿½ï¿½");
         };
 
 
@@ -234,12 +249,12 @@ void TestScene::OnLoad()
     hp->SetValue(75.f);               // HP 75/100
     hp->width = 300.f;
     hp->height = 24.f;
-    hp->fillColor = D2D1::ColorF(0.2f, 0.85f, 0.2f, 1.f);  // ÃÊ·Ï
+    hp->fillColor = D2D1::ColorF(0.2f, 0.85f, 0.2f, 1.f);  // ï¿½Ê·ï¿½
 
     hp->onValueChanged = [](float v) {
 
-        LOG_DEBUG("Ã¼·Â º¯È­");
-        // HP º¯°æ °¨Áö
+        LOG_DEBUG("Ã¼ï¿½ï¿½ ï¿½ï¿½È­");
+        // HP ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         };
 }
 

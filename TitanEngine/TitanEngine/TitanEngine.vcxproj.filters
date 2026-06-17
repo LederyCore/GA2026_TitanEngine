@@ -83,6 +83,15 @@
     <ClCompile Include="BubbleCircle.cpp">
       <Filter>_Content</Filter>
     </ClCompile>
+    <ClCompile Include="AudioClip.cpp">
+      <Filter>TitanEngine\AudioManagement</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioComponent.cpp">
+      <Filter>TitanEngine\AudioManagement</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioManager.cpp">
+      <Filter>TitanEngine\AudioManagement</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Animator.h">
@@ -167,6 +176,15 @@
     <ClInclude Include="BubbleCircle.h">
       <Filter>_Content</Filter>
     </ClInclude>
+    <ClInclude Include="AudioClip.h">
+      <Filter>TitanEngine\AudioManagement</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioComponent.h">
+      <Filter>TitanEngine\AudioManagement</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioManager.h">
+      <Filter>TitanEngine\AudioManagement</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="TitanEngine">
@@ -183,6 +201,9 @@
     </Filter>
     <Filter Include="TitanEngine\ResourceManagement">
       <UniqueIdentifier>{15bb0464-3c89-4d9f-964d-24490f73386a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TitanEngine\AudioManagement">
+      <UniqueIdentifier>{7a1d2c4e-9b3f-4a8d-bc15-2e6f0d9a4b71}</UniqueIdentifier>
     </Filter>
     <Filter Include="_Test">
       <UniqueIdentifier>{acd47a59-2f62-402c-8852-6c4e8769614a}</UniqueIdentifier>
