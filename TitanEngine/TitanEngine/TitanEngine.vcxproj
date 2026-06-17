@@ -122,6 +122,10 @@
       <AdditionalLibraryDirectories>$(ProjectDir)Lib\D</AdditionalLibraryDirectories>
       <AdditionalDependencies>Win32Window.lib;InputSystem.lib;DebugConsole.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>
+      </Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -143,6 +147,9 @@
       <AdditionalLibraryDirectories>$(ProjectDir)Lib\R</AdditionalLibraryDirectories>
       <AdditionalDependencies>Win32Window.lib;InputSystem.lib;DebugConsole.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /E /Y /I "$(ProjectDir)Resource" "$(OutDir)Resource"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AnimationClip.cpp" />

@@ -94,6 +94,7 @@
     </ClCompile>
     <ClCompile Include="BubbleSpawner.cpp" />
     <ClCompile Include="HitEffect.cpp" />
+    <ClCompile Include="DamagePopup.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Animator.h">
@@ -189,6 +190,7 @@
     </ClInclude>
     <ClInclude Include="BubbleSpawner.h" />
     <ClInclude Include="HitEffect.h" />
+    <ClInclude Include="DamagePopup.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="TitanEngine">
