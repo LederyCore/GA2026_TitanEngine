@@ -5,6 +5,7 @@
 #include <DebugConsole/DebugConsole.h>
 #include <InputSystem/InputSystem.h>
 
+#include "DamagePopup.h"
 #include "GameObject.h"
 #include "HitEffect.h"
 #include "Scene.h"
@@ -72,10 +73,28 @@ Object* Enemy::Clone()
 	return clone;
 }
 
-void Enemy::TakeDamage(float amount)
+void Enemy::TakeDamage(int amount)
 {
 	m_CurrHealth -= amount;
 	m_Slider->SetValue(m_CurrHealth);
+
+	GameObject* popup = GetScene()->AddObject("DamagePopup");
+	auto p = GetOwner()->GetTransform()->GetLocalPosition();
+	popup->GetTransform()->SetLocalPosition(p.x, p.y - 80);
+
+	popup->AddComponent<DamagePopup>();
+	popup->AddComponent<SpriteRenderer>();
+	popup->GetComponent<DamagePopup>()->numbers = numbers;
+
+	static std::random_device rd;
+	static std::default_random_engine gen(rd());
+	std::uniform_int_distribution<int>    countDist(1, 100000);
+
+	amount = countDist(gen);
+	popup->GetComponent<DamagePopup>()->Init(std::to_string(amount));
+	//popup->GetComponent<SpriteRenderer>()->sprite.texture = numbers[0];
+
+	
 
 	if (m_HitEffectClip)
 		SpawnHitEffects();

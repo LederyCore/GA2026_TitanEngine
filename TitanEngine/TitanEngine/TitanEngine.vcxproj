@@ -153,6 +153,7 @@
     <ClCompile Include="BubbleCircle.cpp" />
     <ClCompile Include="BubbleSpawner.cpp" />
     <ClCompile Include="Button.cpp" />
+    <ClCompile Include="DamagePopup.cpp" />
     <ClCompile Include="HitEffect.cpp" />
     <ClCompile Include="Slider.cpp" />
     <ClCompile Include="Animator.cpp" />
@@ -191,6 +192,7 @@
     <ClInclude Include="BubbleCircle.h" />
     <ClInclude Include="BubbleSpawner.h" />
     <ClInclude Include="Button.h" />
+    <ClInclude Include="DamagePopup.h" />
     <ClInclude Include="HitEffect.h" />
     <ClInclude Include="Slider.h" />
     <ClInclude Include="Animator.h" />

@@ -1,4 +1,5 @@
 #pragma once
+#include <map>
 #include <memory>
 #include "AnimationClip.h"
 #include "Animator.h"
@@ -36,9 +37,9 @@ public:
 	float m_MaxHealth = 100.0f;
 	float m_CurrHealth = m_MaxHealth;
 
-	void TakeDamage(float amount);
+	void TakeDamage(int amount);
 
-	std::vector<std::shared_ptr<Texture2D>> numbers;
+	std::map<char, std::shared_ptr<Texture2D>> numbers;
 
 	std::shared_ptr<Texture2D> m_healthBarTex;
 private:
