@@ -3,6 +3,7 @@
 #include <memory>
 #include "AnimationClip.h"
 #include "Animator.h"
+#include "AudioClip.h"
 #include "Component.h"
 #include "InGameTimer.h"
 #include "Player.h"
@@ -42,6 +43,9 @@ public:
 	std::map<char, std::shared_ptr<Texture2D>> numbers;
 
 	std::shared_ptr<Texture2D> m_healthBarTex;
+
+	// Hit sound effect, played once on every TakeDamage (injected by the scene).
+	std::shared_ptr<AudioClip> m_hitSfx;
 private:
 	void SpawnHitEffects();
 	void Render(ID2D1DeviceContext7* ctx) override;

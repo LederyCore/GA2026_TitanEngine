@@ -44,6 +44,8 @@ namespace TitanEngine
         clone->height           = height;
         clone->pivot            = pivot;
         clone->offset           = offset;
+        clone->backgroundRect   = backgroundRect;
+        clone->fillRect         = fillRect;
         clone->direction        = direction;
         clone->backgroundImage  = backgroundImage;
         clone->fillImage        = fillImage;
@@ -57,10 +59,11 @@ namespace TitanEngine
     // ---------------------------------------------------------------------------
     // Render
     //
-    // The slider is a single box of (width x height) anchored by pivot/offset.
-    // Background and fill are drawn as two independent layers; each layer uses its
-    // sprite when one is assigned, otherwise falls back to its solid color. This
-    // means assigning only a background image still shows the default color bar.
+    // Background and fill are drawn as two independent boxes, each using its own
+    // RectLayout (backgroundRect / fillRect). If a layout is not customized it
+    // inherits the slider's shared box, so behavior is identical to before. Each
+    // layer uses its sprite when one is assigned, otherwise its solid color
+    // (assigning only a background image still shows the default color fill bar).
     // ---------------------------------------------------------------------------
 
     void Slider::Render(ID2D1DeviceContext7* ctx)
@@ -70,57 +73,63 @@ namespace TitanEngine
         D2D1::Matrix3x2F screen;
         ctx->GetTransform(&screen);
 
-        const D2D1::Matrix3x2F box = BuildBoxMatrix(screen);
-        const D2D1_RECT_F boxRect  = { 0.f, 0.f, width, height };
+        // --- Background layer (its own box) ---
+        float bw, bh;
+        ResolveSize(backgroundRect, bw, bh);
+        const D2D1::Matrix3x2F bgBox = BuildBoxMatrix(backgroundRect, screen);
+        const D2D1_RECT_F bgRect = { 0.f, 0.f, bw, bh };
 
-        // --- Background layer ---
-        if (backgroundImage.GetBitmap())
+        const bool hasBgImage = backgroundImage.GetBitmap() != nullptr;
+        if (hasBgImage)
         {
-            DrawSprite(ctx, backgroundImage, box, boxRect, std::nullopt);
+            DrawSprite(ctx, backgroundImage, bgBox, bgRect, std::nullopt);
         }
         else
         {
-            ctx->SetTransform(box);
+            ctx->SetTransform(bgBox);
             m_brush->SetColor(backgroundColor);
-            ctx->FillRectangle(boxRect, m_brush.Get());
+            ctx->FillRectangle(bgRect, m_brush.Get());
         }
 
-        // --- Fill layer ---
+        // --- Fill layer (its own box) ---
         const float t = GetNormalizedValue();
         if (t > 0.f)
         {
-            const D2D1_RECT_F dst = ComputeFillRect(t);
+            float fw, fh;
+            ResolveSize(fillRect, fw, fh);
+            const D2D1::Matrix3x2F fillBox = BuildBoxMatrix(fillRect, screen);
+            const D2D1_RECT_F dst = ComputeFillRect(fw, fh, t);
 
             if (fillImage.GetBitmap())
             {
                 // Clip the matching portion of the fill sprite so it reveals/hides
                 // from the correct edge as the value changes.
-                const float fw = (float)fillImage.GetWidth();
-                const float fh = (float)fillImage.GetHeight();
+                const float iw = (float)fillImage.GetWidth();
+                const float ih = (float)fillImage.GetHeight();
                 D2D1_RECT_F src;
                 switch (direction)
                 {
-                case Direction::LeftToRight: src = { 0.f, 0.f, fw * t, fh }; break;
-                case Direction::RightToLeft: src = { fw * (1.f - t), 0.f, fw, fh }; break;
-                case Direction::BottomToTop: src = { 0.f, fh * (1.f - t), fw, fh }; break;
-                case Direction::TopToBottom: src = { 0.f, 0.f, fw, fh * t }; break;
+                case Direction::LeftToRight: src = { 0.f, 0.f, iw * t, ih }; break;
+                case Direction::RightToLeft: src = { iw * (1.f - t), 0.f, iw, ih }; break;
+                case Direction::BottomToTop: src = { 0.f, ih * (1.f - t), iw, ih }; break;
+                case Direction::TopToBottom: src = { 0.f, 0.f, iw, ih * t }; break;
                 }
-                DrawSprite(ctx, fillImage, box, dst, src);
+                DrawSprite(ctx, fillImage, fillBox, dst, src);
             }
             else
             {
-                ctx->SetTransform(box);
+                ctx->SetTransform(fillBox);
                 m_brush->SetColor(fillColor);
                 ctx->FillRectangle(dst, m_brush.Get());
             }
         }
 
-        // --- Border (only meaningful for the solid look) ---
-        if (!backgroundImage.GetBitmap())
+        // --- Border (only meaningful for the solid look; frames the bg box last) ---
+        if (!hasBgImage)
         {
-            ctx->SetTransform(box);
+            ctx->SetTransform(bgBox);
             m_brush->SetColor(borderColor);
-            ctx->DrawRectangle(boxRect, m_brush.Get(), 1.f);
+            ctx->DrawRectangle(bgRect, m_brush.Get(), 1.f);
         }
 
         ctx->SetTransform(screen);
@@ -130,8 +139,33 @@ namespace TitanEngine
     // Layout helpers
     // ---------------------------------------------------------------------------
 
-    D2D1::Matrix3x2F Slider::BuildBoxMatrix(const D2D1::Matrix3x2F& screen)
+    void Slider::ResolveSize(const RectLayout& layout, float& outW, float& outH) const
     {
+        // Size: <= 0 inherits the shared width/height.
+        outW = (layout.width  > 0.f) ? layout.width  : width;
+        outH = (layout.height > 0.f) ? layout.height : height;
+    }
+
+    void Slider::ResolveLayout(const RectLayout& layout,
+                               float& outW, float& outH,
+                               D2D1_POINT_2F& outPivot,
+                               D2D1_POINT_2F& outOffset) const
+    {
+        ResolveSize(layout, outW, outH);
+
+        // Pivot: x < 0 inherits the shared pivot.
+        outPivot = (layout.pivot.x < 0.f) ? pivot : layout.pivot;
+
+        // Offset: the layout's own offset is added on top of the shared offset.
+        outOffset = { offset.x + layout.offset.x, offset.y + layout.offset.y };
+    }
+
+    D2D1::Matrix3x2F Slider::BuildBoxMatrix(const RectLayout& layout,
+                                            const D2D1::Matrix3x2F& screen)
+    {
+        float w, h; D2D1_POINT_2F pv, off;
+        ResolveLayout(layout, w, h, pv, off);
+
         Transform* tf     = GetOwner()->GetTransform();
         const auto& world = tf->GetWorldMatrix();
 
@@ -143,21 +177,21 @@ namespace TitanEngine
         );
 
         // Move the box so the pivot lands on the transform origin, then nudge by offset.
-        const float ox = -pivot.x * width  + offset.x;
-        const float oy = -pivot.y * height + offset.y;
+        const float ox = -pv.x * w + off.x;
+        const float oy = -pv.y * h + off.y;
 
         return D2D1::Matrix3x2F::Translation(ox, oy) * d2dMatrix * screen;
     }
 
-    D2D1_RECT_F Slider::ComputeFillRect(float t) const
+    D2D1_RECT_F Slider::ComputeFillRect(float w, float h, float t) const
     {
-        D2D1_RECT_F r = { 0.f, 0.f, width, height };
+        D2D1_RECT_F r = { 0.f, 0.f, w, h };
         switch (direction)
         {
-        case Direction::LeftToRight: r.right  = width  * t;            break;
-        case Direction::RightToLeft: r.left   = width  * (1.f - t);    break;
-        case Direction::BottomToTop: r.top    = height * (1.f - t);    break;
-        case Direction::TopToBottom: r.bottom = height * t;            break;
+        case Direction::LeftToRight: r.right  = w * t;          break;
+        case Direction::RightToLeft: r.left   = w * (1.f - t);  break;
+        case Direction::BottomToTop: r.top    = h * (1.f - t);  break;
+        case Direction::TopToBottom: r.bottom = h * t;          break;
         }
         return r;
     }

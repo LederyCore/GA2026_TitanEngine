@@ -134,7 +134,8 @@ namespace TitanEngine
     }
 
     void AudioManager::PlayOneShot(const std::shared_ptr<AudioClip>& clip,
-                                   float volume, AudioCategory category)
+                                   float volume, AudioCategory category,
+                                   float pitch)
     {
         if (!m_xaudio2 || !clip || !clip->IsValid())
             return;
@@ -157,6 +158,12 @@ namespace TitanEngine
 
         const float catVol = GetCategoryVolume(category);
         voice->SetVolume(volume * catVol);
+
+        // Vary playback pitch. Clamp to XAudio2's safe default range (1/32 ~ 2.0).
+        if (pitch < 0.03125f) pitch = 0.03125f;
+        if (pitch > 2.0f)     pitch = 2.0f;
+        voice->SetFrequencyRatio(pitch);
+
         voice->Start(0);
 
         // 재생이 끝나면 Update 에서 정리하도록 보관.

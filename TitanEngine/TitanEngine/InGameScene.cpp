@@ -16,11 +16,26 @@
 #include "SceneManager.h"
 #include "Slider.h"
 #include "SpriteRenderer.h"
+#include "AudioClip.h"
+#include "AudioManager.h"
 
 using namespace TitanEngine;
 
 void InGameScene::OnLoad()
 {
+    // 브금
+    auto bgm = ResourceManager::Load<AudioClip>(L"Resource/BGM.mp3");
+    if (bgm)
+    {
+        LOG_DEBUG("Bgm_Test.mp3 loaded OK (%.2fs)", bgm->GetDurationSec());
+        // loop = true, volume = 0.5
+        AudioManager::Instance().PlayBGM(bgm, true, 0.5f);
+    }
+    else
+    {
+        LOG_ERROR("Bgm_Test.mp3 load failed - place the file in the Resource folder");
+    }
+
 	// 배경
     GameObject* bg = AddObject("bg");
     bg->AddComponent<SpriteRenderer>();
@@ -76,6 +91,10 @@ void InGameScene::OnLoad()
     // Enemy HealthBar
     auto hBarTex = ResourceManager::Load<Texture2D>(L"Resource/HPbar_BG.webp");
     enemy->GetComponent<Enemy>()->m_healthBarTex = hBarTex;
+
+    // Enemy Hit SFX
+    auto hitSfx = ResourceManager::Load<AudioClip>(L"Resource/hit.mp3");
+    enemy->GetComponent<Enemy>()->m_hitSfx = hitSfx;
 
     // Enemy Damage Number
     auto d0 = ResourceManager::Load<Texture2D>(L"Resource/DamageNumber_sheet0.webp");
@@ -213,7 +232,7 @@ void InGameScene::OnLoad()
 
     timer->GetComponent<InGameTimer>()->m_winTex = winTex;
     timer->GetComponent<InGameTimer>()->m_loseTex = loseTex;
-    timer->GetComponent<InGameTimer>()->m_TimerBarTex = timerBarTex;
+    //timer->GetComponent<InGameTimer>()->m_TimerBarTex = timerBarTex;
     // 타이머 end========================================================================================================
 
 
