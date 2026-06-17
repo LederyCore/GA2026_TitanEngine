@@ -27,7 +27,7 @@ void BubbleSpawner::OnStart()
 void BubbleSpawner::Update(float deltaTime)
 {
 	if (!m_Timer || m_Timer->m_CurTime <= 0.f) return;
-
+	if (m_Timer->IsGameClear()) return;
 	m_NextSpawnTimer -= deltaTime;
 	if (m_NextSpawnTimer <= 0.f)
 	{
