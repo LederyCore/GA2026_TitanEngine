@@ -256,6 +256,25 @@ void TestScene::OnLoad()
         LOG_DEBUG("ü�� ��ȭ");
         // HP ���� ����
         };
+
+    // ---- Slider: background image only -> default color fill bar still shows ----
+    // Also demonstrates a left-anchored pivot (grows from the object's position to the right).
+    auto* hpgo2 = AddObject("HPBar_BgImageOnly");
+    hpgo2->GetTransform()->SetLocalPosition(-150, -300);
+
+    auto* hp2 = hpgo2->AddComponent<Slider>();
+    hp2->minValue = 0.f;
+    hp2->maxValue = 100.f;
+    hp2->SetValue(60.f);
+    hp2->width  = 300.f;
+    hp2->height = 24.f;
+    hp2->pivot  = { 0.f, 0.5f };          // left-center anchor (Unity-style)
+    hp2->offset = { 0.f, 0.f };
+    hp2->fillColor = D2D1::ColorF(0.95f, 0.3f, 0.2f, 1.f);
+    // Only a background image is set; the fill stays the default solid color bar.
+    auto sliderBg = ResourceManager::Load<Texture2D>(L"Resource/cat.png");
+    if (sliderBg)
+        hp2->backgroundImage.texture = sliderBg;
 }
 
 void TestScene::OnUnLoad()
