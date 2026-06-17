@@ -42,10 +42,8 @@ namespace TitanEngine
 
         if (needsTint)
         {
-            // srcRect가 있으면 이미지 원점 좌표계 오프셋을 transform에 포함
-            D2D1::Matrix3x2F finalMatrix = hasSrc
-                ? D2D1::Matrix3x2F::Translation(-pw - sprite.srcRect->left, -ph - sprite.srcRect->top) * d2dMatrix * screenTransform
-                : D2D1::Matrix3x2F::Translation(-pw, -ph) * d2dMatrix * screenTransform;
+            D2D1::Matrix3x2F finalMatrix =
+                D2D1::Matrix3x2F::Translation(-pw, -ph) * d2dMatrix * screenTransform;
             ctx->SetTransform(finalMatrix);
 
             EnsureEffect(ctx);
