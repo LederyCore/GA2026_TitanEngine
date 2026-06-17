@@ -29,7 +29,7 @@ public:
 	Player*       m_Player       = nullptr;
 	InGameTimer*  m_Timer        = nullptr;
 	BubbleCircle* m_BubbleCircle = nullptr;
-	float         m_hitRadius    = 18.f;
+	float         m_hitRadius    = 45.f;   // generous click target (icon is only 32px)
 
 	std::shared_ptr<AnimationClip> m_BubbleHitClip;
 

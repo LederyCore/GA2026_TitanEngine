@@ -35,10 +35,18 @@ public:
 	std::shared_ptr<AnimationClip> m_HitEffectClip;
 
 public:
-	float m_MaxHealth = 100.0f;
+	// Big HP pool to match the 4-6 digit damage numbers. Easy to tune here.
+	float m_MaxHealth = 2500000.0f;
 	float m_CurrHealth = m_MaxHealth;
 
-	void TakeDamage(int amount);
+	void TakeDamage(int amount, bool crit);
+
+	// --- Hit reaction (squash + knockback punch on every hit) ---
+	float m_HitReact   = 0.f;        // counts down after each hit
+	float m_BaseScaleX = -3.f;       // captured in OnStart from the transform
+	float m_BaseScaleY =  3.f;
+	float m_BasePosX   = 100.f;
+	float m_BasePosY   =  0.f;
 
 	std::map<char, std::shared_ptr<Texture2D>> numbers;
 

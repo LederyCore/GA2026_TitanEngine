@@ -12,6 +12,8 @@
 #include "GameTimer.h"
 #include "D2DRenderer.h"
 #include "Bubble.h"
+#include "Player.h"
+#include "JudgeText.h"
 #include "InGameScene.h"
 #include "TitleScene.h"
 
@@ -176,6 +178,8 @@ void TitanEngine::Engine::Render()
     float h = (float)m_renderer->GetHeight();
     Button::SetScreenSize(w, h);
     Bubble::SetScreenSize(w, h);
+    Player::SetScreenSize(w, h);
+    JudgeText::SetScreenSize(w, h);
 
     m_renderer->RenderBegin();
     m_currentFrameActiveScene->Render(

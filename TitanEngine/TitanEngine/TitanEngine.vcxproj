@@ -162,6 +162,7 @@
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="DamagePopup.cpp" />
     <ClCompile Include="HitEffect.cpp" />
+    <ClCompile Include="JudgeText.cpp" />
     <ClCompile Include="Slider.cpp" />
     <ClCompile Include="Animator.cpp" />
     <ClCompile Include="Component.cpp" />
@@ -201,6 +202,7 @@
     <ClInclude Include="Button.h" />
     <ClInclude Include="DamagePopup.h" />
     <ClInclude Include="HitEffect.h" />
+    <ClInclude Include="JudgeText.h" />
     <ClInclude Include="Slider.h" />
     <ClInclude Include="Animator.h" />
     <ClInclude Include="Component.h" />

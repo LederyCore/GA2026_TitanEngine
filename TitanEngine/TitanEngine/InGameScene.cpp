@@ -302,8 +302,24 @@ void InGameScene::OnLoad()
     spawner->m_BubbleTex     = bubbleTex;
     spawner->m_CircleTex     = circleTex;
     spawner->m_BubbleHitClip = bubbleHitClip;
-    spawner->m_MinInterval   = 1.0f;
-    spawner->m_MaxInterval   = 3.0f;
+    spawner->m_MinInterval   = 0.4f;
+    spawner->m_MaxInterval   = 1.1f;
+
+    // Keep bubbles off the player/enemy art (+ bubble hit radius of margin) so
+    // attacking the enemy never accidentally pops a bubble into a BAD.
+    const float exclMargin = 45.f;
+    if (enemyIdleTex)
+    {
+        float hw = (float)(enemyIdleTex->GetWidth() / 10) * 3.f * 0.5f;
+        float hh = (float)enemyIdleTex->GetHeight()        * 3.f * 0.5f;
+        spawner->AddExclusionRect(100.f, 0.f, hw, hh, exclMargin);   // enemy at (100,0)
+    }
+    if (playerIdleTex)
+    {
+        float hw = (float)(playerIdleTex->GetWidth() / 12) * 3.f * 0.5f;
+        float hh = (float)playerIdleTex->GetHeight()        * 3.f * 0.5f;
+        spawner->AddExclusionRect(-100.f, 0.f, hw, hh, exclMargin);  // player at (-100,0)
+    }
 }
 
 void InGameScene::OnUnLoad()

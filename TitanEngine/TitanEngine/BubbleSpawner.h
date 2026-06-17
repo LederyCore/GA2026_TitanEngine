@@ -1,5 +1,6 @@
 #pragma once
 #include <memory>
+#include <vector>
 #include "AnimationClip.h"
 #include "Component.h"
 #include "InGameTimer.h"
@@ -30,9 +31,19 @@ public:
 	float m_MinInterval = 1.0f;
 	float m_MaxInterval = 3.0f;
 
+	// Register a no-spawn rectangle (world space). cx/cy = center, halfW/halfH =
+	// half extents of the art, margin = extra padding (e.g. the bubble hit radius)
+	// so a bubble's click area never overlaps the rect.
+	void AddExclusionRect(float cx, float cy, float halfW, float halfH, float margin);
+
 private:
+	struct ExclusionZone { float minX, minY, maxX, maxY; };
+	std::vector<ExclusionZone> m_Exclusions;
+
 	float m_NextSpawnTimer = 0.0f;
 
-	void SpawnBubble();
+	void  SpawnBubble();
 	float RandomInterval();
+	float GetProgress() const;          // 0 at match start -> 1 at the end
+	bool  IsBlocked(float x, float y) const;
 };

@@ -7,6 +7,7 @@
 #include "Animator.h"
 #include "GameObject.h"
 #include "HitEffect.h"
+#include "JudgeText.h"
 #include "Scene.h"
 #include "SpriteRenderer.h"
 #include "Transform.h"
@@ -47,32 +48,75 @@ void Bubble::Update(float deltaTime)
 
 	if (dx * dx + dy * dy <= m_hitRadius * m_hitRadius)
 	{
-		if (m_BubbleCircle->IsSweetSpot())
+		// Grade the click by how tightly the ring matched the bubble, and show
+		// a PERFECT/GOOD/BAD label above it so the player learns the timing.
+		BubbleCircle::Timing timing = m_BubbleCircle->GetTiming();
+
+		float         fxScale;
+		D2D1_COLOR_F  fxTint;
+		const wchar_t* label;
+		D2D1_COLOR_F  labelColor;
+
+		if (timing == BubbleCircle::Timing::Perfect)
 		{
-			// 정확한 타이밍에 클릭 → 공격력 +1
-			if (m_Player)
+			if (m_Player) m_Player->OnPerfectPop();    // big power + crit chance
+			fxScale    = 2.4f;
+			fxTint     = { 1.0f, 0.85f, 0.1f, 1.f };   // golden burst
+			label      = L"PERFECT!";
+			labelColor = { 1.0f, 0.85f, 0.1f, 1.f };
+		}
+		else if (timing == BubbleCircle::Timing::Good)
+		{
+			if (m_Player) m_Player->OnGoodPop();        // solid power gain
+			fxScale    = 1.6f;
+			fxTint     = { 0.4f, 0.8f, 1.0f, 1.f };     // cool blue
+			label      = L"GOOD";
+			labelColor = { 0.45f, 0.85f, 1.0f, 1.f };
+		}
+		else
+		{
+			// Too early / too late: bubble pops, grants nothing, and breaks the combo.
+			if (m_Player) m_Player->OnMissPop();
+			fxScale    = 1.0f;
+			fxTint     = { 0.6f, 0.6f, 0.6f, 1.f };     // dull grey
+			label      = L"BAD";
+			labelColor = { 1.0f, 0.30f, 0.25f, 1.f };
+		}
+
+		if (m_Player)
+			LOG_DEBUG("Bubble pop! timing=%d AttackPower=%d Combo=%d",
+				(int)timing, m_Player->m_AttackPower, m_Player->m_Combo);
+
+		// Hit animation, scaled and tinted to sell the timing grade.
+		if (m_BubbleHitClip)
+		{
+			Vector2 bubblePos = GetOwner()->GetTransform()->GetWorldPosition();
+
+			GameObject* fxGO = GetScene()->AddObject("BubbleHit");
+			fxGO->AddComponent<HitEffect>();
+			auto* fxSR = fxGO->AddComponent<SpriteRenderer>();
+			fxSR->sprite.tint = fxTint;
+
+			auto* anim = fxGO->AddComponent<Animator>();
+			anim->AddClip(m_BubbleHitClip);
+			anim->Play(m_BubbleHitClip->name);
+
+			fxGO->GetTransform()->SetLocalPosition(bubblePos.x, bubblePos.y);
+			fxGO->GetTransform()->SetLocalScale(fxScale, fxScale);
+		}
+
+		// Floating PERFECT/GOOD/BAD label above the bubble.
+		{
+			Vector2 bubblePos = GetOwner()->GetTransform()->GetWorldPosition();
+			GameObject* judgeGO = GetScene()->AddObject("JudgeText");
+			if (judgeGO)
 			{
-				m_Player->m_AttackPower++;
-				LOG_DEBUG("Bubble pop! AttackPower: %d", m_Player->m_AttackPower);
-			}
-
-			// 히트 애니메이션 스폰
-			if (m_BubbleHitClip)
-			{
-				Vector2 bubblePos = GetOwner()->GetTransform()->GetWorldPosition();
-
-				GameObject* fxGO = GetScene()->AddObject("BubbleHit");
-				fxGO->AddComponent<HitEffect>();
-				fxGO->AddComponent<SpriteRenderer>();
-
-				auto* anim = fxGO->AddComponent<Animator>();
-				anim->AddClip(m_BubbleHitClip);
-				anim->Play(m_BubbleHitClip->name);
-
-				fxGO->GetTransform()->SetLocalPosition(bubblePos.x, bubblePos.y);
-				fxGO->GetTransform()->SetLocalScale(1.5f, 1.5f);
+				auto* judge = judgeGO->AddComponent<JudgeText>();
+				judgeGO->GetTransform()->SetLocalPosition(bubblePos.x, bubblePos.y - 35.f);
+				judge->Setup(label, labelColor);
 			}
 		}
+
 		Destroy(GetOwner());
 	}
 }

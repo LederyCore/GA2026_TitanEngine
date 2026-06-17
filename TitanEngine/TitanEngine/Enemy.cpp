@@ -53,6 +53,13 @@ void Enemy::OnStart()
 	m_Slider->fillRect.height = 24.f;
 	m_Slider->direction = Slider::Direction::LeftToRight;
 	m_Slider->fillColor = D2D1::ColorF(1.0f, 0.25f, 0.2f, 1.f);
+
+	// Remember the resting transform so the hit reaction can spring back to it.
+	auto* tr = GetOwner()->GetTransform();
+	m_BaseScaleX = tr->GetLocalScale().x;
+	m_BaseScaleY = tr->GetLocalScale().y;
+	m_BasePosX   = tr->GetLocalPosition().x;
+	m_BasePosY   = tr->GetLocalPosition().y;
 }
 
 void Enemy::Update(float deltaTime)
@@ -67,9 +74,27 @@ void Enemy::Update(float deltaTime)
 
 	if (input.GetMousePressed(0))
 	{
-		TakeDamage((float)m_Player->m_AttackPower);
-	};
+		// Damage is the player's real, combo-scaled attack - no longer random.
+		Player::AttackResult atk = m_Player->RollAttack();
+		TakeDamage(atk.damage, atk.crit);
+	}
 
+	// Hit reaction: a quick squash + sideways knockback that springs back.
+	auto* tr = GetOwner()->GetTransform();
+	if (m_HitReact > 0.f)
+	{
+		m_HitReact -= deltaTime;
+		float k     = m_HitReact / 0.18f;            // 1 -> 0 over the reaction
+		if (k < 0.f) k = 0.f;
+		float punch = 0.22f * k;                      // squash amount
+		tr->SetLocalScale(m_BaseScaleX * (1.f - punch), m_BaseScaleY * (1.f + punch));
+		tr->SetLocalPosition(m_BasePosX + 28.f * k, m_BasePosY);
+	}
+	else
+	{
+		tr->SetLocalScale(m_BaseScaleX, m_BaseScaleY);
+		tr->SetLocalPosition(m_BasePosX, m_BasePosY);
+	}
 }
 
 void Enemy::OnDisable()
@@ -89,38 +114,51 @@ Object* Enemy::Clone()
 	return clone;
 }
 
-void Enemy::TakeDamage(int amount)
+void Enemy::TakeDamage(int amount, bool crit)
 {
 	// Play the hit SFX on every hit (overlapping shots allowed via PlayOneShot).
-// Slightly randomize the pitch each time so repeated hits sound varied.
+	// Crits ring out a little higher; normal hits get a slight random pitch so
+	// repeated hits sound varied.
 	if (m_hitSfx)
 	{
 		static std::random_device rd;
 		static std::default_random_engine gen(rd());
 		std::uniform_real_distribution<float> pitchDist(0.90f, 1.12f);
-		AudioManager::Instance().PlayOneShot(m_hitSfx, 1.0f, AudioCategory::SFX, pitchDist(gen));
+		float pitch = crit ? 1.25f : pitchDist(gen);
+		AudioManager::Instance().PlayOneShot(m_hitSfx, 1.0f, AudioCategory::SFX, pitch);
 	}
 
 	m_CurrHealth -= amount;
+	if (m_CurrHealth < 0.f) m_CurrHealth = 0.f;
 	m_Slider->SetValue(m_CurrHealth);
 
+	// Kick off the squash/knockback reaction.
+	m_HitReact = 0.18f;
+
+	// Floating damage number - now shows the REAL damage dealt.
+	// (AddObject can return null if the GameObject cap is hit during frantic
+	// play, so guard the whole popup block.)
 	GameObject* popup = GetScene()->AddObject("DamagePopup");
-	auto p = GetOwner()->GetTransform()->GetLocalPosition();
-	popup->GetTransform()->SetLocalPosition(p.x, p.y - 80);
+	if (popup)
+	{
+		// Enemy sprite is 128x64 per frame at scale 3 -> 192px tall, centered on
+		// y, so the head top sits near y-96. Spawn the number just above the head,
+		// using the resting position so knockback doesn't jitter the popup.
+		popup->GetTransform()->SetLocalPosition(m_BasePosX + 40.f, m_BasePosY - 110);
 
-	popup->AddComponent<DamagePopup>();
-	popup->AddComponent<SpriteRenderer>();
-	popup->GetComponent<DamagePopup>()->numbers = numbers;
+		auto* dp = popup->AddComponent<DamagePopup>();
+		popup->AddComponent<SpriteRenderer>();
+		dp->numbers = numbers;
+		dp->Init(std::to_string(amount));
 
-	static std::random_device rd;
-	static std::default_random_engine gen(rd());
-	std::uniform_int_distribution<int>    countDist(1, 100000);
-
-	amount = countDist(gen);
-	popup->GetComponent<DamagePopup>()->Init(std::to_string(amount));
-	//popup->GetComponent<SpriteRenderer>()->sprite.texture = numbers[0];
-
-	
+		// Crits read bigger and gold; normal hits stay at the default look.
+		if (crit)
+		{
+			popup->GetTransform()->SetLocalScale(1.7f, 1.7f);
+			for (auto* g : dp->gos)
+				g->GetComponent<SpriteRenderer>()->sprite.tint = { 1.0f, 0.82f, 0.1f, 1.f };
+		}
+	}
 
 	if (m_HitEffectClip)
 		SpawnHitEffects();
@@ -132,8 +170,7 @@ void Enemy::TakeDamage(int amount)
 		m_Timer->GameClear();
 		Destroy(GetOwner());
 	}
-	LOG_DEBUG("Enemy TakeDamage : %f ", m_CurrHealth);
-
+	LOG_DEBUG("Enemy TakeDamage : %f (dmg=%d crit=%d)", m_CurrHealth, amount, (int)crit);
 }
 
 void Enemy::SpawnHitEffects()

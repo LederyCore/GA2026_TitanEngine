@@ -23,7 +23,19 @@ private:
 	
 public:
 	float m_currSize = 3.0f;
-	bool IsSweetSpot() const { return m_currSize >= 0.2f && m_currSize <= 0.5f; }
+
+	// Rhythm-game timing: the ring shrinks from 3.0 down to 0. The smaller
+	// the ring when clicked, the better the timing - until it passes the
+	// bubble and becomes a miss again.
+	enum class Timing { Miss, Good, Perfect };
+	Timing GetTiming() const
+	{
+		if (m_currSize >= 0.30f && m_currSize <= 0.55f) return Timing::Perfect;
+		if (m_currSize >= 0.12f && m_currSize <= 0.85f) return Timing::Good;
+		return Timing::Miss;
+	}
+	bool IsSweetSpot() const { return GetTiming() != Timing::Miss; }
+	bool IsPerfect()   const { return GetTiming() == Timing::Perfect; }
 
 	InGameTimer* m_Timer;
 };
