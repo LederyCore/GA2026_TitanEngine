@@ -26,12 +26,15 @@ void Enemy::OnStart()
 {
 	m_Animator = GetOwner()->GetComponent<Animator>();
 
+	m_Slider->backgroundImage.texture = m_healthBarTex;
 	m_Slider->minValue = 0.f;
 	m_Slider->maxValue = m_MaxHealth;
 	m_Slider->SetValue(m_MaxHealth);               
 	m_Slider->width = 300.f;
 	m_Slider->height = 24.f;
-	m_Slider->fillColor = D2D1::ColorF(0.2f, 0.85f, 0.2f, 1.f);  // �ʷ�
+	m_Slider->fillColor = D2D1::ColorF(0.2f, 0.85f, 0.2f, 1.f);
+
+	LOG_DEBUG("Enemy numbers size : %d", numbers.size());
 
 }
 

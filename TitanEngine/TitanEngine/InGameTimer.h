@@ -33,6 +33,12 @@ public:
 	void GameClear();
 	bool m_isGameClear;
 	bool IsGameClear() const { return m_isGameClear; }
+
+	std::shared_ptr<Texture2D> m_winTex;
+	std::shared_ptr<Texture2D> m_loseTex;
+	std::shared_ptr<Texture2D> m_TimerBarTex;
+
+	GameObject* loseGo = nullptr;
 };
 
 

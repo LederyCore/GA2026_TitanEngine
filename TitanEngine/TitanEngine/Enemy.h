@@ -38,6 +38,9 @@ public:
 
 	void TakeDamage(float amount);
 
+	std::vector<std::shared_ptr<Texture2D>> numbers;
+
+	std::shared_ptr<Texture2D> m_healthBarTex;
 private:
 	void SpawnHitEffects();
 	void Render(ID2D1DeviceContext7* ctx) override;

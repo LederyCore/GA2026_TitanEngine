@@ -21,6 +21,13 @@ using namespace TitanEngine;
 
 void InGameScene::OnLoad()
 {
+	// 배경
+    GameObject* bg = AddObject("bg");
+    bg->AddComponent<SpriteRenderer>();
+    auto bgTex = ResourceManager::Load<Texture2D>(L"Resource/InGameBG_G_NOW.webp");
+    bg->GetComponent<SpriteRenderer>()->sprite.texture = bgTex;
+
+
     GameObject* enemy = AddObject("Enemy");
     enemy->AddComponent<Enemy>();
     enemy->AddComponent<SpriteRenderer>();
@@ -65,6 +72,34 @@ void InGameScene::OnLoad()
     healthSlider->GetTransform()->SetLocalPosition(0, -200);
     
     enemy->GetComponent<Enemy>()->m_Slider = healthSlider->GetComponent<Slider>();
+
+    // Enemy HealthBar
+    auto hBarTex = ResourceManager::Load<Texture2D>(L"Resource/HPbar_BG.webp");
+    enemy->GetComponent<Enemy>()->m_healthBarTex = hBarTex;
+
+    // Enemy Damage Number
+    auto d0 = ResourceManager::Load<Texture2D>(L"Resource/DamageNumber_sheet0.webp");
+    auto d1 = ResourceManager::Load<Texture2D>(L"Resource/DamageNumber_sheet1.webp");
+    auto d2 = ResourceManager::Load<Texture2D>(L"Resource/DamageNumber_sheet2.webp");
+    auto d3 = ResourceManager::Load<Texture2D>(L"Resource/DamageNumber_sheet3.webp");
+    auto d4 = ResourceManager::Load<Texture2D>(L"Resource/DamageNumber_sheet4.webp");
+    auto d5 = ResourceManager::Load<Texture2D>(L"Resource/DamageNumber_sheet5.webp");
+    auto d6 = ResourceManager::Load<Texture2D>(L"Resource/DamageNumber_sheet6.webp");
+    auto d7 = ResourceManager::Load<Texture2D>(L"Resource/DamageNumber_sheet7.webp");
+    auto d8 = ResourceManager::Load<Texture2D>(L"Resource/DamageNumber_sheet8.webp");
+    auto d9 = ResourceManager::Load<Texture2D>(L"Resource/DamageNumber_sheet9.webp");
+
+    enemy->GetComponent<Enemy>()->numbers.push_back(d0);
+    enemy->GetComponent<Enemy>()->numbers.push_back(d1);
+    enemy->GetComponent<Enemy>()->numbers.push_back(d2);
+    enemy->GetComponent<Enemy>()->numbers.push_back(d3);
+    enemy->GetComponent<Enemy>()->numbers.push_back(d4);
+    enemy->GetComponent<Enemy>()->numbers.push_back(d5);
+    enemy->GetComponent<Enemy>()->numbers.push_back(d6);
+    enemy->GetComponent<Enemy>()->numbers.push_back(d7);
+    enemy->GetComponent<Enemy>()->numbers.push_back(d8);
+    enemy->GetComponent<Enemy>()->numbers.push_back(d9);
+
 
     // 플레이어 ========================================================================================================
     
@@ -140,7 +175,7 @@ void InGameScene::OnLoad()
     player->GetTransform()->SetLocalScale(3, 3);
 
     
-    // 타이머========================================================================================================
+    // 타이머 begin========================================================================================================
 
    
     GameObject* timer = AddObject("Timer");
@@ -158,20 +193,37 @@ void InGameScene::OnLoad()
     enemy->GetComponent<Enemy>()->m_Player = player->GetComponent<Player>();
 
 
-    auto* go = AddObject("Button");
-    go->GetTransform()->SetLocalPosition(-100, -200);
+    //승리, 패배 텍스쳐
+    auto winTex = ResourceManager::Load<Texture2D>(L"Resource/Popup_Victory.webp");
+    auto loseTex = ResourceManager::Load<Texture2D>(L"Resource/Popup_Lose.webp");
 
+    //타이머 바 텍스쳐
+    auto timerBarTex = ResourceManager::Load<Texture2D>(L"Resource/HPbar_BG.webp");
+
+    timer->GetComponent<InGameTimer>()->m_winTex = winTex;
+    timer->GetComponent<InGameTimer>()->m_loseTex = loseTex;
+    timer->GetComponent<InGameTimer>()->m_TimerBarTex = timerBarTex;
+    // 타이머 end========================================================================================================
+
+
+
+    auto btnTex = ResourceManager::Load<Texture2D>(L"Resource/Button.webp");
+
+
+    /*auto* go = AddObject("Button");
+    go->GetTransform()->SetLocalPosition(-100, -200);*/
 
     // 재시작 버튼
     auto* btnGo = AddObject("RestartButton");
     btnGo->GetTransform()->SetLocalPosition(0, 0);
 
     auto* btn_restart = btnGo->AddComponent<Button>();
-    btn_restart->width = 160.f;
-    btn_restart->height = 40.f;
+    //btn_restart->width = 160.f;
+    //btn_restart->height = 40.f;
+    btn_restart->image.texture = btnTex;
     btn_restart->text = L"restart";
+    btn_restart->textColor = { 0.0f, 0.0f, 0.0f, 1.0f };
     btn_restart->onClick = []() {
-        //LOG_DEBUG("재시작");
         SceneManager::Instance().LoadScene("InGameScene");
         };
 
@@ -179,12 +231,14 @@ void InGameScene::OnLoad()
 
     // 메인화면 버튼
     auto* btnGo2 = AddObject("RestartButton");
-    btnGo2->GetTransform()->SetLocalPosition(0, 200);
+    btnGo2->GetTransform()->SetLocalPosition(0, 60);
 
     auto* btn_Main = btnGo2->AddComponent<Button>();
-    btn_Main->width = 160.f;
-    btn_Main->height = 40.f;
+    /*btn_Main->width = 160.f;
+    btn_Main->height = 40.f;*/
+    btn_Main->image.texture = btnTex;
     btn_Main->text = L"Main";
+    btn_Main->textColor= { 0.0f, 0.0f, 0.0f, 1.0f };
     btn_Main->onClick = []() {
         LOG_DEBUG("btn_Main");
         SceneManager::Instance().LoadScene("TitleScene");
