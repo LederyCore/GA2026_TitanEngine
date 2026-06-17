@@ -2,6 +2,7 @@
 #include "Engine.h"
 #include "Button.h"
 #include "ResourceManager.h"
+#include "AudioManager.h"
 #include "SceneManager.h"
 #include "TestScene.h"
 #include "Win32Window/IWindow.h"
@@ -64,15 +65,21 @@ bool TitanEngine::Engine::Initialize(IWindow& window, const wchar_t* windowName,
         return false;
     }
 
+    // AudioManager must init before scenes (which load audio clips).
+    if (false == AudioManager::Instance().Initialize())
+    {
+        LOG_ERROR("오디오 매니저가 초기화 되지 않았습니다.");
+        return false;
+    }
+
     if (false == SceneManager::Instance().Initialize())
     {
         LOG_ERROR("씬 매니저가 초기화 되지 않았습니다.");
         return false;
     }
 
-   /* auto testScene = std::make_shared<TestScene>("TestScene");
+    auto testScene = std::make_shared<TestScene>("TestScene");
     SceneManager::Instance().RegisterScene("TestScene", testScene);
-    SceneManager::Instance().LoadScene("TestScene");*/
 
     auto titleScene = std::make_shared<TitleScene>("TitleScene");
     SceneManager::Instance().RegisterScene("TitleScene", titleScene);
@@ -81,7 +88,8 @@ bool TitanEngine::Engine::Initialize(IWindow& window, const wchar_t* windowName,
     SceneManager::Instance().RegisterScene("InGameScene", inGameScene);
 
 
-    SceneManager::Instance().LoadScene("TitleScene");
+    // Load TestScene to verify the BGM example. Change back to "TitleScene" to restore.
+    SceneManager::Instance().LoadScene("TestScene");
 
 
     wnd->AddObserver(WM_SIZE, m_renderer);
@@ -136,6 +144,8 @@ void TitanEngine::Engine::Finalize()
 {
     SceneManager::Instance().UnInitialize();
     m_renderer->FlushAndClearTarget();
+    // Voices reference clip PCM memory, so shut down audio before unloading clips.
+    AudioManager::Instance().Shutdown();
     ResourceManager::Instance().UnLoadAll();
     m_renderer->UnInitialize();
 }
@@ -147,6 +157,9 @@ void TitanEngine::Engine::FixedUpdate(float fixedTime)
 
 void TitanEngine::Engine::Update(float deltaTime)
 {
+    // Clean up finished one-shot SFX voices.
+    AudioManager::Instance().Update();
+
     m_currentFrameActiveScene->PropagateWorldMatrix();
     m_currentFrameActiveScene->Update(deltaTime);
 }

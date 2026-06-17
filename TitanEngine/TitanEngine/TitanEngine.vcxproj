@@ -146,6 +146,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="AnimationClip.cpp" />
+    <ClCompile Include="AudioClip.cpp" />
+    <ClCompile Include="AudioComponent.cpp" />
+    <ClCompile Include="AudioManager.cpp" />
     <ClCompile Include="Bubble.cpp" />
     <ClCompile Include="BubbleCircle.cpp" />
     <ClCompile Include="BubbleSpawner.cpp" />
@@ -181,6 +184,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimationClip.h" />
+    <ClInclude Include="AudioClip.h" />
+    <ClInclude Include="AudioComponent.h" />
+    <ClInclude Include="AudioManager.h" />
     <ClInclude Include="Bubble.h" />
     <ClInclude Include="BubbleCircle.h" />
     <ClInclude Include="BubbleSpawner.h" />
